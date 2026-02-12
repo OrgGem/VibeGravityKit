@@ -4,6 +4,7 @@ setup(
     name="VibeGravityKit",
     version="1.0.0",
     packages=find_packages(),
+    py_modules=["vibe_cli"],
     include_package_data=True,
     install_requires=[
         "requests",
@@ -13,6 +14,7 @@ setup(
     entry_points={
         "console_scripts": [
             "vibe=vibe_cli:main",
+            "vibegravity=vibe_cli:main",
         ],
     },
     author="Vibe Coding Team",

@@ -18,7 +18,7 @@ But here's the killer feature: **We hate wasting tokens.**
 
 ## 🚀 Key Roles
 
-1.  **Strategy**: Planner, Market Analyst, Tech Stack Advisor.
+1.  **Strategy**: Leader, Planner, Market Analyst, Tech Stack Advisor.
 2.  **Creative**: Designer (Tailwind Systems), Mobile Wizard, Tech Writer.
 3.  **Engineering**: Frontend/Backend Dev, QA, Security, DevOps.
 
@@ -44,22 +44,35 @@ vibe init antigravity
 ```
 *Boom! The `.agent` folder is created, and your 11 agents are ready to work.*
 
-### 3. How to Use (Agentic Workflow)
+---
+
+## 🎮 Agentic Workflow (How to Chat)
+
 In VibeGravityKit, **You are the Boss.** You talk, Agents work.
 
-#### Example: Building a "Food Delivery App"
+### 👑 The Leader Flow (Full Project Management)
+When you want to start a big feature or project, call the **Leader**.
+> **You**: "@[/leader] I want to add a 'Dark Mode' feature to the app."
+> **Leader**:
+> 1. Calls `planner` to break down tasks.
+> 2. Calls `designer` to update the Design System.
+> 3. Assigns `frontend-dev` to implement the switch.
+> 4. Assigns `qa-engineer` to test it.
 
-**Step 1: Planning**
-> **You**: "@[/planner] I want to build a GrabFood clone. Analyze the market and list core features."
-> **Agent**: Runs `market-trend-analyst` and creates a project plan.
+### 🧩 Calling Individual Agents (Micromanagement)
+ sometimes you just need a specialist.
 
-**Step 2: Design**
-> **You**: "@[/architect] Design the database for Users, Restaurants, and Orders."
-> **Agent**: Runs `db-designer` to generate a `schema.prisma` file.
+#### 1. The Architect (Database & API)
+> **You**: "@[/architect] Update the `User` schema to include `phoneNumber` and regenerate the OpenAPI spec."
+> **Agent**: Runs `db-designer` (Prisma) and `api-designer` (Swagger).
 
-**Step 3: Coding**
-> **You**: "@[/frontend-dev] Create the Login screen using our Design System."
-> **Agent**: Runs `context-manager` to read cues, then `diff-applier` to write the code.
+#### 2. The Frontend Developer (Coding)
+> **You**: "@[/frontend-dev] Refactor the `Button` component to match the new Design System."
+> **Agent**: Uses `context-manager` to read the file, then `diff-applier` to patch it safely.
+
+#### 3. The Tech Writer (Documentation)
+> **You**: "@[/tech-writer] Write a `RELEASE_NOTES.md` for this version."
+> **Agent**: Scans the git log and generates a beautiful changelog.
 
 ---
 
@@ -72,13 +85,8 @@ In VibeGravityKit, **You are the Boss.** You talk, Agents work.
 └── brain/           # Project Context & Memory
 ```
 
----
-
-## ❤️ Credits & Acknowledgements
-
-Special thanks to **[ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)** for pioneering the data-driven approach to UI/UX generation. Your work heavily inspired our Designer role.
-
----
+## ❤️ Credits
+Special thanks to **[ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)** for pioneering the data-driven approach to UI/UX generation.
 
 ## 📄 License
 MIT © [Nhqvu2005](https://github.com/Nhqvu2005)

@@ -7,75 +7,78 @@
 
 ## 🎩 What is VibeGravityKit?
 
-Imagine having a full-stack engineering team living inside your terminal. 
-**VibeGravityKit** isn't just a collection of scripts; it's a philosophy. It turns your LLM into a coordinated squad of 11 specialized agents, from the **Architect** who designs your database, to the **Security Engineer** who guards your keys.
+Imagine having a full-stack engineering team living inside your IDE. 
+**VibeGravityKit** isn't just a collection of scripts; it's a philosophy. It turns your LLM (Claude, GPT-4, Gemini) into a coordinated squad of **11 specialized agents**, from the **Architect** who designs your database, to the **Security Engineer** who guards your keys.
 
-But here's the kicker: **We hate wasting tokens.**
-Most AI coding tools are sloppy. They read entire files just to change one line. We don't do that here.
+But here's the killer feature: **We hate wasting tokens.**
 - **Context Manager**: Minifies your code before the AI sees it. (Saves ~50% tokens).
 - **Diff Applier**: Applies surgical patches instead of rewriting files. (Saves ~90% tokens).
 
-## 🚀 Key Features
+---
 
-### 1. The 11-Agent Dream Team
-| Role | Skillset |
-| :--- | :--- |
-| **Planner & Leader** | Strategy, User Stories, Risk Analysis. |
-| **Architect & Designer** | Database Schema (Prisma), OpenAPI Specs, Design Systems. |
-| **Dev Team (Web/Mobile)** | React, Vue, Expo, Flutter, Vanilla JS — we code it all. |
-| **QA & Security** | Zero-token Test Gen & Vulnerability Scanning. |
-| **DevOps & SRE** | Docker, CI/CD, Infrastructure as Code. |
+## 🚀 Key Roles
 
-### 2. Token Economy Engine
-We treat input tokens like gold. Our "Smart Tools" ensure you only pay for what matters.
-- `context-manager`: "Read this file, but strip the fluff."
-- `diff-applier`: "Change these 3 lines. Don't touch the rest."
-- `git-manager`: "Commit this with a semantic message."
-
-### 3. One-Command Setup
-Install once, use everywhere. Deploy your AI team to any new project with a single command.
+1.  **Strategy**: Planner, Market Analyst, Tech Stack Advisor.
+2.  **Creative**: Designer (Tailwind Systems), Mobile Wizard, Tech Writer.
+3.  **Engineering**: Frontend/Backend Dev, QA, Security, DevOps.
 
 ---
 
 ## 🛠️ Installation & Usage
 
-### 1. Install Global CLI
-Run this **once** to install the VibeGravityKit CLI on your machine:
+### 1. Global Setup (Run Once)
+Turn `VibeGravityKit` into a command everywhere on your machine.
 ```bash
-git clone https://github.com/Start-Vibe-Coding/VibeGravityKit.git
+git clone https://github.com/Nhqvu2005/VibeGravityKit.git
 cd VibeGravityKit
 pip install .
 ```
+*(Make sure you have **Python 3.9+** and **Node.js 18+** installed)*
+> **Why Node.js?** Some skills like `mobile-wizard` (Expo), `ui-ux-pro-max` (Tailwind), and `api-designer` rely on standard Node.js tools.
 
-### 2. Initialize in a Project
+### 2. Deploy to a Project
 Go to any project folder (new or existing) and summon your team:
 ```bash
 cd my-new-project
-vibe --init
+vibe init antigravity
 ```
 *Boom! The `.agent` folder is created, and your 11 agents are ready to work.*
 
-### 3. Start building!
-Now, just chat with your IDE (Cursor/Windsurf/Vibe):
-> "@[/planner] I want to build a Spotify clone."
-> "@[/frontend-dev] Create the login screen using the design system."
+### 3. How to Use (Agentic Workflow)
+In VibeGravityKit, **You are the Boss.** You talk, Agents work.
+
+#### Example: Building a "Food Delivery App"
+
+**Step 1: Planning**
+> **You**: "@[/planner] I want to build a GrabFood clone. Analyze the market and list core features."
+> **Agent**: Runs `market-trend-analyst` and creates a project plan.
+
+**Step 2: Design**
+> **You**: "@[/architect] Design the database for Users, Restaurants, and Orders."
+> **Agent**: Runs `db-designer` to generate a `schema.prisma` file.
+
+**Step 3: Coding**
+> **You**: "@[/frontend-dev] Create the Login screen using our Design System."
+> **Agent**: Runs `context-manager` to read cues, then `diff-applier` to write the code.
 
 ---
 
 ## 📂 Project Structure
 
 ```bash
-my-project/
-├── .agent/
-│   ├── workflows/       # The Brains (Planner, Dev, QA...)
-│   ├── skills/          # The Hands (Diff Applier, Docker Wizard...)
-│   └── brain/           # The Memory (Project Context)
-├── src/                 # Your code
-└── README.md
+.agent/
+├── workflows/       # The "Brain": Instructions for each Role
+├── skills/          # The "Hands": Python scripts that do the work
+└── brain/           # Project Context & Memory
 ```
 
-## 🤝 Contributing
-We believe in **Vibe First, Code Second**. If you have ideas to make this kit even more "chill" to use, open a PR!
+---
+
+## ❤️ Credits & Acknowledgements
+
+Special thanks to **[ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)** for pioneering the data-driven approach to UI/UX generation. Your work heavily inspired our Designer role.
+
+---
 
 ## 📄 License
-MIT © Vibe Coding Team
+MIT © [Nhqvu2005](https://github.com/Nhqvu2005)

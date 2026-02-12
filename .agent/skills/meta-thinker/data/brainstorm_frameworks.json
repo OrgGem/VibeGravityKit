@@ -1,0 +1,381 @@
+[
+    {
+        "id": "scamper",
+        "name": "SCAMPER",
+        "description": "7 câu hỏi biến đổi sản phẩm/ý tưởng hiện có",
+        "steps": [
+            {
+                "letter": "S",
+                "action": "Substitute",
+                "question": "Thay thế thành phần nào bằng thứ khác?",
+                "example": "Uber: thay taxi truyền thống bằng xe cá nhân"
+            },
+            {
+                "letter": "C",
+                "action": "Combine",
+                "question": "Kết hợp 2 thứ lại thành 1?",
+                "example": "Grab: ride + food + payment trong 1 app"
+            },
+            {
+                "letter": "A",
+                "action": "Adapt",
+                "question": "Áp dụng từ ngành khác sang?",
+                "example": "Tinder: swipe từ UX mobile → dating"
+            },
+            {
+                "letter": "M",
+                "action": "Modify",
+                "question": "Phóng to/thu nhỏ/thay đổi gì?",
+                "example": "Twitter/X: giới hạn 280 ký tự → nội dung ngắn gọn"
+            },
+            {
+                "letter": "P",
+                "action": "Put to other use",
+                "question": "Dùng vào mục đích khác?",
+                "example": "Slack: game chat tool → business communication"
+            },
+            {
+                "letter": "E",
+                "action": "Eliminate",
+                "question": "Bỏ bớt cái gì?",
+                "example": "Notion: bỏ nhiều app riêng lẻ → all-in-one workspace"
+            },
+            {
+                "letter": "R",
+                "action": "Reverse",
+                "question": "Đảo ngược quy trình?",
+                "example": "Priceline: khách đặt giá → khách sạn chấp nhận"
+            }
+        ],
+        "best_for": [
+            "Cải tiến sản phẩm hiện có",
+            "Tìm góc mới cho thị trường cũ"
+        ]
+    },
+    {
+        "id": "lean-canvas",
+        "name": "Lean Canvas",
+        "description": "1-page business model cho startup, focus vào problem-solution fit",
+        "sections": [
+            {
+                "name": "Problem",
+                "prompt": "Top 3 vấn đề mà khách hàng đang gặp?"
+            },
+            {
+                "name": "Customer Segments",
+                "prompt": "Ai là early adopter? Mô tả cụ thể."
+            },
+            {
+                "name": "Unique Value Proposition",
+                "prompt": "1 câu duy nhất mô tả tại sao sản phẩm này khác biệt?"
+            },
+            {
+                "name": "Solution",
+                "prompt": "Top 3 tính năng giải quyết top 3 vấn đề?"
+            },
+            {
+                "name": "Channels",
+                "prompt": "Làm sao tiếp cận khách hàng? (SEO, Ads, Referral, Content...)"
+            },
+            {
+                "name": "Revenue Streams",
+                "prompt": "Kiếm tiền bằng cách nào?"
+            },
+            {
+                "name": "Cost Structure",
+                "prompt": "Chi phí chính: hosting, marketing, nhân sự?"
+            },
+            {
+                "name": "Key Metrics",
+                "prompt": "Đo lường thành công bằng gì? (DAU, MRR, Retention...)"
+            },
+            {
+                "name": "Unfair Advantage",
+                "prompt": "Cái gì đối thủ không thể copy dễ dàng?"
+            }
+        ],
+        "best_for": [
+            "Startup mới",
+            "Validate ý tưởng nhanh"
+        ]
+    },
+    {
+        "id": "5w1h",
+        "name": "5W1H Analysis",
+        "description": "Framework cơ bản để phân tích toàn diện một ý tưởng",
+        "questions": [
+            {
+                "w": "What",
+                "question": "Sản phẩm là gì? Giải quyết vấn đề gì?"
+            },
+            {
+                "w": "Who",
+                "question": "Ai dùng? Ai trả tiền? Ai quyết định mua?"
+            },
+            {
+                "w": "Why",
+                "question": "Tại sao họ cần? Tại sao bây giờ? Tại sao chọn bạn?"
+            },
+            {
+                "w": "When",
+                "question": "Khi nào họ dùng? Tần suất bao nhiêu?"
+            },
+            {
+                "w": "Where",
+                "question": "Dùng ở đâu? Online/Offline? Mobile/Desktop?"
+            },
+            {
+                "w": "How",
+                "question": "Hoạt động như nào? Tech gì? Monetize sao?"
+            }
+        ],
+        "best_for": [
+            "Phân tích ban đầu",
+            "Hiểu rõ bối cảnh"
+        ]
+    },
+    {
+        "id": "blue-ocean",
+        "name": "Blue Ocean Strategy",
+        "description": "Tìm thị trường mới (blue ocean) thay vì cạnh tranh ở thị trường đỏ (red ocean)",
+        "canvas": [
+            {
+                "action": "Eliminate",
+                "question": "Ngành này có yếu tố nào đang được coi trọng nhưng thực ra không cần?",
+                "example": "Southwest Airlines: bỏ suất ăn, chỗ ngồi cố định"
+            },
+            {
+                "action": "Reduce",
+                "question": "Yếu tố nào cần giảm xuống dưới chuẩn ngành?",
+                "example": "IKEA: giảm dịch vụ lắp ráp, giảm nhân viên bán hàng"
+            },
+            {
+                "action": "Raise",
+                "question": "Yếu tố nào cần nâng cao hơn chuẩn ngành?",
+                "example": "Dyson: nâng cao thiết kế và công nghệ"
+            },
+            {
+                "action": "Create",
+                "question": "Tạo ra yếu tố gì mà ngành chưa từng có?",
+                "example": "Tesla: tạo ra mạng lưới sạc riêng, OTA updates"
+            }
+        ],
+        "best_for": [
+            "Thị trường cạnh tranh cao",
+            "Tìm lối đi riêng"
+        ]
+    },
+    {
+        "id": "jobs-to-be-done",
+        "name": "Jobs To Be Done (JTBD)",
+        "description": "Hiểu 'công việc' mà khách hàng thuê sản phẩm làm",
+        "framework": {
+            "template": "Khi [TÌNH HUỐNG], tôi muốn [ĐỘNG LỰC], để tôi có thể [KẾT QUẢ MONG MUỐN]",
+            "examples": [
+                "Khi [đang chờ xe buýt], tôi muốn [giết thời gian có ích], để tôi có thể [cảm thấy không phí thời gian] → TikTok, Duolingo",
+                "Khi [cần gửi tiền cho bạn], tôi muốn [gửi ngay lập tức không phí], để tôi có thể [không phải ra ngân hàng] → MoMo, ZaloPay",
+                "Khi [học lập trình], tôi muốn [thực hành ngay trên trình duyệt], để tôi có thể [không cần cài IDE phức tạp] → Replit, CodeSandbox"
+            ],
+            "job_types": [
+                {
+                    "type": "Functional",
+                    "desc": "Hoàn thành một tác vụ cụ thể",
+                    "example": "Gửi tiền, đặt đồ ăn"
+                },
+                {
+                    "type": "Emotional",
+                    "desc": "Cảm giác muốn đạt được",
+                    "example": "An tâm, tự tin, vui vẻ"
+                },
+                {
+                    "type": "Social",
+                    "desc": "Cách muốn người khác nhìn mình",
+                    "example": "Chuyên nghiệp, sành điệu, có trách nhiệm"
+                }
+            ]
+        },
+        "best_for": [
+            "Hiểu motivation thật sự của user",
+            "Tìm insight sâu"
+        ]
+    },
+    {
+        "id": "value-proposition-canvas",
+        "name": "Value Proposition Canvas",
+        "description": "Map giữa customer profile và value proposition",
+        "customer_profile": [
+            {
+                "element": "Customer Jobs",
+                "prompt": "Khách hàng đang cố hoàn thành công việc gì?"
+            },
+            {
+                "element": "Pains",
+                "prompt": "Nỗi đau, rủi ro, trở ngại khi làm việc đó?"
+            },
+            {
+                "element": "Gains",
+                "prompt": "Lợi ích, kết quả mong muốn?"
+            }
+        ],
+        "value_map": [
+            {
+                "element": "Products & Services",
+                "prompt": "Sản phẩm/dịch vụ bạn cung cấp?"
+            },
+            {
+                "element": "Pain Relievers",
+                "prompt": "Giải quyết nỗi đau nào?"
+            },
+            {
+                "element": "Gain Creators",
+                "prompt": "Tạo ra lợi ích gì?"
+            }
+        ],
+        "best_for": [
+            "Product-market fit",
+            "Refine value proposition"
+        ]
+    },
+    {
+        "id": "design-sprint",
+        "name": "Design Sprint (Google Ventures)",
+        "description": "5 ngày từ ý tưởng → prototype → test với user thật",
+        "days": [
+            {
+                "day": 1,
+                "name": "Understand",
+                "activities": [
+                    "Map the problem",
+                    "Expert interviews",
+                    "How Might We notes"
+                ]
+            },
+            {
+                "day": 2,
+                "name": "Diverge",
+                "activities": [
+                    "Lightning demos",
+                    "Sketch solutions",
+                    "Crazy 8s"
+                ]
+            },
+            {
+                "day": 3,
+                "name": "Decide",
+                "activities": [
+                    "Vote on solutions",
+                    "Create storyboard",
+                    "Choose prototype plan"
+                ]
+            },
+            {
+                "day": 4,
+                "name": "Prototype",
+                "activities": [
+                    "Build realistic prototype",
+                    "Prepare interview script"
+                ]
+            },
+            {
+                "day": 5,
+                "name": "Test",
+                "activities": [
+                    "5 user interviews",
+                    "Observe and learn",
+                    "Plan next steps"
+                ]
+            }
+        ],
+        "best_for": [
+            "Validate nhanh",
+            "Team collaboration"
+        ]
+    },
+    {
+        "id": "swot",
+        "name": "SWOT Analysis",
+        "description": "Phân tích 4 khía cạnh: Strengths, Weaknesses, Opportunities, Threats",
+        "quadrants": [
+            {
+                "name": "Strengths",
+                "prompt": "Điểm mạnh nội tại? (tech, team, expertise, network)",
+                "internal": true
+            },
+            {
+                "name": "Weaknesses",
+                "prompt": "Điểm yếu nội tại? (budget, experience, resources)",
+                "internal": true
+            },
+            {
+                "name": "Opportunities",
+                "prompt": "Cơ hội bên ngoài? (trends, unserved market, regulation)",
+                "internal": false
+            },
+            {
+                "name": "Threats",
+                "prompt": "Mối đe dọa bên ngoài? (competitors, tech changes, economy)",
+                "internal": false
+            }
+        ],
+        "best_for": [
+            "Đánh giá tổng thể",
+            "So sánh các hướng đi"
+        ]
+    },
+    {
+        "id": "crazy-8s",
+        "name": "Crazy 8s",
+        "description": "Vẽ/viết 8 ý tưởng trong 8 phút — tốc độ loại bỏ overthinking",
+        "rules": [
+            "Chia giấy/màn hình thành 8 ô",
+            "Mỗi ô = 1 ý tưởng, tối đa 1 phút",
+            "Không cần đẹp, chỉ cần nhanh",
+            "Số lượng > chất lượng ở giai đoạn này",
+            "Sau đó vote chọn top 2-3"
+        ],
+        "best_for": [
+            "Phá vỡ creative block",
+            "Team brainstorm"
+        ]
+    },
+    {
+        "id": "first-principles",
+        "name": "First Principles Thinking",
+        "description": "Bẻ vấn đề về gốc rễ, xây lại từ đầu thay vì cải tiến cái cũ",
+        "steps": [
+            {
+                "step": 1,
+                "action": "Identify assumptions",
+                "prompt": "Mọi người nghĩ gì là đúng về vấn đề này?"
+            },
+            {
+                "step": 2,
+                "action": "Break down",
+                "prompt": "Bẻ nhỏ vấn đề thành các thành phần cơ bản nhất"
+            },
+            {
+                "step": 3,
+                "action": "Rebuild",
+                "prompt": "Nếu xây lại từ đầu, không có giới hạn, bạn sẽ làm gì?"
+            }
+        ],
+        "examples": [
+            {
+                "problem": "Xe điện quá đắt",
+                "assumption": "Pin phải đắt",
+                "first_principle": "Pin chỉ là kim loại + hóa chất → mua nguyên liệu thô + tự sản xuất",
+                "result": "Tesla Gigafactory"
+            },
+            {
+                "problem": "Học lập trình khó",
+                "assumption": "Phải học theory trước",
+                "first_principle": "Con người học qua thực hành → cho code ngay, giải thích sau",
+                "result": "freeCodeCamp, Codecademy"
+            }
+        ],
+        "best_for": [
+            "Disruption",
+            "Tìm giải pháp đột phá"
+        ]
+    }
+]

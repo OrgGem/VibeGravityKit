@@ -1,14 +1,14 @@
 # 🌌 VibeGravityKit
 
 > **The AI-Native Software House in a Box.**
-> *Build enterprise-grade software with a team of 11 AI Agents — optimized for maximum speed and minimum token costs.*
+> *Build enterprise-grade software with a team of 13 AI Agents — optimized for maximum speed and minimum token costs.*
 
 ---
 
 ## 🎩 What is VibeGravityKit?
 
 Imagine having a full-stack engineering team living inside your IDE. 
-**VibeGravityKit** turns your IDE into a coordinated squad of **11 specialized agents**, from the **Architect** who designs your database, to the **Security Engineer** who guards your keys.
+**VibeGravityKit** turns your IDE into a coordinated squad of **13 specialized agents**, from the **Architect** who designs your database, to the **Meta Thinker** who expands your vision.
 
 But here's the killer feature: **We hate wasting tokens.**
 - **Context Manager**: Minifies your code before the AI sees it. (Saves ~50% tokens).
@@ -33,14 +33,18 @@ vibe init antigravity
 
 ---
 
-## 🎮 The 11 Agents (Usage Examples)
+## 🎮 The 13 Agents (Usage Examples)
 
 In VibeGravityKit, **You are the Boss.** Just chat with your agents using `@` mentions.
 
-### 1. Strategy Team 🧠
+### 1. Strategy & Vision Team 🧠
 **@[/leader]** (The Boss's Right Hand)
 > "I want to build a Spotify clone. Orchestrate the entire plan."
 *(Orchestrates Planner, Architect, and Devs automatically)*
+
+**@[/meta-thinker]** (Creative Advisor)
+> "I want to build a food delivery app but make it unique. Brainstorm ideas."
+*(Generates: `vision_brief.md` with trends, competitors, and unique angles)*
 
 **@[/planner]** (Project Manager)
 > "Break down the 'User Profile' feature into 5 user stories with acceptance criteria."
@@ -81,6 +85,10 @@ In VibeGravityKit, **You are the Boss.** Just chat with your agents using `@` me
 *(Generates: `Dockerfile`, `docker-compose.yml`)*
 
 ### 4. Quality & Support Team 🛡️
+**@[/knowledge-guide]** (Code Explainer & Scribe)
+> "Explain how the authentication flow works in this project."
+*(Explains code & captures improvement ideas to `.agent/memory/ideas_inbox.md`)*
+
 **@[/qa-engineer]** (Tester)
 > "Generate unit tests for the `calculateTax` function in `utils.ts`."
 *(Generates: `tests/utils.test.ts`)*

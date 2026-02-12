@@ -8,7 +8,7 @@
 ## 🎩 What is VibeGravityKit?
 
 Imagine having a full-stack engineering team living inside your IDE. 
-**VibeGravityKit** turns your LLM (Claude, GPT-4, Gemini) into a coordinated squad of **11 specialized agents**, from the **Architect** who designs your database, to the **Security Engineer** who guards your keys.
+**VibeGravityKit** turns your IDE into a coordinated squad of **11 specialized agents**, from the **Architect** who designs your database, to the **Security Engineer** who guards your keys.
 
 But here's the killer feature: **We hate wasting tokens.**
 - **Context Manager**: Minifies your code before the AI sees it. (Saves ~50% tokens).

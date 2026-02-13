@@ -145,6 +145,30 @@ In VibeGravityKit, **You are the Boss.** Just chat with your agents using `@` me
 
 ## 📋 Changelog
 
+### v2.4.0
+- `agent_index.json` — Leader reads 1 file to know all 14 agents, their roles, skills, and when to call each
+- `codebase-navigator` upgraded — now captures full function signatures (params, return types)
+- New action: `--action outline` for compact codebase overview
+- Handoff template for standardized task delegation between agents
+```bash
+# Leader reads this to decide who to call:
+cat .agent/brain/agent_index.json
+
+# Index codebase with full signatures:
+python .agent/skills/codebase-navigator/scripts/navigator.py --action index --path "."
+
+# Compact outline for Leader (1 line per file):
+python .agent/skills/codebase-navigator/scripts/navigator.py --action outline
+# Output: src/api.py → create_user:15, get_orders:42, authenticate:78
+
+# Full map with signatures:
+python .agent/skills/codebase-navigator/scripts/navigator.py --action map
+# Output: L15: def create_user(name, email, role="user")
+
+# Search by function name or signature:
+python .agent/skills/codebase-navigator/scripts/navigator.py --action search --query "auth"
+```
+
 ### v2.3.0
 - New skill: `brain-manager` — project context, architecture decisions, export/import
 - New skill: `journal-manager` — 2-tier knowledge journal (index + entries)

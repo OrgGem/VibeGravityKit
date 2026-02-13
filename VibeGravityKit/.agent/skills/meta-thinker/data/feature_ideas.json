@@ -300,5 +300,53 @@
         "API versioning",
         "Load balancing",
         "Caching (Redis)"
+    ],
+    "gaming": [
+        "Game loop (start → play → score → retry)",
+        "Leaderboard (global / friends / daily / weekly)",
+        "High score persistence (local + cloud)",
+        "Difficulty progression (speed/complexity ramp)",
+        "Power-ups / collectibles",
+        "Lives / hearts system",
+        "Daily challenge (unique per day)",
+        "Combo/streak multiplier",
+        "Replay / ghost (see your best run)",
+        "Character/skin selection",
+        "Sound effects + music toggle",
+        "Haptic feedback (mobile)",
+        "Tutorial / first-time onboarding",
+        "Screenshot/share score card",
+        "Offline playable (PWA)"
+    ],
+    "community": [
+        "Forum / Discussion board",
+        "User-generated content (UGC) submission",
+        "Moderation tools (auto + manual)",
+        "Reputation/karma system",
+        "Community guidelines + enforcement",
+        "Ambassadors / moderators program",
+        "Community events (AMAs, challenges)",
+        "Featured content / spotlight",
+        "Community analytics",
+        "Onboarding for new members",
+        "Feedback / suggestion box",
+        "Integration with Discord/Slack"
+    ],
+    "growth_viral": [
+        "Referral program (invite friend → both rewarded)",
+        "Social sharing (score card, achievement, result)",
+        "Waitlist with position (share to move up)",
+        "Public API / embeddable widget",
+        "SEO-friendly landing pages",
+        "Email drip campaign",
+        "Product Hunt / Hacker News launch checklist",
+        "In-app review prompt (timing matters)",
+        "Word-of-mouth triggers (surprise & delight)",
+        "Freemium → paid conversion funnel",
+        "Network effects (product improves with more users)",
+        "Content marketing (blog / newsletter / social)",
+        "Influencer / creator partnerships",
+        "Viral loop design (use → share → new user → use)",
+        "Open source community contribution"
     ]
 }

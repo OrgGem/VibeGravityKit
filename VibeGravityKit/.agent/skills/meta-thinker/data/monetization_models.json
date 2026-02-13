@@ -425,5 +425,146 @@
             "GitHub stars (proxy for reach)"
         ],
         "pricing_tips": "Combine with consulting/enterprise support for sustainable income"
+    },
+    {
+        "id": "pay-per-result",
+        "name": "Pay-Per-Result / Success Fee",
+        "description": "Charge only when the product delivers measurable outcomes",
+        "how_it_works": "User pays based on results achieved (leads generated, sales closed, problems solved), not usage or time",
+        "examples": [
+            "Upwork (escrow + milestone)",
+            "Performance marketing platforms",
+            "AI-powered recruiting (pay per hire)",
+            "Legal tech (pay if case won)"
+        ],
+        "pros": [
+            "Low risk for customer = easy to sell",
+            "High perceived value",
+            "Aligns incentives (you win when they win)"
+        ],
+        "cons": [
+            "Revenue unpredictability",
+            "Hard to define 'result' precisely",
+            "Requires tracking and attribution"
+        ],
+        "best_for": [
+            "AI/ML products",
+            "Lead generation",
+            "Recruiting platform",
+            "Marketing tools"
+        ],
+        "metrics": [
+            "Cost per result",
+            "Result delivery rate",
+            "Customer satisfaction",
+            "Revenue per customer"
+        ],
+        "pricing_tips": "Define 'result' clearly in contract. Offer a base fee + success bonus for predictable revenue."
+    },
+    {
+        "id": "reverse-trial",
+        "name": "Reverse Trial (Premium First)",
+        "description": "Give users FULL premium access first, then downgrade to free. Users experience the best version before deciding.",
+        "how_it_works": "14-30 day premium trial → auto-downgrade to free tier → user upgrades when they miss premium features",
+        "examples": [
+            "Ahrefs (7-day trial)",
+            "Toggl Track",
+            "Grammarly",
+            "Loom"
+        ],
+        "pros": [
+            "Higher conversion than freemium (users experience full value)",
+            "Users build habits with premium features",
+            "Loss aversion drives upgrades"
+        ],
+        "cons": [
+            "Higher initial server costs",
+            "Users may game trials (new accounts)",
+            "Must have significant premium-vs-free gap"
+        ],
+        "best_for": [
+            "SaaS tools",
+            "Productivity apps",
+            "Analytics platforms",
+            "Design tools"
+        ],
+        "metrics": [
+            "Trial-to-paid conversion",
+            "Feature adoption during trial",
+            "Time-to-first-value",
+            "Trial duration optimization"
+        ],
+        "pricing_tips": "14 days is the sweet spot for most SaaS. Require credit card to reduce tire-kickers by 60%."
+    },
+    {
+        "id": "tokenization",
+        "name": "Tokenization / Credits",
+        "description": "Users buy tokens/credits to use features. Flexible, granular pricing without commitment.",
+        "how_it_works": "Buy credit packs → spend credits per action (AI generation, API call, export). Credits never expire or expire yearly.",
+        "examples": [
+            "ChatGPT (message credits)",
+            "Midjourney (image credits)",
+            "Adobe Stock (download credits)",
+            "AWS Lambda (invocation credits)"
+        ],
+        "pros": [
+            "Users pay exactly for what they use",
+            "No commitment anxiety",
+            "Upsell to subscription for heavy users"
+        ],
+        "cons": [
+            "Complex pricing communication",
+            "Users may be uncertain about costs",
+            "Harder to predict revenue"
+        ],
+        "best_for": [
+            "AI-powered tools",
+            "API services",
+            "Design/Media tools",
+            "Game platforms"
+        ],
+        "metrics": [
+            "Credits purchased",
+            "Credits consumed",
+            "Credit balance at churn",
+            "Average credits per user per month"
+        ],
+        "pricing_tips": "Offer a free credit pack for onboarding. Bundle subscriptions with monthly credit allowances."
+    },
+    {
+        "id": "bundling",
+        "name": "Product Bundling / Suite",
+        "description": "Offer multiple products as a single package at a discounted price",
+        "how_it_works": "Individual products sold separately, or as a bundle at 30-50% discount. Bundle drives adoption across product line.",
+        "examples": [
+            "Microsoft 365",
+            "Adobe Creative Cloud",
+            "Apple One",
+            "JetBrains All Products Pack",
+            "Setapp"
+        ],
+        "pros": [
+            "Higher ARPU via cross-sell",
+            "Reduces churn (switching one tool = losing all)",
+            "Competitors can't match the value"
+        ],
+        "cons": [
+            "Need multiple good products first",
+            "Complex pricing matrix",
+            "Cannibalizes individual product sales"
+        ],
+        "best_for": [
+            "Enterprise software suite",
+            "Creative tools",
+            "Productivity Suite",
+            "Streaming services"
+        ],
+        "metrics": [
+            "Bundle adoption rate",
+            "Products used per user",
+            "Bundle vs individual revenue",
+            "Cross-product retention"
+        ],
+        "pricing_tips": "Price bundle at 60-70% of individual sum. Free trial individual products to hook users, then offer bundle upgrade."
     }
 ]

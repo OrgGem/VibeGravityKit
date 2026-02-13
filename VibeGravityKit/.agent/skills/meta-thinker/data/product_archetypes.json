@@ -791,5 +791,208 @@
             "ai",
             "authentication"
         ]
+    },
+    {
+        "id": "data-platform",
+        "name": "Data Platform / Analytics",
+        "description": "Collect, process, and visualize data for business insights",
+        "examples": [
+            "Mixpanel",
+            "Amplitude",
+            "Tableau",
+            "Metabase",
+            "PostHog"
+        ],
+        "platforms": [
+            "web",
+            "api"
+        ],
+        "core_features": [
+            "Data ingestion (API/SDK)",
+            "Real-time dashboards",
+            "Funnel analysis",
+            "Cohort analysis",
+            "A/B testing",
+            "Custom reports",
+            "Data export",
+            "Team collaboration"
+        ],
+        "monetization": [
+            "Usage-based (events/month)",
+            "Tiered plans",
+            "Enterprise custom",
+            "Self-hosted option"
+        ],
+        "complexity": "hard",
+        "time_estimate": "4-8 months",
+        "domains": [
+            "analytics",
+            "business-intelligence",
+            "marketing",
+            "product"
+        ]
+    },
+    {
+        "id": "creator-economy",
+        "name": "Creator Economy Platform",
+        "description": "Tools for creators to monetize content, build audience, and manage their business",
+        "examples": [
+            "Patreon",
+            "Gumroad",
+            "Ko-fi",
+            "Substack",
+            "Teachable",
+            "Linktree"
+        ],
+        "platforms": [
+            "web",
+            "mobile"
+        ],
+        "core_features": [
+            "Creator profile/storefront",
+            "Digital product sales",
+            "Subscription/membership tiers",
+            "Fan communication (DM, broadcast)",
+            "Analytics dashboard",
+            "Payout management",
+            "Landing page builder",
+            "Email list management"
+        ],
+        "monetization": [
+            "Platform fee (5-10% of creator revenue)",
+            "Premium creator tools",
+            "Transaction fees",
+            "White-label for enterprises"
+        ],
+        "complexity": "medium",
+        "time_estimate": "3-5 months",
+        "domains": [
+            "content",
+            "education",
+            "art",
+            "music",
+            "writing",
+            "video"
+        ]
+    },
+    {
+        "id": "web3-dapp",
+        "name": "Web3 / Decentralized App",
+        "description": "Blockchain-based application with smart contracts and token economics",
+        "examples": [
+            "Uniswap",
+            "OpenSea",
+            "Aave",
+            "Mirror.xyz",
+            "Lens Protocol"
+        ],
+        "platforms": [
+            "web",
+            "mobile"
+        ],
+        "core_features": [
+            "Wallet connection (MetaMask, WalletConnect)",
+            "Smart contract interaction",
+            "Token/NFT management",
+            "On-chain transactions",
+            "Decentralized identity",
+            "Governance (DAO voting)",
+            "Gas fee estimation"
+        ],
+        "monetization": [
+            "Transaction fees",
+            "Token appreciation",
+            "Protocol fees",
+            "NFT royalties",
+            "Premium features"
+        ],
+        "complexity": "hard",
+        "time_estimate": "3-6 months",
+        "domains": [
+            "defi",
+            "nft",
+            "social",
+            "gaming",
+            "identity",
+            "governance"
+        ]
+    },
+    {
+        "id": "automation-workflow",
+        "name": "Automation / Workflow Builder",
+        "description": "Visual tool for creating automated workflows connecting multiple services",
+        "examples": [
+            "Zapier",
+            "Make (Integromat)",
+            "n8n",
+            "Pipedream",
+            "Power Automate"
+        ],
+        "platforms": [
+            "web"
+        ],
+        "core_features": [
+            "Visual workflow editor (drag & drop)",
+            "Trigger/Action nodes",
+            "3rd-party integrations (API connectors)",
+            "Conditional logic (if/else/loop)",
+            "Scheduling (cron)",
+            "Error handling & retry",
+            "Execution logs",
+            "Template library"
+        ],
+        "monetization": [
+            "Task-based pricing",
+            "Tiered plans by complexity",
+            "Premium connectors",
+            "Enterprise (self-hosted)"
+        ],
+        "complexity": "hard",
+        "time_estimate": "4-8 months",
+        "domains": [
+            "productivity",
+            "marketing",
+            "devops",
+            "data",
+            "crm"
+        ]
+    },
+    {
+        "id": "micro-saas",
+        "name": "Micro-SaaS (Single Feature Tool)",
+        "description": "Small, focused tool solving ONE specific problem extremely well. Often built and run by 1-2 people.",
+        "examples": [
+            "Plausible Analytics",
+            "Buttondown",
+            "Bannerbear",
+            "Cron (calendar)",
+            "Lemon Squeezy"
+        ],
+        "platforms": [
+            "web"
+        ],
+        "core_features": [
+            "One killer feature (the ONLY reason users sign up)",
+            "Simple onboarding (< 2 minutes)",
+            "Clean dashboard",
+            "API for power users",
+            "Webhook notifications",
+            "Export data"
+        ],
+        "monetization": [
+            "Simple subscription ($9-49/mo)",
+            "Lifetime deal (AppSumo launch)",
+            "Usage-based",
+            "Free tier + paid"
+        ],
+        "complexity": "easy",
+        "time_estimate": "1-3 months",
+        "domains": [
+            "any — pick a niche pain point",
+            "developer-tools",
+            "marketing",
+            "analytics",
+            "productivity"
+        ]
     }
 ]

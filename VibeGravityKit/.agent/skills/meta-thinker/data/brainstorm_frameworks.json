@@ -377,5 +377,238 @@
             "Disruption",
             "Finding breakthrough solutions"
         ]
+    },
+    {
+        "id": "six-thinking-hats",
+        "name": "Six Thinking Hats",
+        "description": "6 different perspectives to evaluate any idea or decision comprehensively",
+        "hats": [
+            {
+                "color": "White",
+                "focus": "Facts & Data",
+                "question": "What do we know? What data do we need?",
+                "example": "Market size is $4.2B, growing 12% YoY"
+            },
+            {
+                "color": "Red",
+                "focus": "Feelings & Intuition",
+                "question": "What's your gut feeling? What excites or worries you?",
+                "example": "This feels like it could be huge, but the timing worries me"
+            },
+            {
+                "color": "Black",
+                "focus": "Risks & Caution",
+                "question": "What could go wrong? What are the dangers?",
+                "example": "Competitors have 10x our budget. Regulation could kill us."
+            },
+            {
+                "color": "Yellow",
+                "focus": "Optimism & Benefits",
+                "question": "What's the best case? What opportunities exist?",
+                "example": "If we get 1% of the market, that's $42M ARR"
+            },
+            {
+                "color": "Green",
+                "focus": "Creativity & Alternatives",
+                "question": "What new ideas can we generate? What if we did it differently?",
+                "example": "What if we flip the business model and make the tool free?"
+            },
+            {
+                "color": "Blue",
+                "focus": "Process & Control",
+                "question": "What's our next step? How do we organize this thinking?",
+                "example": "Let's test this with 50 users in 2 weeks before committing"
+            }
+        ],
+        "best_for": [
+            "Team decision-making",
+            "Evaluating ideas from multiple angles",
+            "Reducing bias in discussions"
+        ]
+    },
+    {
+        "id": "reverse-brainstorm",
+        "name": "Reverse Brainstorming",
+        "description": "Instead of solving the problem, brainstorm ways to CAUSE or WORSEN it — then reverse those ideas into solutions",
+        "steps": [
+            {
+                "step": 1,
+                "action": "Reverse the problem",
+                "prompt": "How could we make this problem WORSE?",
+                "example": "How to make onboarding MORE confusing?"
+            },
+            {
+                "step": 2,
+                "action": "Generate bad ideas",
+                "prompt": "List 10+ ways to cause or worsen the problem.",
+                "example": "Add 20 form fields, use jargon, hide the skip button"
+            },
+            {
+                "step": 3,
+                "action": "Reverse each bad idea",
+                "prompt": "Flip each bad idea into a positive solution.",
+                "example": "→ 2 fields max, plain language, prominent skip button"
+            },
+            {
+                "step": 4,
+                "action": "Prioritize solutions",
+                "prompt": "Which reversed ideas are most impactful and feasible?"
+            }
+        ],
+        "best_for": [
+            "Breaking creative blocks",
+            "UX improvement",
+            "Finding non-obvious solutions"
+        ]
+    },
+    {
+        "id": "triz",
+        "name": "TRIZ (40 Inventive Principles)",
+        "description": "Systematic innovation method — identify contradictions and apply proven inventive principles to resolve them",
+        "key_principles": [
+            {
+                "id": 1,
+                "name": "Segmentation",
+                "description": "Divide an object or system into independent parts",
+                "example": "Modular furniture, microservices architecture"
+            },
+            {
+                "id": 2,
+                "name": "Taking out / Extraction",
+                "description": "Remove a problematic part or extract the useful part",
+                "example": "Noise-canceling headphones extract and invert ambient noise"
+            },
+            {
+                "id": 10,
+                "name": "Prior Action",
+                "description": "Perform the required action in advance (pre-compute, pre-load)",
+                "example": "CDN pre-caches content. Apps pre-download for offline use."
+            },
+            {
+                "id": 13,
+                "name": "The Other Way Round / Inversion",
+                "description": "Invert the action or make the moving part fixed (and vice versa)",
+                "example": "Instead of user going to store → store comes to user (delivery apps)"
+            },
+            {
+                "id": 15,
+                "name": "Dynamism",
+                "description": "Make an object or process adaptive, flexible, or adjustable",
+                "example": "Dynamic pricing, adaptive difficulty in games, responsive design"
+            },
+            {
+                "id": 25,
+                "name": "Self-Service",
+                "description": "Make the object serve itself — perform supplementary functions automatically",
+                "example": "Self-checkout, auto-scaling servers, self-healing infrastructure"
+            },
+            {
+                "id": 28,
+                "name": "Replace Mechanical System",
+                "description": "Replace mechanical interaction with sensory, digital, or AI-based systems",
+                "example": "Physical key → biometric login. Manual moderating → AI moderation."
+            },
+            {
+                "id": 35,
+                "name": "Parameter Change",
+                "description": "Change an object's physical or digital state (format, interface, model)",
+                "example": "Newspaper → digital news. Desktop software → SaaS."
+            }
+        ],
+        "best_for": [
+            "Technical problem-solving",
+            "Resolving trade-offs (speed vs quality, cost vs features)",
+            "Hardware and software innovation"
+        ]
+    },
+    {
+        "id": "disney-method",
+        "name": "Disney Creative Strategy",
+        "description": "Walt Disney's 3-room method: Dream → Plan → Critique. Each role thinks separately to avoid killing ideas too early.",
+        "rooms": [
+            {
+                "role": "Dreamer",
+                "mindset": "Everything is possible. No constraints.",
+                "question": "If there were NO limitations — budget, time, technology — what would we build?",
+                "output": "Wild vision, ambitious features, blue-sky ideas",
+                "example": "A personal AI tutor that adapts to your mood and teaches through games"
+            },
+            {
+                "role": "Realist",
+                "mindset": "How do we actually build this?",
+                "question": "What's the MVP? What resources do we need? What's the timeline?",
+                "output": "Concrete plan, tech stack, milestones, resource requirements",
+                "example": "Phase 1: quiz app with GPT-4 backend. Phase 2: mood detection via camera. Budget: $5K."
+            },
+            {
+                "role": "Critic",
+                "mindset": "What will go wrong? What are we missing?",
+                "question": "What are the weaknesses? What would competitors do? What would make users leave?",
+                "output": "Risk list, potential failures, competitive threats, mitigation strategies",
+                "example": "Risk: GPT API costs at scale. Mitigation: cache common responses, use smaller model for simple tasks."
+            }
+        ],
+        "process": "Cycle through all 3 rooms multiple times until the idea is refined.",
+        "best_for": [
+            "Early-stage ideation",
+            "Balancing creativity with practicality",
+            "Solo brainstorming when you need multiple perspectives"
+        ]
+    },
+    {
+        "id": "10x-moonshot",
+        "name": "10x Moonshot Thinking",
+        "description": "Don't improve by 10% — improve by 10X. Forces radical rethinking of the problem and solution space.",
+        "steps": [
+            {
+                "step": 1,
+                "action": "Define the 1x (current state)",
+                "prompt": "What does the current solution look like? What are its limitations?",
+                "example": "Current: Users manually track expenses in spreadsheets"
+            },
+            {
+                "step": 2,
+                "action": "Imagine the 10x",
+                "prompt": "What would a 10X BETTER solution look like? (Not incremental — transformational)",
+                "example": "10x: AI reads all your bank transactions, categorizes automatically, predicts future spend, suggests savings"
+            },
+            {
+                "step": 3,
+                "action": "Identify the technology gap",
+                "prompt": "What technology or capability is needed to close the gap between 1x and 10x?",
+                "example": "Need: Open Banking API + ML categorization + predictive model"
+            },
+            {
+                "step": 4,
+                "action": "Find the stepping stone",
+                "prompt": "What's the realistic 3x that moves toward the 10x vision?",
+                "example": "3x: Connect bank API → auto-categorize → monthly report. (Build toward prediction later)"
+            }
+        ],
+        "examples": [
+            {
+                "domain": "Education",
+                "current_1x": "Online video courses (Udemy)",
+                "moonshot_10x": "AI tutor that adapts in real-time to your learning style, pace, and mistakes",
+                "stepping_stone_3x": "Quiz-based learning with AI-generated explanations"
+            },
+            {
+                "domain": "E-commerce",
+                "current_1x": "Search → browse → add to cart → checkout",
+                "moonshot_10x": "AI personal shopper that knows your style, budget, and needs — auto-curates",
+                "stepping_stone_3x": "Style quiz → personalized recommendations → 1-click reorder"
+            },
+            {
+                "domain": "Healthcare",
+                "current_1x": "Call clinic → wait → book appointment → wait more",
+                "moonshot_10x": "AI triage that diagnoses, prescribes, and dispatches care within minutes",
+                "stepping_stone_3x": "Symptom checker → instant video call with doctor → e-prescription"
+            }
+        ],
+        "best_for": [
+            "Visionary product thinking",
+            "Startup differentiation",
+            "Avoiding incremental thinking traps"
+        ]
     }
 ]

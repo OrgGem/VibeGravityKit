@@ -281,63 +281,8 @@ python .agent/skills/template-marketplace/scripts/template_engine.py --action sh
 
 ### v2.4.0
 - `agent_index.json` — Leader reads 1 file to know all agents, their roles, skills, and when to call each
-- `codebase-navigator` upgraded — now captures full function signatures (params, return types)
-- New action: `--action outline` for compact codebase overview
+- `codebase-navigator` upgraded — full function signatures + `--action outline` for compact overview
 - Handoff template for standardized task delegation between agents
-```bash
-# Leader reads this to decide who to call:
-cat .agent/brain/agent_index.json
-
-# Index codebase with full signatures:
-python .agent/skills/codebase-navigator/scripts/navigator.py --action index --path "."
-
-# Compact outline for Leader (1 line per file):
-python .agent/skills/codebase-navigator/scripts/navigator.py --action outline
-# Output: src/api.py → create_user:15, get_orders:42, authenticate:78
-
-# Full map with signatures:
-python .agent/skills/codebase-navigator/scripts/navigator.py --action map
-# Output: L15: def create_user(name, email, role="user")
-
-# Search by function name or signature:
-python .agent/skills/codebase-navigator/scripts/navigator.py --action search --query "auth"
-```
-
-### v2.3.0
-- New skill: `brain-manager` — project context, architecture decisions, export/import
-- New skill: `journal-manager` — 2-tier knowledge journal (index + entries)
-```bash
-vibegravity brain show                              # View project context
-vibegravity brain add-decision "Use PostgreSQL"     # Record decision
-vibegravity brain set project.name "MyApp"          # Set value
-vibegravity brain export -o backup.json             # Backup brain
-vibegravity journal add -t "Fix N+1 query" --tags "perf,db"  # Record lesson
-vibegravity journal list                            # View recent entries
-vibegravity journal search "database"               # Search
-```
-
-### v2.2.0
-- New skill: `env-manager` — auto-scan codebase and generate `.env.example`
-- New skill: `i18n-manager` — extract hardcoded strings for translation
-- Agent Memory: `project_context.json` for project knowledge
-```bash
-python .agent/skills/env-manager/scripts/env_scanner.py --path "."
-python .agent/skills/i18n-manager/scripts/string_extractor.py --path "src/"
-```
-
-### v2.1.0
-- 17 new data files: API patterns, DB schemas, Docker/CI-CD templates, security scanning (OWASP), SEO rules, mobile templates, and more
-
-### v2.0.0
-- CLI: `vibegravity init`, `list`, `doctor`, `update`, `version`
-- Multi-IDE: Cursor (`.mdc`), Windsurf (`.md`), Cline (`.md`)
-```bash
-vibegravity init                   # Install for ALL IDEs at once
-vibegravity init cursor            # Install for Cursor only
-vibegravity list                   # List all 17 agents
-vibegravity doctor                 # Check environment health
-vibegravity update                 # Auto-update to latest version
-```
 
 ## ❤️ Credits
 Special thanks to **[ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)** for pioneering the data-driven approach to UI/UX generation.

@@ -907,5 +907,212 @@
             "Security posture dashboard for SMEs",
             "AI-powered vulnerability scanner"
         ]
+    },
+    {
+        "id": "ai-ml",
+        "name": "AI & Machine Learning",
+        "pain_points": [
+            "High compute costs for training",
+            "Data quality and labeling is expensive",
+            "Model hallucination and reliability",
+            "Explainability (black box problem)",
+            "Rapid obsolescence of models"
+        ],
+        "opportunities": [
+            "AI-as-a-Service (API wrappers)",
+            "Domain-specific fine-tuned models",
+            "AI agents and automation",
+            "Synthetic data generation",
+            "Model evaluation tools",
+            "AI safety and alignment"
+        ],
+        "trends": [
+            "Multi-modal AI (text + image + video)",
+            "Small language models (SLMs) on edge",
+            "AI agents with tool use",
+            "RAG (Retrieval Augmented Generation)",
+            "AI coding assistants",
+            "Open-source model explosion"
+        ],
+        "target_users": [
+            "Developers",
+            "Data scientists",
+            "Product teams",
+            "Content creators",
+            "Enterprise decision-makers",
+            "Researchers"
+        ],
+        "example_ideas": [
+            "AI writing assistant for specific niches",
+            "Fine-tuning platform (no-code)",
+            "AI-powered data extraction from documents",
+            "Prompt marketplace and testing platform",
+            "AI model comparison and benchmarking tool"
+        ]
+    },
+    {
+        "id": "mental-health",
+        "name": "Mental Health & Wellness",
+        "pain_points": [
+            "Therapist shortage and high cost",
+            "Stigma prevents seeking help",
+            "Long wait times for appointments",
+            "Lack of continuity between sessions",
+            "One-size-fits-all treatment"
+        ],
+        "opportunities": [
+            "AI-assisted therapy chatbot",
+            "Mood tracking with insights",
+            "Meditation and mindfulness apps",
+            "Peer support communities",
+            "Workplace mental health tools",
+            "Sleep improvement technology"
+        ],
+        "trends": [
+            "Digital therapeutics (FDA-approved)",
+            "AI emotional intelligence",
+            "Biofeedback wearables",
+            "Psychedelic-assisted therapy tracking",
+            "Employer mental health benefits"
+        ],
+        "target_users": [
+            "Young adults (18-35)",
+            "Remote workers",
+            "Students",
+            "Employers/HR",
+            "Therapists",
+            "Parents"
+        ],
+        "example_ideas": [
+            "Daily mood journal with AI insights",
+            "Anxiety management companion app",
+            "Therapist matching platform",
+            "Corporate wellness dashboard",
+            "Sleep tracking with personalized recommendations"
+        ]
+    },
+    {
+        "id": "web3-crypto",
+        "name": "Web3 & Cryptocurrency",
+        "pain_points": [
+            "Complex UX (wallets, gas fees, keys)",
+            "Scams and rug pulls",
+            "Regulatory uncertainty",
+            "High transaction costs on some chains",
+            "Lack of mainstream adoption"
+        ],
+        "opportunities": [
+            "Wallet abstraction (invisible crypto)",
+            "DeFi simplified for beginners",
+            "On-chain analytics",
+            "NFT utility beyond art",
+            "Cross-chain bridges",
+            "Tokenized real-world assets (RWA)"
+        ],
+        "trends": [
+            "Account abstraction (ERC-4337)",
+            "Real-World Asset tokenization",
+            "Decentralized social (Farcaster, Lens)",
+            "Layer 2 scaling (Arbitrum, Base)",
+            "AI x Crypto agents"
+        ],
+        "target_users": [
+            "Crypto traders",
+            "DeFi users",
+            "NFT collectors",
+            "Web3 developers",
+            "Institutional investors",
+            "Curious newcomers"
+        ],
+        "example_ideas": [
+            "Portfolio tracker with DeFi yield",
+            "Social trading with copy-trade",
+            "No-code smart contract builder",
+            "Crypto tax calculator",
+            "Wallet-as-a-service for apps"
+        ]
+    },
+    {
+        "id": "robotics-hardware",
+        "name": "Robotics & Smart Hardware",
+        "pain_points": [
+            "High manufacturing costs",
+            "Complex firmware development",
+            "Supply chain fragility",
+            "User safety concerns",
+            "Integration with existing systems"
+        ],
+        "opportunities": [
+            "Consumer robotics (cleaning, companion)",
+            "Warehouse automation",
+            "Drone delivery",
+            "Smart home ecosystem",
+            "Agricultural robotics",
+            "Telepresence robots"
+        ],
+        "trends": [
+            "Humanoid robots (Figure, Tesla Optimus)",
+            "Robot-as-a-Service (RaaS)",
+            "AI-powered computer vision on edge",
+            "Modular robotics",
+            "Swarm intelligence"
+        ],
+        "target_users": [
+            "Manufacturing companies",
+            "Logistics operators",
+            "Agriculture businesses",
+            "Smart home consumers",
+            "Researchers",
+            "Hobbyists/Makers"
+        ],
+        "example_ideas": [
+            "Robot fleet management dashboard",
+            "Computer vision quality inspection",
+            "DIY robot kit with app control",
+            "Drone flight planning platform",
+            "IoT device management portal"
+        ]
+    },
+    {
+        "id": "creator-influencer",
+        "name": "Creator & Influencer Economy",
+        "pain_points": [
+            "Hard to monetize small audiences",
+            "Platform dependency (algorithm changes)",
+            "Burnout from constant content creation",
+            "Difficulty tracking brand deals",
+            "No stable income"
+        ],
+        "opportunities": [
+            "Creator CRM and link management",
+            "AI content repurposing (one video → 10 shorts)",
+            "Fan community platforms",
+            "Sponsorship marketplace",
+            "Creator finance (advances, invoicing)",
+            "Live commerce for creators"
+        ],
+        "trends": [
+            "AI-generated content assistance",
+            "Multi-platform distribution",
+            "Creator-led brands (own products)",
+            "Community-based monetization",
+            "Short-form video dominance",
+            "Virtual influencers"
+        ],
+        "target_users": [
+            "YouTubers",
+            "TikTokers",
+            "Instagram influencers",
+            "Podcasters",
+            "Newsletter writers",
+            "Small creators (1K-100K followers)"
+        ],
+        "example_ideas": [
+            "AI video clip generator from long-form",
+            "Sponsorship deal tracker + invoicing",
+            "Creator analytics across all platforms",
+            "Fan membership platform (alternative to Patreon)",
+            "Content calendar with AI suggestions"
+        ]
     }
 ]

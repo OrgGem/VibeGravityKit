@@ -13,11 +13,11 @@ Instead of consuming tokens to "think", the agent uses a script to retrieve exis
 
 | File | Content | Entries |
 | :--- | :--- | :---: |
-| `data/brainstorm_frameworks.json` | 10 creative frameworks (SCAMPER, Lean Canvas...) | 10 |
-| `data/product_archetypes.json` | 20 product templates + examples | 20 |
-| `data/industry_database.json` | 25 industries + pain points + opportunities | 25 |
-| `data/feature_ideas.json` | 200+ feature ideas by category | 200+ |
-| `data/monetization_models.json` | 12 monetization models + examples | 12 |
+| `data/brainstorm_frameworks.json` | 15 creative frameworks (SCAMPER, Lean Canvas, TRIZ, Disney...) | 15 |
+| `data/product_archetypes.json` | 25 product templates + examples | 25 |
+| `data/industry_database.json` | 30 industries + pain points + opportunities | 30 |
+| `data/feature_ideas.json` | 300+ feature ideas by 23 categories | 300+ |
+| `data/monetization_models.json` | 16 monetization models + examples | 16 |
 | `data/platform_guide.json` | 6 platforms + pros/cons + tech stacks | 6 |
 
 ## Script Usage

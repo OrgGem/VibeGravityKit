@@ -143,6 +143,18 @@ In VibeGravityKit, **You are the Boss.** Just chat with your agents using `@` me
 └── brain/           # Project Context & Memory
 ```
 
+## 📋 Changelog
+
+### v2.0.0 — Phase 1-3 Complete
+- **CLI Upgrades**: `vibegravity init`, `list`, `doctor`, `update`, `version`
+- **Multi-IDE Support**: Native rules for Cursor (`.mdc`), Windsurf (`.md`), Cline (`.md`)
+- **All-in-One Init**: `vibegravity init` installs for all 4 IDEs at once
+- **Skill Enrichment**: 17 new data files across all skill categories:
+  - API patterns, DB schemas, diagram templates
+  - Docker/CI-CD templates, Git conventions, test patterns
+  - Security scanning (OWASP Top 10), SEO rules, mobile templates
+  - Task estimation, user stories, competitor analysis frameworks
+
 ## ❤️ Credits
 Special thanks to **[ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)** for pioneering the data-driven approach to UI/UX generation.
 

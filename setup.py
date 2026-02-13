@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="VibeGravityKit",
-    version="2.0.0",
+    version="2.2.0",
     packages=["VibeGravityKit"],
     include_package_data=True,
     install_requires=[

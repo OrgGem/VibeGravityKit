@@ -145,15 +145,21 @@ In VibeGravityKit, **You are the Boss.** Just chat with your agents using `@` me
 
 ## 📋 Changelog
 
-### v2.0.0 — Phase 1-3 Complete
-- **CLI Upgrades**: `vibegravity init`, `list`, `doctor`, `update`, `version`
-- **Multi-IDE Support**: Native rules for Cursor (`.mdc`), Windsurf (`.md`), Cline (`.md`)
-- **All-in-One Init**: `vibegravity init` installs for all 4 IDEs at once
-- **Skill Enrichment**: 17 new data files across all skill categories:
-  - API patterns, DB schemas, diagram templates
-  - Docker/CI-CD templates, Git conventions, test patterns
-  - Security scanning (OWASP Top 10), SEO rules, mobile templates
-  - Task estimation, user stories, competitor analysis frameworks
+### v2.2.0
+- New skill: `env-manager` — auto-scan codebase and generate `.env.example`
+- New skill: `i18n-manager` — extract hardcoded strings for translation
+- New skill: `cost-tracker` — estimate AI token costs per model (10 models supported)
+- Agent Memory: `project_context.json` template for storing project knowledge and decisions
+
+### v2.1.0
+- 17 new data files: API patterns, DB schemas, Docker/CI-CD templates, security scanning (OWASP), SEO rules, mobile templates, task estimation, and more
+- Changelog section added to README
+
+### v2.0.0
+- CLI commands: `vibegravity init`, `list`, `doctor`, `update`, `version`
+- Multi-IDE support: Cursor (`.mdc`), Windsurf (`.md`), Cline (`.md`)
+- `vibegravity init` installs for all 4 IDEs at once
+- `generate_adapters.py` auto-converts workflows to IDE rule files
 
 ## ❤️ Credits
 Special thanks to **[ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)** for pioneering the data-driven approach to UI/UX generation.

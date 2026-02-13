@@ -14,11 +14,11 @@ def main():
     pass
 
 @main.command()
-@click.argument('ide', default='antigravity', required=False)
+@click.argument('ide', default='all', required=False)
 def init(ide):
     """Initialize VibeGravityKit in the current directory.
     
-    Supported IDEs: antigravity (default), cursor, windsurf, cline
+    Supported: all (default), antigravity, cursor, windsurf, cline
     """
     package_dir = Path(__file__).resolve().parent
     
@@ -46,42 +46,40 @@ def init(ide):
         },
     }
     
-    if ide not in ide_config:
+    # Determine which IDEs to install
+    if ide == "all":
+        targets = list(ide_config.keys())
+        click.echo("🚀 Installing VibeGravityKit for ALL IDEs...")
+    elif ide in ide_config:
+        targets = [ide]
+        click.echo(f"🚀 Installing VibeGravityKit for {ide}...")
+    else:
         click.echo(f"❌ Unknown IDE: '{ide}'")
-        click.echo(f"   Supported: {', '.join(ide_config.keys())}")
+        click.echo(f"   Supported: all, {', '.join(ide_config.keys())}")
         return
     
-    config = ide_config[ide]
-    source_dir = config["source"]
-    target_dir = config["target"]
-    
-    if target_dir.exists():
-        click.echo(f"⚠️  {config['label']} already exists here!")
-        if not click.confirm("Do you want to overwrite it?"):
-            return
-
-    click.echo(f"🚀 Initializing VibeGravityKit for {ide}...")
-    
-    try:
-        if source_dir.exists():
+    installed = 0
+    for target_ide in targets:
+        config = ide_config[target_ide]
+        source_dir = config["source"]
+        target_dir = config["target"]
+        
+        if not source_dir.exists():
+            click.echo(f"  ⚠️  Skipped {target_ide}: source not found")
+            continue
+        
+        try:
             if target_dir.exists():
                 shutil.rmtree(target_dir)
             target_dir.parent.mkdir(parents=True, exist_ok=True)
             shutil.copytree(source_dir, target_dir)
-            click.echo(f"✅ Copied {config['label']}")
-        else:
-            click.echo(f"❌ Error: Source not found at {source_dir}")
-            return
-
-        click.echo(f"\n✨ VibeGravityKit installed for {ide}!")
-        
-        if ide == "antigravity":
-            click.echo("👉 Use @[/planner], @[/architect], etc. in your AI chat.")
-        else:
-            click.echo(f"👉 {ide.capitalize()} will auto-load the agent rules.")
-        
-    except Exception as e:
-        click.echo(f"❌ Installation failed: {str(e)}")
+            click.echo(f"  ✅ {config['label']}")
+            installed += 1
+        except Exception as e:
+            click.echo(f"  ❌ {target_ide}: {str(e)}")
+    
+    click.echo(f"\n✨ Done! Installed for {installed} IDE(s).")
+    click.echo("👉 Use @[/planner], @[/architect], etc. in your AI chat.")
 
 @main.command()
 def list():

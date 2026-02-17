@@ -1,5 +1,8 @@
-recursive-include VibeGravityKit/.agent *
-recursive-include VibeGravityKit/ide-adapters *
-recursive-include VibeGravityKit/scripts *
-include VibeGravityKit/VERSION
+recursive-include GravityKit/.agent *
+recursive-include GravityKit/ide-adapters *
+recursive-include GravityKit/scripts *
+recursive-include GravityKit/data *
+recursive-include GravityKit/lib *
+include GravityKit/VERSION
+include GravityKit/skills_index.json
 include README.md

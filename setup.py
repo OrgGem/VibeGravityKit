@@ -1,21 +1,22 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="VibeGravityKit",
-    version="2.7.0",
-    packages=["VibeGravityKit"],
+    name="GravityKit",
+    version="3.1.0",
+    packages=["GravityKit"],
     include_package_data=True,
     install_requires=[
         "requests",
         "beautifulsoup4",
         "click",
+        "pyyaml",
     ],
     entry_points={
         "console_scripts": [
-            "vibe=VibeGravityKit.cli:main",
-            "vibegravity=VibeGravityKit.cli:main",
+            "gk=GravityKit.cli:main",
+            "gravitykit=GravityKit.cli:main",
         ],
     },
-    author="Vibe Coding Team",
+    author="GravityKit Team",
     description="The AI-Native Software House in a Box",
 )

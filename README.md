@@ -9,7 +9,7 @@
 
 ```bash
 # 1. Clone & install
-git clone https://github.com/Nhqvu2005/VibeGravityKit.git
+git clone https://github.com/OrgGem/VibeGravityKit.git
 cd VibeGravityKit
 pip install .
 
@@ -163,9 +163,69 @@ In VibeGravityKit, **You are the Boss.** Chat with your agents using `@` mention
 ```
 .agent/
 ├── workflows/       # Instructions for each agent role
-├── skills/          # Python scripts & tools
+├── skills/          # 886 skills across 17 categories
 └── brain/           # Project context & memory
 ```
+
+---
+
+## 🔄 Workflows (29)
+
+| Workflow              | Description                                                              |
+| --------------------- | ------------------------------------------------------------------------ |
+| `/leader`             | Team Lead — Orchestrates the entire team from concept to production      |
+| `/quickstart`         | Fully automated project build from idea to production                    |
+| `/planner`            | Analyzes requirements, writes PRD, breaks down tasks                     |
+| `/meta-thinker`       | Idea Consultant, Creative Advisor, Vision Development                    |
+| `/architect`          | Systems Design, Database, API                                            |
+| `/solution-architect` | Strategic technical planning, trade-off analysis, roadmap design         |
+| `/designer`           | UI/UX Design System and Assets                                           |
+| `/frontend-dev`       | Component, Layout, State Management (React/Vue/Tailwind)                 |
+| `/backend-dev`        | API Implementation, DB Queries (Node/Python/Go)                          |
+| `/fullstack-coder`    | Architecture, Backend, Frontend, Testing in one workflow                 |
+| `/mobile-dev`         | iOS/Android (React Native/Expo)                                          |
+| `/devops`             | Docker, CI/CD, Cloud Deployment                                          |
+| `/cloud-deployer`     | AWS deployment, CI/CD pipelines, Docker, Kubernetes, serverless          |
+| `/n8n-automator`      | n8n workflow builder — Code nodes, API integrations, 70+ SaaS connectors |
+| `/qa-engineer`        | Test Case, API, SQL, Automation, Performance, Bug Reporting              |
+| `/quality-guardian`   | Code review, testing, security audit in one comprehensive pass           |
+| `/code-reviewer`      | Automated code quality review with pattern-based analysis                |
+| `/security-engineer`  | Security Workflow (Audit/Pen-Test/Incident)                              |
+| `/seo-specialist`     | Search Engine Optimization                                               |
+| `/tech-writer`        | Documentation & API Refs                                                 |
+| `/doc-writer`         | Professional technical documentation, reports, RFC, ADR                  |
+| `/knowledge-guide`    | Code Explainer, Note Taker, Handoff Specialist                           |
+| `/researcher`         | Market Analysis, Web Search, Trend Discovery                             |
+| `/research-analyst`   | Deep research, analysis, file I/O, image generation, translation         |
+| `/deep-researcher`    | Comprehensive research, analysis, and professional report writing        |
+| `/release-manager`    | Changelog generation, version bumping, and release notes                 |
+| `/prompt-engineer`    | Create optimized prompts from user input for any AI model                |
+| `/image-creator`      | AI image generation, design assets, diagrams, visual content             |
+| `/translator`         | Multi-language translation, i18n setup, and localization management      |
+
+---
+
+## 📊 Skill Categories (886 total)
+
+| Category                   | Skills | Description                                                                 |
+| -------------------------- | -----: | --------------------------------------------------------------------------- |
+| 🔷 Azure & Microsoft SDK   |    121 | Azure AI, Storage, Cosmos DB, Event Hubs, Service Bus, Identity, etc.       |
+| 🔧 Workflow & Utilities    |    176 | Git, shell scripting, project scaffolding, memory, i18n, file tools         |
+| 💻 Backend & Languages     |     93 | Python, TypeScript, Go, Rust, Java, C#, Ruby, PHP, FastAPI, Django, etc.    |
+| 🤖 AI, LLM & Agents        |     74 | RAG, LangChain, LangGraph, CrewAI, prompt engineering, voice AI, embeddings |
+| 🔌 SaaS Automation         |     89 | Slack, Jira, Notion, HubSpot, Salesforce, GitHub, Gmail, 70+ integrations   |
+| 📈 Marketing & Business    |     63 | SEO, content marketing, pricing, email, analytics, startup tools            |
+| 🛡️ Security & Pentesting   |     61 | OWASP, Burp Suite, Metasploit, red team, vulnerability scanning             |
+| ☁️ DevOps, Cloud & Infra   |     52 | Docker, Kubernetes, Terraform, CI/CD, monitoring, incident response         |
+| 🎨 Frontend & UI           |     44 | React, Angular, Next.js, Tailwind, Three.js, design systems                 |
+| ✅ Testing & Quality       |     41 | TDD, Playwright, Jest, code review, debugging, linting                      |
+| 🏛️ Architecture & Patterns |     19 | C4 diagrams, microservices, clean architecture, system design               |
+| 📚 Documentation           |     17 | Wiki, README, API docs, changelogs, tutorials                               |
+| 🗄️ Database                |     13 | PostgreSQL, MySQL, MongoDB, Redis, SQL optimization                         |
+| 📊 Data Engineering        |      8 | Spark, dbt, Airflow, data pipelines, data quality                           |
+| 📱 Mobile Development      |      6 | React Native, Flutter, Expo, iOS, SwiftUI                                   |
+| 🎮 Game Development        |      6 | Unity, Unreal Engine, Godot, Minecraft plugins                              |
+| ⛓️ Blockchain & Web3       |      3 | Solidity, DeFi, NFT standards                                               |
 
 ---
 

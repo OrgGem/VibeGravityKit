@@ -177,8 +177,10 @@ Use the `generate_image` tool for:
 
 ## Rules
 
+- **⚡ SINGLE REQUEST ONLY**: Execute `generate_image` **EXACTLY ONCE**. The image generation is asynchronous.
+- **⏳ WAIT FOR RESULT**: The image will appear in the chat history. **DO NOT** retry getting the image immediately. Wait for the system/user to confirm receipt.
+- **⛔ ERROR HANDLING**: If `generate_image` fails (503, 400, etc.), **STOP**. Report the error. Do NOT loop.
 - **Prompt quality = output quality** — be specific with descriptions.
-- **Iterate** — first image is a draft, refine 2-3 times.
 - **Consistent style** — maintain visual consistency across project assets.
 - **Accessible** — ensure sufficient contrast, avoid color-only information.
 - **License-aware** — AI-generated images should be noted as such.

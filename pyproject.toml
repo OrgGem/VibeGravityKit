@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gk"
+dynamic = ["version"]
+description = "GravityKit — The AI-Native Software House in a Box"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "GravityKit Team", email = "contact@gravitykit.ai" }
+]
+keywords = [
+    "ai", "agents", "llm", "coding", "automation",
+    "gravitykit", "antigravity", "cursor", "windsurf", "cline"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "click>=8.0",
+    "requests>=2.28",
+    "beautifulsoup4>=4.11",
+    "pyyaml>=6.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/OrgGem/VibeGravityKit"
+Repository = "https://github.com/OrgGem/VibeGravityKit"
+"Bug Tracker" = "https://github.com/OrgGem/VibeGravityKit/issues"
+Changelog = "https://github.com/OrgGem/VibeGravityKit/blob/main/CHANGELOG.md"
+
+[project.scripts]
+gk = "GravityKit.cli:main"
+gravitykit = "GravityKit.cli:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["GravityKit*"]
+
+[tool.setuptools.package-data]
+"GravityKit" = [
+    "VERSION",
+    "skills_index.json",
+    ".agent/**/*",
+    "ide-adapters/**/*",
+    "scripts/**/*",
+    "data/**/*",
+    "lib/**/*",
+]
+
+[tool.setuptools.dynamic]
+version = { file = "GravityKit/VERSION" }

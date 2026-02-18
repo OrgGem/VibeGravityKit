@@ -211,6 +211,65 @@
           "notes": "Classify failures by root cause: selector drift, timing, environment, data."
         }
       ]
+    },
+    {
+      "id": "nocobase-plugin-build",
+      "name": "NocoBase Plugin Build & Deploy",
+      "description": "Workflow to scaffold, build, package, and deploy a custom NocoBase plugin (standalone or Docker).",
+      "category": "nocobase",
+      "relatedBundles": [
+        "core-dev",
+        "ops-core"
+      ],
+      "steps": [
+        {
+          "title": "Scaffold the plugin",
+          "goal": "Generate boilerplate structure and register plugin in yarn workspaces.",
+          "recommendedSkills": [
+            "nocobase-plugin-developer",
+            "nodejs-best-practices"
+          ],
+          "notes": "Run `yarn nocobase create-plugin @nocobase/plugin-<name>` then `yarn install`. Plugin must be under `packages/*/*/*` to match workspace glob."
+        },
+        {
+          "title": "Implement server and client logic",
+          "goal": "Write plugin server (collections, routes, actions) and client (UI components, schema initializers).",
+          "recommendedSkills": [
+            "nocobase-plugin-developer",
+            "nocobase-plugin-expert",
+            "backend-dev-guidelines",
+            "frontend-developer"
+          ],
+          "notes": "Server entry exports Plugin class and `namespace`. Client entry registers UI via `Plugin.load()`. Use `peerDependencies` for all @nocobase/* packages."
+        },
+        {
+          "title": "Build the plugin",
+          "goal": "Compile TypeScript source into distributable dist/ artifacts.",
+          "recommendedSkills": [
+            "nocobase-plugin-build",
+            "typescript-pro"
+          ],
+          "notes": "Use `yarn nocobase build @nocobase/plugin-<name> --no-dts` in dev environments where core lib/ folders are absent. Use full build for production."
+        },
+        {
+          "title": "Verify and test",
+          "goal": "Confirm dist/ output is correct and plugin loads without errors.",
+          "recommendedSkills": [
+            "verification-before-completion",
+            "systematic-debugging"
+          ],
+          "notes": "Check dist/client/index.js and dist/server/index.js exist. Watch container logs for load errors. Common issues: missing dist/, wrong peerDependencies, SyntaxError from ESM bundling."
+        },
+        {
+          "title": "Package and deploy",
+          "goal": "Create .tgz and install into production or Docker container.",
+          "recommendedSkills": [
+            "nocobase-plugin-build",
+            "docker-expert"
+          ],
+          "notes": "Run `npm pack` in plugin dir. Copy .tgz to container via `docker cp`, then `yarn pm add` + `yarn pm enable` + restart. For updates: remove old version first."
+        }
+      ]
     }
   ]
 }

@@ -6,3 +6,13 @@ recursive-include GravityKit/lib *
 include GravityKit/VERSION
 include GravityKit/skills_index.json
 include README.md
+include LICENSE
+include CHANGELOG.md
+include pyproject.toml
+
+# Exclude build artifacts and caches
+global-exclude __pycache__
+global-exclude *.py[cod]
+global-exclude *.egg-info
+prune dist
+prune build

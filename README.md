@@ -8,18 +8,24 @@
 ## ⚡ Quick Start
 
 ```bash
-# 1. Clone & install
-git clone https://github.com/OrgGem/VibeGravityKit.git
-cd VibeGravityKit
-pip install .
+# Install from PyPI
+pip install gk
 
-# 2. Init in your project
+# Init in your project
 cd /path/to/your-project
 gk init            # Install for ALL IDEs (Antigravity, Cursor, Windsurf, Cline)
 gk init cursor     # Or install for a specific IDE only
 ```
 
 > **Requirements:** Python 3.9+, Node.js 18+
+
+**For development / contributing:**
+
+```bash
+git clone https://github.com/OrgGem/VibeGravityKit.git
+cd VibeGravityKit
+pip install -e .   # Editable install
+```
 
 ---
 

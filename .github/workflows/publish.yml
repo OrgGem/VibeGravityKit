@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/project/gk/
+      url: https://pypi.org/project/gkt/
 
     permissions:
       id-token: write # Required for trusted publishing (OIDC)

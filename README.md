@@ -9,12 +9,12 @@
 
 ```bash
 # Install from PyPI
-pip install gk
+pip install gkt
 
 # Init in your project
 cd /path/to/your-project
-gk init            # Install for ALL IDEs (Antigravity, Cursor, Windsurf, Cline)
-gk init cursor     # Or install for a specific IDE only
+gkt init            # Install for ALL IDEs (Antigravity, Cursor, Windsurf, Cline)
+gkt init cursor     # Or install for a specific IDE only
 ```
 
 > **Requirements:** Python 3.9+, Node.js 18+
@@ -31,35 +31,35 @@ pip install -e .   # Editable install
 
 ## 🛠️ CLI Commands
 
-| Command                    | Description                                                                       |
-| -------------------------- | --------------------------------------------------------------------------------- |
-| `gk init [ide]`            | Install agents for your IDE (`all`, `antigravity`, `cursor`, `windsurf`, `cline`) |
-| `gk list`                  | List all available AI agents and their roles                                      |
-| `gk doctor`                | Check environment health (Python, Node, Git, npm)                                 |
-| `gk update`                | Update GravityKit to the latest version                                           |
-| `gk version`               | Show current version                                                              |
-| `gk brain`                 | Manage project brain — context, decisions, conventions                            |
-| `gk journal`               | Knowledge journal — capture lessons, bugs, insights                               |
-| `gk skills list [--all]`   | List active skills (or all including disabled)                                    |
-| `gk skills search <query>` | Search skills by keyword                                                          |
-| `gk skills enable <name>`  | Enable a disabled skill                                                           |
-| `gk skills disable <name>` | Disable a skill                                                                   |
-| `gk skills count`          | Show total skill count                                                            |
-| `gk validate [--strict]`   | Validate all SKILL.md files                                                       |
-| `gk generate-index`        | Regenerate `skills_index.json`                                                    |
+| Command                     | Description                                                                       |
+| --------------------------- | --------------------------------------------------------------------------------- |
+| `gkt init [ide]`            | Install agents for your IDE (`all`, `antigravity`, `cursor`, `windsurf`, `cline`) |
+| `gkt list`                  | List all available AI agents and their roles                                      |
+| `gkt doctor`                | Check environment health (Python, Node, Git, npm)                                 |
+| `gkt update`                | Update GravityKit to the latest version                                           |
+| `gkt version`               | Show current version                                                              |
+| `gkt brain`                 | Manage project brain — context, decisions, conventions                            |
+| `gkt journal`               | Knowledge journal — capture lessons, bugs, insights                               |
+| `gkt skills list [--all]`   | List active skills (or all including disabled)                                    |
+| `gkt skills search <query>` | Search skills by keyword                                                          |
+| `gkt skills enable <name>`  | Enable a disabled skill                                                           |
+| `gkt skills disable <name>` | Disable a skill                                                                   |
+| `gkt skills count`          | Show total skill count                                                            |
+| `gkt validate [--strict]`   | Validate all SKILL.md files                                                       |
+| `gkt generate-index`        | Regenerate `skills_index.json`                                                    |
 
-> **Alias:** `gravitykit` works the same as `gk`.
+> **Alias:** `gravitykit` works the same as `gkt`.
 
 ---
 
 ## 🌐 Multi-IDE Support
 
-| IDE             | Command               | Creates                        |
-| --------------- | --------------------- | ------------------------------ |
-| **Antigravity** | `gk init antigravity` | `.agent/` (workflows + skills) |
-| **Cursor**      | `gk init cursor`      | `.cursor/rules/*.mdc`          |
-| **Windsurf**    | `gk init windsurf`    | `.windsurf/rules/*.md`         |
-| **Cline**       | `gk init cline`       | `.clinerules/*.md`             |
+| IDE             | Command                | Creates                        |
+| --------------- | ---------------------- | ------------------------------ |
+| **Antigravity** | `gkt init antigravity` | `.agent/` (workflows + skills) |
+| **Cursor**      | `gkt init cursor`      | `.cursor/rules/*.mdc`          |
+| **Windsurf**    | `gkt init windsurf`    | `.windsurf/rules/*.md`         |
+| **Cline**       | `gkt init cline`       | `.clinerules/*.md`             |
 
 ---
 

@@ -34,4 +34,3 @@ Thumbs.db
 
 # GravityKit specific
 /.agent/
-/.agent/brain/agent_index.json

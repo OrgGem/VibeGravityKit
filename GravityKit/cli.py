@@ -146,7 +146,7 @@ def doctor():
     if (Path.cwd() / ".agent").exists():
         click.echo(f"✅ .agent    : Found in current directory")
     else:
-        click.echo(f"⚠️  .agent    : Not found (Run 'gk init' to install)")
+        click.echo(f"⚠️  .agent    : Not found (Run 'gkt init' to install)")
 
     click.echo("")
     if all_good:
@@ -209,7 +209,7 @@ def brain(ctx):
     import subprocess as sp
     script = Path(__file__).resolve().parent / ".agent" / "skills" / "brain-manager" / "scripts" / "brain.py"
     if not script.exists():
-        click.echo("❌ brain-manager skill not found. Run 'gk init' first.")
+        click.echo("❌ brain-manager skill not found. Run 'gkt init' first.")
         return
     sp.run(["python", str(script)] + ctx.args)
 
@@ -220,7 +220,7 @@ def journal(ctx):
     import subprocess as sp
     script = Path(__file__).resolve().parent / ".agent" / "skills" / "journal-manager" / "scripts" / "journal.py"
     if not script.exists():
-        click.echo("❌ journal-manager skill not found. Run 'gk init' first.")
+        click.echo("❌ journal-manager skill not found. Run 'gkt init' first.")
         return
     sp.run(["python", str(script)] + ctx.args)
 

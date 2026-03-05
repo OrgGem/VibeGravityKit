@@ -212,10 +212,6 @@ The GitHub Actions workflow (`.github/workflows/publish.yml`) will:
 
 ---
 
-## ❤️ Credits
-
-Special thanks to **[ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)** for pioneering the data-driven approach to UI/UX generation.
-
 ## 📄 License
 
-MIT © [Nhqvu2005](https://github.com/Nhqvu2005)
+MIT

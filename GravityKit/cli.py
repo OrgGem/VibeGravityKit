@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import click
 import os
+import json
 import shutil
 from pathlib import Path
 
@@ -8,19 +9,103 @@ from pathlib import Path
 # This assumes cli.py is in the root of the repo
 SOURCE_ROOT = Path(__file__).resolve().parent
 
+# IDE names that are valid targets for init
+IDE_NAMES = {"antigravity", "cursor", "windsurf", "cline", "all"}
+
+
+def load_skill_groups():
+    """Load skill group definitions from data/skill_groups.json."""
+    groups_file = SOURCE_ROOT / "data" / "skill_groups.json"
+    if not groups_file.exists():
+        return {}
+    with open(groups_file, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def copy_group_selective(source_agent_dir, target_agent_dir, group_config):
+    """Copy only the skills and workflows defined in a group config.
+    
+    Always copies: brain/
+    Selectively copies: skills/<name>/, workflows/<name>.md
+    """
+    if target_agent_dir.exists():
+        shutil.rmtree(target_agent_dir)
+    target_agent_dir.mkdir(parents=True, exist_ok=True)
+
+    # Always copy brain/
+    brain_src = source_agent_dir / "brain"
+    if brain_src.exists():
+        shutil.copytree(brain_src, target_agent_dir / "brain")
+
+    # Copy selected skills
+    skills_target = target_agent_dir / "skills"
+    skills_target.mkdir(parents=True, exist_ok=True)
+    skills_src = source_agent_dir / "skills"
+    copied_skills = 0
+    for skill_name in group_config.get("skills", []):
+        src = skills_src / skill_name
+        if src.exists():
+            shutil.copytree(src, skills_target / skill_name)
+            copied_skills += 1
+
+    # Copy selected workflows
+    workflows_target = target_agent_dir / "workflows"
+    workflows_target.mkdir(parents=True, exist_ok=True)
+    for wf_name in group_config.get("workflows", []):
+        src = source_agent_dir / "workflows" / f"{wf_name}.md"
+        if src.exists():
+            shutil.copy2(src, workflows_target / f"{wf_name}.md")
+
+    return copied_skills
+
+
 @click.group()
 def main():
     """GravityKit CLI - Manage your AI Agent Team."""
     pass
 
 @main.command()
-@click.argument('ide', default='all', required=False)
-def init(ide):
+@click.argument('target', default='all', required=False)
+@click.option('--group', '-g', default=None, help='Skill group to install (e.g. general-dev, n8n-dev)')
+def init(target, group):
     """Initialize GravityKit in the current directory.
     
-    Supported: all (default), antigravity, cursor, windsurf, cline
+    TARGET can be an IDE name or a skill group name.
+    
+    \b
+    IDE names: all (default), antigravity, cursor, windsurf, cline
+    Group names: general-dev, n8n-dev, nocobase-dev, general-doc, research,
+                 cloud-deploy, security-audit, seo-marketing, ai-agent,
+                 saas-integrate, startup-biz
+    
+    \b
+    Examples:
+      gkt init antigravity              # Install all skills for Antigravity
+      gkt init general-dev              # Install general-dev group (Antigravity)
+      gkt init antigravity --group n8n-dev  # Install n8n-dev group for Antigravity
+      gkt init all --group nocobase-dev # Install nocobase-dev group for all IDEs
     """
     package_dir = Path(__file__).resolve().parent
+    skill_groups = load_skill_groups()
+    
+    # Auto-detect: is target an IDE name or a group name?
+    if target in IDE_NAMES:
+        ide_target = target
+        group_name = group  # May be None (= install all)
+    elif target in skill_groups:
+        ide_target = "antigravity"  # Default IDE when group is specified directly
+        group_name = target
+    else:
+        click.echo(f"❌ Unknown target: '{target}'")
+        click.echo(f"   IDE names: all, antigravity, cursor, windsurf, cline")
+        click.echo(f"   Group names: {', '.join(skill_groups.keys())}")
+        return
+
+    # Validate group name if provided
+    if group_name and group_name not in skill_groups:
+        click.echo(f"❌ Unknown skill group: '{group_name}'")
+        click.echo(f"   Available groups: {', '.join(skill_groups.keys())}")
+        return
     
     # IDE configuration mapping
     ide_config = {
@@ -47,16 +132,17 @@ def init(ide):
     }
     
     # Determine which IDEs to install
-    if ide == "all":
+    if ide_target == "all":
         targets = list(ide_config.keys())
-        click.echo("🚀 Installing GravityKit for ALL IDEs...")
-    elif ide in ide_config:
-        targets = [ide]
-        click.echo(f"🚀 Installing GravityKit for {ide}...")
     else:
-        click.echo(f"❌ Unknown IDE: '{ide}'")
-        click.echo(f"   Supported: all, {', '.join(ide_config.keys())}")
-        return
+        targets = [ide_target]
+
+    if group_name:
+        grp = skill_groups[group_name]
+        click.echo(f"🚀 Installing group '{group_name}' ({grp['description']})...")
+        click.echo(f"   Skills: {len(grp.get('skills', []))} | Workflows: {len(grp.get('workflows', []))}")
+    else:
+        click.echo(f"🚀 Installing GravityKit (all skills)...")
     
     installed = 0
     for target_ide in targets:
@@ -69,17 +155,45 @@ def init(ide):
             continue
         
         try:
-            if target_dir.exists():
-                shutil.rmtree(target_dir)
-            target_dir.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copytree(source_dir, target_dir)
-            click.echo(f"  ✅ {config['label']}")
+            if group_name and target_ide == "antigravity":
+                # Selective copy for antigravity with group filter
+                copied = copy_group_selective(source_dir, target_dir, skill_groups[group_name])
+                click.echo(f"  ✅ {config['label']} ({copied} skills)")
+            else:
+                # Full copy (original behavior) for non-antigravity IDEs or no group
+                if target_dir.exists():
+                    shutil.rmtree(target_dir)
+                target_dir.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copytree(source_dir, target_dir)
+                click.echo(f"  ✅ {config['label']}")
             installed += 1
         except Exception as e:
             click.echo(f"  ❌ {target_ide}: {str(e)}")
     
     click.echo(f"\n✨ Done! Installed for {installed} IDE(s).")
-    click.echo("👉 Use @[/planner], @[/architect], etc. in your AI chat.")
+    if group_name:
+        click.echo(f"👉 Group '{group_name}' is ready. Use the workflows in .agent/workflows/.")
+    else:
+        click.echo("👉 Use @[/planner], @[/architect], etc. in your AI chat.")
+
+@main.command()
+def groups():
+    """List available skill groups."""
+    skill_groups = load_skill_groups()
+    if not skill_groups:
+        click.echo("❌ No skill groups found.")
+        return
+
+    click.echo("\n📦 Available Skill Groups:\n")
+    click.echo(f"{'Group':<18} {'Skills':>6} {'Workflows':>9}   {'Description':<50}")
+    click.echo("-" * 90)
+    for name, config in skill_groups.items():
+        skills_count = len(config.get("skills", []))
+        wf_count = len(config.get("workflows", []))
+        desc = config.get("description", "No description")
+        click.echo(f"{name:<18} {skills_count:>6} {wf_count:>9}   {desc}")
+    click.echo(f"\n💡 Usage: gkt init <group-name>  (e.g. gkt init general-dev)")
+    click.echo("")
 
 @main.command()
 def list():

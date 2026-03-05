@@ -1,7 +1,7 @@
 # 🌌 VibeGravityKit
 
 > **The AI-Native Software House in a Box.**
-> _Build enterprise-grade software with a team of AI Agents — with **parallel delegation** for maximum speed and minimum token costs._
+> _Build enterprise-grade software with a team of 887 AI Skills — organized into 11 focused groups for fast, token-efficient development._
 
 ---
 
@@ -11,42 +11,80 @@
 # Install from PyPI
 pip install gkt
 
-# Init in your project
+# Init in your project (all skills)
 cd /path/to/your-project
-gkt init            # Install for ALL IDEs (Antigravity, Cursor, Windsurf, Cline)
-gkt init cursor     # Or install for a specific IDE only
+gkt init antigravity
+
+# Or install only the skills you need
+gkt init general-dev     # 20 core dev skills
+gkt init n8n-dev         # 12 n8n automation skills
+gkt init ai-agent        # 20 AI/LLM/RAG skills
 ```
 
-> **Requirements:** Python 3.9+, Node.js 18+
+> **Requirements:** Python 3.9+
 
 **For development / contributing:**
 
 ```bash
 git clone https://github.com/OrgGem/VibeGravityKit.git
 cd VibeGravityKit
-pip install -e .   # Editable install
+pip install -e .
+```
+
+---
+
+## 📦 Skill Groups
+
+Instead of loading all 887 skills, install only the group you need:
+
+```bash
+gkt groups   # List all available groups
+```
+
+| Group            | Skills | Description                               |
+| ---------------- | ------ | ----------------------------------------- |
+| `general-dev`    | 20     | Backend, Frontend, Full-stack development |
+| `n8n-dev`        | 12     | n8n workflow automations                  |
+| `nocobase-dev`   | 20     | NocoBase plugin development               |
+| `general-doc`    | 12     | Technical docs, RFC, ADR                  |
+| `research`       | 10     | Deep research, market analysis            |
+| `cloud-deploy`   | 15     | Cloud, DevOps, CI/CD                      |
+| `security-audit` | 20     | Pentest, vulnerability assessment         |
+| `seo-marketing`  | 20     | SEO, CRO, content marketing               |
+| `ai-agent`       | 20     | LLM apps, RAG, multi-agent                |
+| `saas-integrate` | 20     | 20+ SaaS platform connectors              |
+| `startup-biz`    | 20     | Market analysis, financial modeling       |
+
+**Usage:**
+
+```bash
+gkt init general-dev                    # Install group (default: Antigravity IDE)
+gkt init antigravity --group n8n-dev    # Specify IDE + group
+gkt init antigravity                    # Install ALL skills (legacy behavior)
 ```
 
 ---
 
 ## 🛠️ CLI Commands
 
-| Command                     | Description                                                                       |
-| --------------------------- | --------------------------------------------------------------------------------- |
-| `gkt init [ide]`            | Install agents for your IDE (`all`, `antigravity`, `cursor`, `windsurf`, `cline`) |
-| `gkt list`                  | List all available AI agents and their roles                                      |
-| `gkt doctor`                | Check environment health (Python, Node, Git, npm)                                 |
-| `gkt update`                | Update GravityKit to the latest version                                           |
-| `gkt version`               | Show current version                                                              |
-| `gkt brain`                 | Manage project brain — context, decisions, conventions                            |
-| `gkt journal`               | Knowledge journal — capture lessons, bugs, insights                               |
-| `gkt skills list [--all]`   | List active skills (or all including disabled)                                    |
-| `gkt skills search <query>` | Search skills by keyword                                                          |
-| `gkt skills enable <name>`  | Enable a disabled skill                                                           |
-| `gkt skills disable <name>` | Disable a skill                                                                   |
-| `gkt skills count`          | Show total skill count                                                            |
-| `gkt validate [--strict]`   | Validate all SKILL.md files                                                       |
-| `gkt generate-index`        | Regenerate `skills_index.json`                                                    |
+| Command                            | Description                                            |
+| ---------------------------------- | ------------------------------------------------------ |
+| `gkt init [target]`                | Install skills for an IDE or a skill group             |
+| `gkt init [target] --group <name>` | Install a specific skill group for an IDE              |
+| `gkt groups`                       | List all available skill groups                        |
+| `gkt list`                         | List all available AI agents and their roles           |
+| `gkt doctor`                       | Check environment health (Python, Node, Git, npm)      |
+| `gkt update`                       | Update GravityKit to the latest version                |
+| `gkt version`                      | Show current version                                   |
+| `gkt brain`                        | Manage project brain — context, decisions, conventions |
+| `gkt journal`                      | Knowledge journal — capture lessons, bugs, insights    |
+| `gkt skills list [--all]`          | List active skills (or all including disabled)         |
+| `gkt skills search <query>`        | Search skills by keyword                               |
+| `gkt skills enable <name>`         | Enable a disabled skill                                |
+| `gkt skills disable <name>`        | Disable a skill                                        |
+| `gkt skills count`                 | Show total skill count                                 |
+| `gkt validate [--strict]`          | Validate all SKILL.md files                            |
+| `gkt generate-index`               | Regenerate `skills_index.json`                         |
 
 > **Alias:** `gravitykit` works the same as `gkt`.
 
@@ -60,107 +98,71 @@ pip install -e .   # Editable install
 | **Cursor**      | `gkt init cursor`      | `.cursor/rules/*.mdc`          |
 | **Windsurf**    | `gkt init windsurf`    | `.windsurf/rules/*.md`         |
 | **Cline**       | `gkt init cline`       | `.clinerules/*.md`             |
+| **All**         | `gkt init`             | All of the above               |
 
 ---
 
-## 🚀 How It Works — Two Ways to Build
+## 🚀 How It Works
 
-### Mode 1: `@[/leader]` — Smart Delegation (Recommended)
-
-> **You are the Boss. The Leader is your right hand.**
+### Mode 1: `@[/leader]` — Smart Delegation
 
 ```
-You → Leader → Agents → Report back per phase → You approve → Next phase
+You → Leader → Agents → Report per phase → You approve → Next phase
 ```
 
-**Flow:**
-
-1. Tell the Leader what you want to build.
-2. Leader analyzes, brainstorms, and presents a plan.
-3. **You approve the plan** ✅
-4. Leader **auto-delegates** to the right agents:
-
-| Phase                       | Agent                                                  | Mode            |
-| --------------------------- | ------------------------------------------------------ | --------------- |
-| 📋 Planning                 | `@[/planner]`                                          | Sequential      |
-| 🏗️ Architecture + 🎨 Design | `@[/architect]` + `@[/designer]`                       | ⚡ **PARALLEL** |
-| 💻 Development              | `@[/frontend-dev]` + `@[/backend-dev]`                 | ⚡ **PARALLEL** |
-| 🧪 QA & Fix                 | `@[/qa-engineer]`                                      | Sequential      |
-| 🚀 Launch                   | `@[/devops]` + `@[/security]` + `@[/seo]` + `@[/docs]` | ⚡ **PARALLEL** |
-
-5. After each phase, Leader reports results and waits for your approval.
-6. **QA Smart Loop**: If a bug can't be fixed, Leader calls `@[/meta-thinker]` + `@[/planner]` to rethink. Max **3 retries**.
-
----
+| Phase                       | Agent                                                  | Mode        |
+| --------------------------- | ------------------------------------------------------ | ----------- |
+| 📋 Planning                 | `@[/planner]`                                          | Sequential  |
+| 🏗️ Architecture + 🎨 Design | `@[/architect]` + `@[/designer]`                       | ⚡ PARALLEL |
+| 💻 Development              | `@[/frontend-dev]` + `@[/backend-dev]`                 | ⚡ PARALLEL |
+| 🧪 QA & Fix                 | `@[/qa-engineer]`                                      | Sequential  |
+| 🚀 Launch                   | `@[/devops]` + `@[/security]` + `@[/seo]` + `@[/docs]` | ⚡ PARALLEL |
 
 ### Mode 2: `@[/quickstart]` — Full Autopilot
 
-> **One command. Complete project. No approvals needed.**
-
-```
-You → Quickstart → [Auto-runs ALL agents] → Delivers complete project
-```
-
-**Perfect for:** MVPs, prototypes, hackathons.
-
-- Built-in **QA Auto-Fix Loop** with max **5 retries** per bug.
-- Delivers a **complete report**: features built, test results, unresolved issues, and how to run it.
+One command, complete project. No approvals needed. Best for MVPs and prototypes.
 
 ---
 
-### Mode Comparison
+## 🔄 Workflows (35)
 
-|                      | `@[/leader]`             | `@[/quickstart]`  |
-| -------------------- | ------------------------ | ----------------- |
-| **User involvement** | Approve each phase       | None (fully auto) |
-| **Parallel agents**  | ⚡ Yes (up to 4x faster) | ⚡ Yes            |
-| **Bug fix retries**  | 3 max                    | 5 max             |
-| **Best for**         | Production apps          | MVPs, prototypes  |
-
----
-
-## 🎮 The Agents
-
-In VibeGravityKit, **You are the Boss.** Chat with your agents using `@` mentions.
-
-### Strategy & Vision 🧠
-
-| Agent                    | Role                                       |
-| ------------------------ | ------------------------------------------ |
-| `@[/leader]`             | Orchestrates all agents, reports per phase |
-| `@[/quickstart]`         | Full autopilot — end-to-end project build  |
-| `@[/meta-thinker]`       | Creative advisor, brainstorming            |
-| `@[/planner]`            | PRD, user stories, timeline                |
-| `@[/researcher]`         | Web search & market analysis               |
-| `@[/tech-stack-advisor]` | Tech stack recommendations                 |
-
-### Design & Product 🎨
-
-| Agent               | Role                                  |
-| ------------------- | ------------------------------------- |
-| `@[/architect]`     | System architecture, DB schema        |
-| `@[/designer]`      | UI/UX design system                   |
-| `@[/mobile-wizard]` | Mobile app scaffolding (Expo/Flutter) |
-
-### Engineering 💻
-
-| Agent              | Role                              |
-| ------------------ | --------------------------------- |
-| `@[/frontend-dev]` | Web development (React, Next.js)  |
-| `@[/backend-dev]`  | API development (Node.js, Python) |
-| `@[/devops]`       | Docker, CI/CD, infrastructure     |
-
-### Quality & Support 🛡️
-
-| Agent                   | Role                           |
-| ----------------------- | ------------------------------ |
-| `@[/knowledge-guide]`   | Code explainer, note taker     |
-| `@[/qa-engineer]`       | Testing & quality assurance    |
-| `@[/security-engineer]` | Security scanning & audits     |
-| `@[/tech-writer]`       | Documentation & release notes  |
-| `@[/seo-specialist]`    | SEO optimization               |
-| `@[/code-reviewer]`     | Code quality scanner           |
-| `@[/release-manager]`   | Changelog & version management |
+| Workflow                  | Description                                              |
+| ------------------------- | -------------------------------------------------------- |
+| `/leader`                 | Orchestrates the entire team from concept to production  |
+| `/quickstart`             | Fully automated project build from idea to production    |
+| `/planner`                | Analyzes requirements, writes PRD, breaks down tasks     |
+| `/meta-thinker`           | Creative advisor, brainstorming, vision development      |
+| `/architect`              | Systems design, database, API                            |
+| `/solution-architect`     | Strategic technical planning, trade-off analysis         |
+| `/designer`               | UI/UX design system and assets                           |
+| `/frontend-dev`           | Component, layout, state management (React/Vue/Tailwind) |
+| `/backend-dev`            | API implementation, DB queries (Node/Python/Go)          |
+| `/fullstack-coder`        | Architecture, backend, frontend, testing in one workflow |
+| `/mobile-dev`             | iOS/Android (React Native/Expo)                          |
+| `/devops`                 | Docker, CI/CD, cloud deployment                          |
+| `/cloud-deployer`         | AWS deployment, CI/CD, Docker, Kubernetes, serverless    |
+| `/n8n-automator`          | n8n workflow builder with 70+ SaaS connectors            |
+| `/nocobase-plugin-expert` | NocoBase plugin development (Server, Client, DB, API)    |
+| `/nocobase-plugin-build`  | Build NocoBase plugins                                   |
+| `/qa-engineer`            | Test case, API, SQL, automation, performance             |
+| `/quality-guardian`       | Code review, testing, security audit in one pass         |
+| `/code-reviewer`          | Automated code quality review                            |
+| `/security-engineer`      | Security workflow (Audit/Pen-Test/Incident)              |
+| `/security-auditor`       | Penetration testing, vulnerability assessment            |
+| `/seo-specialist`         | Search engine optimization                               |
+| `/seo-marketer`           | SEO optimization, content strategy, CRO                  |
+| `/ai-agent-builder`       | Build LLM apps, RAG systems, multi-agent architectures   |
+| `/saas-connector`         | Automate 20+ SaaS platforms via API integrations         |
+| `/startup-advisor`        | Market analysis, financial modeling, GTM planning        |
+| `/tech-writer`            | Documentation & API refs                                 |
+| `/doc-writer`             | Professional technical documentation, reports, RFC, ADR  |
+| `/knowledge-guide`        | Code explainer, note taker, handoff specialist           |
+| `/researcher`             | Market analysis, web search, trend discovery             |
+| `/research-analyst`       | Deep research, analysis, file I/O, translation           |
+| `/deep-researcher`        | Comprehensive research and professional reports          |
+| `/release-manager`        | Changelog generation, version bumping                    |
+| `/prompt-engineer`        | Create optimized prompts for any AI model                |
+| `/image-creator`          | AI image generation, design assets, diagrams             |
 
 ---
 
@@ -168,70 +170,10 @@ In VibeGravityKit, **You are the Boss.** Chat with your agents using `@` mention
 
 ```
 .agent/
-├── workflows/       # Instructions for each agent role
-├── skills/          # 886 skills across 17 categories
+├── workflows/       # Instructions for each agent role (35 workflows)
+├── skills/          # 887 skills across 11 groups
 └── brain/           # Project context & memory
 ```
-
----
-
-## 🔄 Workflows (29)
-
-| Workflow              | Description                                                              |
-| --------------------- | ------------------------------------------------------------------------ |
-| `/leader`             | Team Lead — Orchestrates the entire team from concept to production      |
-| `/quickstart`         | Fully automated project build from idea to production                    |
-| `/planner`            | Analyzes requirements, writes PRD, breaks down tasks                     |
-| `/meta-thinker`       | Idea Consultant, Creative Advisor, Vision Development                    |
-| `/architect`          | Systems Design, Database, API                                            |
-| `/solution-architect` | Strategic technical planning, trade-off analysis, roadmap design         |
-| `/designer`           | UI/UX Design System and Assets                                           |
-| `/frontend-dev`       | Component, Layout, State Management (React/Vue/Tailwind)                 |
-| `/backend-dev`        | API Implementation, DB Queries (Node/Python/Go)                          |
-| `/fullstack-coder`    | Architecture, Backend, Frontend, Testing in one workflow                 |
-| `/mobile-dev`         | iOS/Android (React Native/Expo)                                          |
-| `/devops`             | Docker, CI/CD, Cloud Deployment                                          |
-| `/cloud-deployer`     | AWS deployment, CI/CD pipelines, Docker, Kubernetes, serverless          |
-| `/n8n-automator`      | n8n workflow builder — Code nodes, API integrations, 70+ SaaS connectors |
-| `/qa-engineer`        | Test Case, API, SQL, Automation, Performance, Bug Reporting              |
-| `/quality-guardian`   | Code review, testing, security audit in one comprehensive pass           |
-| `/code-reviewer`      | Automated code quality review with pattern-based analysis                |
-| `/security-engineer`  | Security Workflow (Audit/Pen-Test/Incident)                              |
-| `/seo-specialist`     | Search Engine Optimization                                               |
-| `/tech-writer`        | Documentation & API Refs                                                 |
-| `/doc-writer`         | Professional technical documentation, reports, RFC, ADR                  |
-| `/knowledge-guide`    | Code Explainer, Note Taker, Handoff Specialist                           |
-| `/researcher`         | Market Analysis, Web Search, Trend Discovery                             |
-| `/research-analyst`   | Deep research, analysis, file I/O, image generation, translation         |
-| `/deep-researcher`    | Comprehensive research, analysis, and professional report writing        |
-| `/release-manager`    | Changelog generation, version bumping, and release notes                 |
-| `/prompt-engineer`    | Create optimized prompts from user input for any AI model                |
-| `/image-creator`      | AI image generation, design assets, diagrams, visual content             |
-| `/translator`         | Multi-language translation, i18n setup, and localization management      |
-
----
-
-## 📊 Skill Categories (886 total)
-
-| Category                   | Skills | Description                                                                 |
-| -------------------------- | -----: | --------------------------------------------------------------------------- |
-| 🔷 Azure & Microsoft SDK   |    121 | Azure AI, Storage, Cosmos DB, Event Hubs, Service Bus, Identity, etc.       |
-| 🔧 Workflow & Utilities    |    176 | Git, shell scripting, project scaffolding, memory, i18n, file tools         |
-| 💻 Backend & Languages     |     93 | Python, TypeScript, Go, Rust, Java, C#, Ruby, PHP, FastAPI, Django, etc.    |
-| 🤖 AI, LLM & Agents        |     74 | RAG, LangChain, LangGraph, CrewAI, prompt engineering, voice AI, embeddings |
-| 🔌 SaaS Automation         |     89 | Slack, Jira, Notion, HubSpot, Salesforce, GitHub, Gmail, 70+ integrations   |
-| 📈 Marketing & Business    |     63 | SEO, content marketing, pricing, email, analytics, startup tools            |
-| 🛡️ Security & Pentesting   |     61 | OWASP, Burp Suite, Metasploit, red team, vulnerability scanning             |
-| ☁️ DevOps, Cloud & Infra   |     52 | Docker, Kubernetes, Terraform, CI/CD, monitoring, incident response         |
-| 🎨 Frontend & UI           |     44 | React, Angular, Next.js, Tailwind, Three.js, design systems                 |
-| ✅ Testing & Quality       |     41 | TDD, Playwright, Jest, code review, debugging, linting                      |
-| 🏛️ Architecture & Patterns |     19 | C4 diagrams, microservices, clean architecture, system design               |
-| 📚 Documentation           |     17 | Wiki, README, API docs, changelogs, tutorials                               |
-| 🗄️ Database                |     13 | PostgreSQL, MySQL, MongoDB, Redis, SQL optimization                         |
-| 📊 Data Engineering        |      8 | Spark, dbt, Airflow, data pipelines, data quality                           |
-| 📱 Mobile Development      |      6 | React Native, Flutter, Expo, iOS, SwiftUI                                   |
-| 🎮 Game Development        |      6 | Unity, Unreal Engine, Godot, Minecraft plugins                              |
-| ⛓️ Blockchain & Web3       |      3 | Solidity, DeFi, NFT standards                                               |
 
 ---
 
@@ -242,6 +184,31 @@ In VibeGravityKit, **You are the Boss.** Chat with your agents using `@` mention
 | **Context Manager** | Minifies code before AI sees it               | ~50% tokens |
 | **Context Router**  | Queries only relevant data from 34+ sources   | ~70% tokens |
 | **Diff Applier**    | Applies surgical patches instead of rewriting | ~90% tokens |
+
+---
+
+## 🚢 Publishing to PyPI
+
+This package is published as `gkt` on [PyPI](https://pypi.org/project/gkt/). Publishing is automated via GitHub Actions.
+
+### Auto-Publish on Tag Push
+
+1. Update the version in `GravityKit/VERSION`
+2. Commit and push changes
+3. Create and push a version tag:
+
+```bash
+git tag v3.2.0
+git push origin v3.2.0
+```
+
+The GitHub Actions workflow (`.github/workflows/publish.yml`) will:
+
+- Build the package (`python -m build`)
+- Check with Twine (`twine check dist/*`)
+- Publish to PyPI via OIDC trusted publishing
+
+> **Note:** OIDC trusted publishing is configured. No API token needed if the PyPI project is linked to this GitHub repo.
 
 ---
 

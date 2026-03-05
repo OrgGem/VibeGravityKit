@@ -21,7 +21,18 @@
       "ui-ux-pro-max",
       "color-palette-generator",
       "context-router",
-      "knowledge-guide"
+      "knowledge-guide",
+      "typescript-pro",
+      "javascript-mastery",
+      "react-patterns",
+      "nextjs-best-practices",
+      "testing-patterns",
+      "e2e-testing-patterns",
+      "clean-code",
+      "debugging-strategies",
+      "git-advanced-workflows",
+      "ci-cd-setup",
+      "vercel-deployment"
     ],
     "workflows": [
       "architect",
@@ -57,9 +68,17 @@
       "auth-implementation-patterns",
       "zapier-make-patterns",
       "context-manager",
-      "debugger"
+      "debugger",
+      "inngest",
+      "trigger-dev",
+      "bullmq-specialist",
+      "nodejs-best-practices",
+      "typescript-pro",
+      "testing-patterns"
     ],
-    "workflows": ["n8n-automator"]
+    "workflows": [
+      "n8n-automator"
+    ]
   },
   "nocobase-dev": {
     "description": "NocoBase Plugin Development - Full-stack NocoBase plugins",
@@ -83,9 +102,18 @@
       "postgresql",
       "clean-code",
       "test-generator",
-      "debugging-strategies"
+      "debugging-strategies",
+      "e2e-testing-patterns",
+      "javascript-testing-patterns",
+      "docker-expert",
+      "git-advanced-workflows",
+      "ci-cd-setup",
+      "api-documentation-generator"
     ],
-    "workflows": ["nocobase-plugin-expert", "nocobase-plugin-build"]
+    "workflows": [
+      "nocobase-plugin-expert",
+      "nocobase-plugin-build"
+    ]
   },
   "general-doc": {
     "description": "Documentation - Technical docs, reports, RFC, ADR",
@@ -101,9 +129,21 @@
       "knowledge-guide",
       "mermaid-expert",
       "prompt-engineer",
-      "context-router"
+      "context-router",
+      "api-documentation-generator",
+      "wiki-architect",
+      "wiki-page-writer",
+      "wiki-onboarding",
+      "wiki-researcher",
+      "docs-architect",
+      "reference-builder",
+      "tutorial-engineer"
     ],
-    "workflows": ["doc-writer", "tech-writer", "knowledge-guide"]
+    "workflows": [
+      "doc-writer",
+      "tech-writer",
+      "knowledge-guide"
+    ]
   },
   "research": {
     "description": "Research & Analysis - Deep research, market analysis, content",
@@ -117,7 +157,15 @@
       "content-creator",
       "prompt-engineer",
       "context-manager",
-      "knowledge-guide"
+      "knowledge-guide",
+      "exa-search",
+      "tavily-web",
+      "wiki-researcher",
+      "infinite-gratitude",
+      "daily-news-report",
+      "business-analyst",
+      "startup-analyst",
+      "mermaid-expert"
     ],
     "workflows": [
       "deep-researcher",
@@ -143,9 +191,23 @@
       "env-manager",
       "git-manager",
       "secrets-management",
-      "incident-responder"
+      "incident-responder",
+      "k8s-manifest-generator",
+      "k8s-security-policies",
+      "helm-chart-scaffolding",
+      "gitops-workflow",
+      "deployment-pipeline-design",
+      "deployment-procedures",
+      "gitlab-ci-patterns",
+      "terraform-module-library",
+      "terraform-skill",
+      "gcp-cloud-run",
+      "vercel-deployment"
     ],
-    "workflows": ["cloud-deployer", "devops"]
+    "workflows": [
+      "cloud-deployer",
+      "devops"
+    ]
   },
   "security-audit": {
     "description": "Security & Penetration Testing - Vulnerability assessment, threat modeling",
@@ -169,9 +231,20 @@
       "security-requirement-extraction",
       "threat-mitigation-mapping",
       "security-bluebook-builder",
-      "broken-authentication"
+      "broken-authentication",
+      "cloud-penetration-testing",
+      "aws-penetration-testing",
+      "linux-privilege-escalation",
+      "windows-privilege-escalation",
+      "wordpress-penetration-testing",
+      "ssh-penetration-testing",
+      "shodan-reconnaissance",
+      "metasploit-framework"
     ],
-    "workflows": ["security-engineer", "security-auditor"]
+    "workflows": [
+      "security-engineer",
+      "security-auditor"
+    ]
   },
   "seo-marketing": {
     "description": "SEO & Marketing - Content optimization, CRO, growth strategies",
@@ -195,9 +268,20 @@
       "content-creator",
       "social-content",
       "analytics-tracking",
-      "marketing-ideas"
+      "marketing-ideas",
+      "seo-content-refresher",
+      "seo-cannibalization-detector",
+      "content-marketer",
+      "geo-fundamentals",
+      "competitor-alternatives",
+      "paid-ads",
+      "email-sequence",
+      "popup-cro"
     ],
-    "workflows": ["seo-specialist", "seo-marketer"]
+    "workflows": [
+      "seo-specialist",
+      "seo-marketer"
+    ]
   },
   "ai-agent": {
     "description": "AI & Agent Development - LLM apps, RAG, multi-agent systems",
@@ -221,9 +305,20 @@
       "tool-design",
       "autonomous-agent-patterns",
       "conversation-memory",
-      "gemini-api-dev"
+      "gemini-api-dev",
+      "agent-memory-systems",
+      "agent-memory-mcp",
+      "agent-evaluation",
+      "agent-orchestration-multi-agent-optimize",
+      "computer-use-agents",
+      "voice-agents",
+      "ai-product",
+      "ai-wrapper-product"
     ],
-    "workflows": ["prompt-engineer", "ai-agent-builder"]
+    "workflows": [
+      "prompt-engineer",
+      "ai-agent-builder"
+    ]
   },
   "saas-integrate": {
     "description": "SaaS Integration - Automation connectors for 30+ SaaS platforms",
@@ -247,9 +342,20 @@
       "clickup-automation",
       "zendesk-automation",
       "sendgrid-automation",
-      "whatsapp-automation"
+      "whatsapp-automation",
+      "airtable-automation",
+      "asana-automation",
+      "monday-automation",
+      "pipedrive-automation",
+      "freshdesk-automation",
+      "intercom-automation",
+      "mailchimp-automation",
+      "instagram-automation"
     ],
-    "workflows": ["n8n-automator", "saas-connector"]
+    "workflows": [
+      "n8n-automator",
+      "saas-connector"
+    ]
   },
   "startup-biz": {
     "description": "Startup & Business - Market analysis, financial modeling, strategy",
@@ -273,8 +379,196 @@
       "hr-pro",
       "marketing-psychology",
       "free-tool-strategy",
-      "micro-saas-launcher"
+      "micro-saas-launcher",
+      "app-store-optimization",
+      "billing-automation",
+      "ab-test-setup",
+      "employment-contract-templates",
+      "paywall-upgrade-cro",
+      "content-creator"
     ],
-    "workflows": ["planner", "meta-thinker", "researcher", "startup-advisor"]
+    "workflows": [
+      "planner",
+      "meta-thinker",
+      "researcher",
+      "startup-advisor"
+    ]
+  },
+  "api-graphql": {
+    "description": "API & GraphQL - Design, documentation, integration, FastAPI",
+    "skills": [
+      "api-design-principles",
+      "api-designer",
+      "api-documentation-generator",
+      "api-documenter",
+      "api-patterns",
+      "api-security-best-practices",
+      "api-testing-observability-api-mock",
+      "openapi-spec-generation",
+      "graphql",
+      "graphql-architect",
+      "fastapi-pro",
+      "fastapi-router-py",
+      "fastapi-templates",
+      "stripe-integration",
+      "hubspot-integration",
+      "plaid-fintech",
+      "shopify-apps",
+      "payment-integration",
+      "paypal-integration",
+      "auth-implementation-patterns",
+      "error-handling-patterns",
+      "cc-skill-backend-patterns",
+      "backend-architect",
+      "nestjs-expert"
+    ],
+    "workflows": [
+      "architect",
+      "backend-dev",
+      "fullstack-coder",
+      "api-graphql-dev"
+    ]
+  },
+  "claude-code": {
+    "description": "Claude Code & CC Skills - Prompt engineering, MCP, agent tools",
+    "skills": [
+      "claude-code-guide",
+      "cc-skill-backend-patterns",
+      "cc-skill-frontend-patterns",
+      "cc-skill-coding-standards",
+      "cc-skill-security-review",
+      "cc-skill-continuous-learning",
+      "cc-skill-strategic-compact",
+      "cc-skill-clickhouse-io",
+      "cc-skill-project-guidelines-example",
+      "prompt-engineering",
+      "prompt-engineering-patterns",
+      "prompt-library",
+      "prompt-engineer",
+      "prompt-caching",
+      "agent-tool-builder",
+      "mcp-builder",
+      "skill-developer",
+      "skill-creator",
+      "autonomous-agent-patterns",
+      "context-window-management",
+      "context-manager",
+      "debugger"
+    ],
+    "workflows": [
+      "prompt-engineer",
+      "fullstack-coder",
+      "code-reviewer",
+      "claude-code-dev"
+    ]
+  },
+  "context-data-rag": {
+    "description": "Context Engineering, RAG & Data Pipelines",
+    "skills": [
+      "context-fundamentals",
+      "context-compression",
+      "context-degradation",
+      "context-optimization",
+      "context-window-management",
+      "context-manager",
+      "context-router",
+      "context-driven-development",
+      "rag-engineer",
+      "rag-implementation",
+      "hybrid-search-implementation",
+      "similarity-search-patterns",
+      "embedding-strategies",
+      "vector-database-engineer",
+      "vector-index-tuning",
+      "data-engineer",
+      "data-engineering-data-pipeline",
+      "data-engineering-data-driven-feature",
+      "data-quality-frameworks",
+      "data-scientist",
+      "data-storytelling",
+      "airflow-dag-patterns",
+      "dbt-transformation-patterns",
+      "spark-optimization",
+      "llm-app-patterns",
+      "langchain-architecture",
+      "langgraph",
+      "agent-memory-systems"
+    ],
+    "workflows": [
+      "deep-researcher",
+      "ai-agent-builder",
+      "research-analyst",
+      "context-data-eng"
+    ]
+  },
+  "database": {
+    "description": "Database Engineering - SQL/NoSQL, Postgres, migrations, CQRS",
+    "skills": [
+      "database-design",
+      "database-architect",
+      "database-admin",
+      "database-optimizer",
+      "database-migration",
+      "database-migrations-sql-migrations",
+      "database-migrations-migration-observability",
+      "sql-pro",
+      "sql-optimization-patterns",
+      "postgresql",
+      "nosql-expert",
+      "cc-skill-clickhouse-io",
+      "prisma-expert",
+      "neon-postgres",
+      "using-neon",
+      "cqrs-implementation",
+      "event-sourcing-architect",
+      "event-store-design",
+      "projection-patterns",
+      "saga-orchestration",
+      "architecture-patterns",
+      "clean-code",
+      "supabase-postgres-best-practices",
+      "cc-skill-backend-patterns",
+      "error-handling-patterns",
+      "database-cloud-optimization-cost-optimize"
+    ],
+    "workflows": [
+      "architect",
+      "backend-dev",
+      "solution-architect",
+      "database-eng"
+    ]
+  },
+  "observability-report": {
+    "description": "Observability & Reporting - Monitoring, tracing, Grafana, SLO, incidents",
+    "skills": [
+      "observability-engineer",
+      "observability-monitoring-monitor-setup",
+      "observability-monitoring-slo-implement",
+      "slo-implementation",
+      "grafana-dashboards",
+      "prometheus-configuration",
+      "distributed-tracing",
+      "distributed-debugging-debug-trace",
+      "service-mesh-observability",
+      "datadog-automation",
+      "incident-responder",
+      "incident-response-incident-response",
+      "incident-response-smart-fix",
+      "incident-runbook-templates",
+      "postmortem-writing",
+      "on-call-handoff-patterns",
+      "error-detective",
+      "error-diagnostics-error-analysis",
+      "error-diagnostics-error-trace",
+      "analytics-tracking",
+      "kpi-dashboard-design",
+      "reliability-engineer"
+    ],
+    "workflows": [
+      "devops",
+      "cloud-deployer",
+      "quality-guardian",
+      "observability-eng"
+    ]
   }
 }

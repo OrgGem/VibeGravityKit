@@ -10,7 +10,7 @@ from pathlib import Path
 SOURCE_ROOT = Path(__file__).resolve().parent
 
 # IDE names that are valid targets for init
-IDE_NAMES = {"antigravity", "cursor", "windsurf", "cline", "all"}
+IDE_NAMES = {"antigravity", "cursor", "windsurf", "cline", "kilocode", "copilot", "all"}
 
 
 def load_skill_groups():
@@ -73,7 +73,7 @@ def init(target, group):
     TARGET can be an IDE name or a skill group name.
     
     \b
-    IDE names: all (default), antigravity, cursor, windsurf, cline
+    IDE names: all (default), antigravity, cursor, windsurf, cline, kilocode, copilot
     Group names: general-dev, n8n-dev, nocobase-dev, general-doc, research,
                  cloud-deploy, security-audit, seo-marketing, ai-agent,
                  saas-integrate, startup-biz
@@ -97,7 +97,7 @@ def init(target, group):
         group_name = target
     else:
         click.echo(f"❌ Unknown target: '{target}'")
-        click.echo(f"   IDE names: all, antigravity, cursor, windsurf, cline")
+        click.echo(f"   IDE names: all, antigravity, cursor, windsurf, cline, kilocode, copilot")
         click.echo(f"   Group names: {', '.join(skill_groups.keys())}")
         return
 
@@ -128,6 +128,16 @@ def init(target, group):
             "source": package_dir / "ide-adapters" / "cline",
             "target": Path.cwd() / ".clinerules",
             "label": ".clinerules/ (Cline IDE)",
+        },
+        "kilocode": {
+            "source": package_dir / "ide-adapters" / "kilocode",
+            "target": Path.cwd() / ".kilocode" / "rules",
+            "label": ".kilocode/rules/ (Kilo Code)",
+        },
+        "copilot": {
+            "source": package_dir / "ide-adapters" / "copilot",
+            "target": Path.cwd() / ".github" / "instructions",
+            "label": ".github/instructions/ (GitHub Copilot)",
         },
     }
     

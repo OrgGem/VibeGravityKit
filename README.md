@@ -1,7 +1,7 @@
 # 🌌 VibeGravityKit
 
 > **The AI-Native Software House in a Box.**
-> _Build enterprise-grade software with a team of 887 AI Skills — organized into 11 focused groups for fast, token-efficient development._
+> _Build enterprise-grade software with a team of 887 AI Skills — organized into 16 focused groups for fast, token-efficient development._
 
 ---
 
@@ -16,9 +16,9 @@ cd /path/to/your-project
 gkt init antigravity
 
 # Or install only the skills you need
-gkt init general-dev     # 20 core dev skills
-gkt init n8n-dev         # 12 n8n automation skills
-gkt init ai-agent        # 20 AI/LLM/RAG skills
+gkt init general-dev     # 30 core dev skills
+gkt init n8n-dev         # 18 n8n automation skills
+gkt init ai-agent        # 28 AI/LLM/RAG skills
 ```
 
 > **Requirements:** Python 3.9+
@@ -41,19 +41,24 @@ Instead of loading all 887 skills, install only the group you need:
 gkt groups   # List all available groups
 ```
 
-| Group            | Skills | Description                               |
-| ---------------- | ------ | ----------------------------------------- |
-| `general-dev`    | 20     | Backend, Frontend, Full-stack development |
-| `n8n-dev`        | 12     | n8n workflow automations                  |
-| `nocobase-dev`   | 20     | NocoBase plugin development               |
-| `general-doc`    | 12     | Technical docs, RFC, ADR                  |
-| `research`       | 10     | Deep research, market analysis            |
-| `cloud-deploy`   | 15     | Cloud, DevOps, CI/CD                      |
-| `security-audit` | 20     | Pentest, vulnerability assessment         |
-| `seo-marketing`  | 20     | SEO, CRO, content marketing               |
-| `ai-agent`       | 20     | LLM apps, RAG, multi-agent                |
-| `saas-integrate` | 20     | 20+ SaaS platform connectors              |
-| `startup-biz`    | 20     | Market analysis, financial modeling       |
+| Group                  | Skills | Description                                     |
+| ---------------------- | ------ | ----------------------------------------------- |
+| `general-dev`          | 30     | Backend, Frontend, Full-stack development       |
+| `n8n-dev`              | 18     | n8n workflow automations                        |
+| `nocobase-dev`         | 25     | NocoBase plugin development                     |
+| `general-doc`          | 20     | Technical docs, RFC, ADR, wiki                  |
+| `research`             | 18     | Deep research, market analysis                  |
+| `cloud-deploy`         | 26     | Cloud, DevOps, CI/CD, Kubernetes                |
+| `security-audit`       | 28     | Pentest, vulnerability assessment               |
+| `seo-marketing`        | 28     | SEO, CRO, content marketing                     |
+| `ai-agent`             | 28     | LLM apps, RAG, multi-agent                      |
+| `saas-integrate`       | 28     | 28+ SaaS platform connectors                    |
+| `startup-biz`          | 26     | Market analysis, financial modeling             |
+| `api-graphql`          | 24     | API design, GraphQL, REST, OpenAPI, FastAPI     |
+| `claude-code`          | 22     | Claude Code skills, prompt engineering, MCP     |
+| `context-data-rag`     | 28     | Context engineering, RAG, data pipelines        |
+| `database`             | 26     | SQL/NoSQL, Postgres, migrations, CQRS           |
+| `observability-report` | 22     | Monitoring, Grafana, Prometheus, SLO, incidents |
 
 **Usage:**
 
@@ -92,13 +97,15 @@ gkt init antigravity                    # Install ALL skills (legacy behavior)
 
 ## 🌐 Multi-IDE Support
 
-| IDE             | Command                | Creates                        |
-| --------------- | ---------------------- | ------------------------------ |
-| **Antigravity** | `gkt init antigravity` | `.agent/` (workflows + skills) |
-| **Cursor**      | `gkt init cursor`      | `.cursor/rules/*.mdc`          |
-| **Windsurf**    | `gkt init windsurf`    | `.windsurf/rules/*.md`         |
-| **Cline**       | `gkt init cline`       | `.clinerules/*.md`             |
-| **All**         | `gkt init`             | All of the above               |
+| IDE                | Command                | Creates                                  |
+| ------------------ | ---------------------- | ---------------------------------------- |
+| **Antigravity**    | `gkt init antigravity` | `.agent/` (workflows + skills)           |
+| **Cursor**         | `gkt init cursor`      | `.cursor/rules/*.mdc`                    |
+| **Windsurf**       | `gkt init windsurf`    | `.windsurf/rules/*.md`                   |
+| **Cline**          | `gkt init cline`       | `.clinerules/*.md`                       |
+| **Kilo Code**      | `gkt init kilocode`    | `.kilocode/rules/*.md`                   |
+| **GitHub Copilot** | `gkt init copilot`     | `.github/instructions/*.instructions.md` |
+| **All**            | `gkt init`             | All of the above                         |
 
 ---
 
@@ -124,7 +131,7 @@ One command, complete project. No approvals needed. Best for MVPs and prototypes
 
 ---
 
-## 🔄 Workflows (35)
+## 🔄 Workflows (40)
 
 | Workflow                  | Description                                              |
 | ------------------------- | -------------------------------------------------------- |
@@ -163,6 +170,11 @@ One command, complete project. No approvals needed. Best for MVPs and prototypes
 | `/release-manager`        | Changelog generation, version bumping                    |
 | `/prompt-engineer`        | Create optimized prompts for any AI model                |
 | `/image-creator`          | AI image generation, design assets, diagrams             |
+| `/api-graphql-dev`        | API & GraphQL development workflow                       |
+| `/claude-code-dev`        | Claude Code skills, prompt engineering, MCP              |
+| `/context-data-eng`       | Context engineering, RAG, data pipelines                 |
+| `/database-eng`           | Database design, optimization, migrations, CQRS          |
+| `/observability-eng`      | Monitoring, tracing, Grafana, Prometheus, SLO            |
 
 ---
 
@@ -170,8 +182,8 @@ One command, complete project. No approvals needed. Best for MVPs and prototypes
 
 ```
 .agent/
-├── workflows/       # Instructions for each agent role (35 workflows)
-├── skills/          # 887 skills across 11 groups
+├── workflows/       # Instructions for each agent role (40 workflows)
+├── skills/          # 887 skills across 16 groups
 └── brain/           # Project context & memory
 ```
 
@@ -198,8 +210,8 @@ This package is published as `gkt` on [PyPI](https://pypi.org/project/gkt/). Pub
 3. Create and push a version tag:
 
 ```bash
-git tag v3.2.0
-git push origin v3.2.0
+git tag v3.2.1
+git push origin v3.2.1
 ```
 
 The GitHub Actions workflow (`.github/workflows/publish.yml`) will:

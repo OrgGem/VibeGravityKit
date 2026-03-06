@@ -10,7 +10,7 @@ from pathlib import Path
 SOURCE_ROOT = Path(__file__).resolve().parent
 
 # IDE names that are valid targets for init
-IDE_NAMES = {"antigravity", "cursor", "windsurf", "cline", "kilocode", "copilot", "all"}
+IDE_NAMES = {"antigravity", "cursor", "windsurf", "cline", "kilocode", "copilot", "kiro", "all"}
 
 
 def load_skill_groups():
@@ -59,6 +59,63 @@ def copy_group_selective(source_agent_dir, target_agent_dir, group_config):
     return copied_skills
 
 
+def install_kiro(package_dir, group_config=None):
+    """Install GravityKit for Kiro IDE.
+    
+    Maps .agent/ structure to Kiro's .kiro/ structure:
+      .agent/skills/ → .kiro/skills/
+      ide-adapters/kiro/steering/ → .kiro/steering/
+      ide-adapters/kiro/hooks/ → .kiro/hooks/
+      Creates empty .kiro/specs/
+    """
+    kiro_dir = Path.cwd() / ".kiro"
+    agent_dir = package_dir / ".agent"
+    templates_dir = package_dir / "ide-adapters" / "kiro"
+
+    # Clean existing .kiro/ directory
+    if kiro_dir.exists():
+        shutil.rmtree(kiro_dir)
+    kiro_dir.mkdir(parents=True, exist_ok=True)
+
+    # 1. Copy skills: .agent/skills/ → .kiro/skills/
+    skills_src = agent_dir / "skills"
+    skills_target = kiro_dir / "skills"
+    skills_target.mkdir(parents=True, exist_ok=True)
+    copied_skills = 0
+    if skills_src.exists():
+        if group_config:
+            # Selective: only copy skills in the group
+            for skill_name in group_config.get("skills", []):
+                src = skills_src / skill_name
+                if src.exists():
+                    shutil.copytree(src, skills_target / skill_name)
+                    copied_skills += 1
+        else:
+            # Full: copy all skills
+            for skill_folder in skills_src.iterdir():
+                if skill_folder.is_dir() and (skill_folder / "SKILL.md").exists():
+                    shutil.copytree(skill_folder, skills_target / skill_folder.name)
+                    copied_skills += 1
+
+    # 2. Copy steering: ide-adapters/kiro/steering/ → .kiro/steering/
+    steering_src = templates_dir / "steering"
+    steering_target = kiro_dir / "steering"
+    if steering_src.exists():
+        shutil.copytree(steering_src, steering_target)
+
+    # 3. Copy hooks: ide-adapters/kiro/hooks/ → .kiro/hooks/
+    hooks_src = templates_dir / "hooks"
+    hooks_target = kiro_dir / "hooks"
+    if hooks_src.exists():
+        shutil.copytree(hooks_src, hooks_target)
+
+    # 4. Create specs directory
+    specs_dir = kiro_dir / "specs"
+    specs_dir.mkdir(parents=True, exist_ok=True)
+
+    return copied_skills
+
+
 @click.group()
 def main():
     """GravityKit CLI - Manage your AI Agent Team."""
@@ -97,7 +154,7 @@ def init(target, group):
         group_name = target
     else:
         click.echo(f"❌ Unknown target: '{target}'")
-        click.echo(f"   IDE names: all, antigravity, cursor, windsurf, cline, kilocode, copilot")
+        click.echo(f"   IDE names: all, antigravity, cursor, windsurf, cline, kilocode, copilot, kiro")
         click.echo(f"   Group names: {', '.join(skill_groups.keys())}")
         return
 
@@ -139,6 +196,11 @@ def init(target, group):
             "target": Path.cwd() / ".github" / "instructions",
             "label": ".github/instructions/ (GitHub Copilot)",
         },
+        "kiro": {
+            "source": package_dir / ".agent",
+            "target": Path.cwd() / ".kiro",
+            "label": ".kiro/ (Kiro IDE - skills, hooks, steering, specs)",
+        },
     }
     
     # Determine which IDEs to install
@@ -165,7 +227,12 @@ def init(target, group):
             continue
         
         try:
-            if group_name and target_ide == "antigravity":
+            if target_ide == "kiro":
+                # Special install for Kiro: maps .agent/ to .kiro/ structure
+                grp = skill_groups[group_name] if group_name else None
+                copied = install_kiro(package_dir, grp)
+                click.echo(f"  ✅ {config['label']} ({copied} skills)")
+            elif group_name and target_ide == "antigravity":
                 # Selective copy for antigravity with group filter
                 copied = copy_group_selective(source_dir, target_dir, skill_groups[group_name])
                 click.echo(f"  ✅ {config['label']} ({copied} skills)")

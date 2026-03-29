@@ -20,13 +20,20 @@
   "general-dev": {
     "description": "General Development - Backend, Frontend, Full-stack",
     "skills": [
+      "gravity-requirement-analysis",
+      "gravity-adversarial-review",
+      "gravity-implementation-readiness",
       "db-designer",
       "api-designer",
       "system-diagrammer",
       "architecture-auditor",
       "system-strategist",
+      "strategic-planning-advisor",
       "project-scaffolder",
       "tech-stack-advisor",
+      "user-story-generator",
+      "task-estimator",
+      "architecture",
       "codebase-navigator",
       "context-manager",
       "diff-applier",
@@ -62,7 +69,8 @@
       "backend-dev",
       "fullstack-coder",
       "qa-engineer",
-      "code-reviewer"
+      "code-reviewer",
+      "solution-architect"
     ]
   },
   "n8n-dev": {
@@ -96,6 +104,9 @@
   "nocobase-dev": {
     "description": "NocoBase Plugin Development - Full-stack NocoBase plugins",
     "skills": [
+      "gravity-requirement-analysis",
+      "gravity-adversarial-review",
+      "gravity-implementation-readiness",
       "nocobase-plugin-developer",
       "nodejs-backend-patterns",
       "typescript-pro",
@@ -105,6 +116,9 @@
       "api-patterns",
       "auth-implementation-patterns",
       "error-handling-patterns",
+      "user-story-generator",
+      "task-estimator",
+      "strategic-planning-advisor",
       "frontend-developer",
       "react-patterns",
       "react-ui-patterns",
@@ -125,7 +139,10 @@
     ],
     "workflows": [
       "nocobase-plugin-expert",
-      "nocobase-plugin-build"
+      "nocobase-plugin-build",
+      "planner",
+      "qa-engineer",
+      "code-reviewer"
     ]
   },
   "general-doc": {
@@ -161,11 +178,18 @@
   "research": {
     "description": "Research & Analysis - Deep research, market analysis, content",
     "skills": [
+      "gravity-requirement-analysis",
+      "gravity-adversarial-review",
       "deep-research",
       "search-specialist",
       "meta-thinker",
       "competitive-landscape",
       "market-sizing-analysis",
+      "competitor-analyzer",
+      "market-trend-analyst",
+      "product-manager-toolkit",
+      "pricing-strategy",
+      "app-store-optimization",
       "data-storytelling",
       "content-creator",
       "prompt-engineer",
@@ -184,7 +208,9 @@
       "deep-researcher",
       "researcher",
       "research-analyst",
-      "image-creator"
+      "image-creator",
+      "planner",
+      "meta-thinker"
     ]
   },
   "cloud-deploy": {

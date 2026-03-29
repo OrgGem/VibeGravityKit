@@ -117,6 +117,24 @@
     "source": "community"
   },
   {
+    "id": "agent-skill-creator",
+    "path": "skills/agent-skill-creator/SKILL.md",
+    "category": "data-ai",
+    "name": "agent-skill-creator",
+    "description": "Create cross-platform agent skills from workflow descriptions. Activates when users ask to create an agent, automate a repetitive workflow, create a custom skill, or need advanced agent creation. Triggers on phrases like create agent for, automate workflow, create skill for, every day I have to, daily I need to, turn process into agent, need to automate, create a cross-platform skill, validate this skill, export this skill, migrate this skill. Supports single skills, multi-agent suites, transcript processing, template-based creation, interactive configuration, cross-platform export, and spec validation.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "agent-skill-creator/references/examples/stock-analyzer",
+    "path": "skills/agent-skill-creator/references/examples/stock-analyzer/SKILL.md",
+    "category": "data-ai",
+    "name": "stock-analyzer",
+    "description": "Provides comprehensive technical analysis for stocks and ETFs using RSI, MACD, Bollinger Bands, and other indicators. Activates when user requests stock analysis, technical indicators, trading signals, or market data for specific ticker symbols.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "agent-tool-builder",
     "path": "skills/agent-tool-builder/SKILL.md",
     "category": "data-ai",
@@ -4194,6 +4212,33 @@
     "source": "community"
   },
   {
+    "id": "gravity-adversarial-review",
+    "path": "skills/gravity-adversarial-review/SKILL.md",
+    "category": "architecture",
+    "name": "gravity-adversarial-review",
+    "description": "Cynical quality review and exhaustive edge case analysis. Combines adversarial review (find 10+ issues) with path enumeration (find unhandled boundaries). Use when reviewing code, specs, PRDs, architecture docs, or any artifact before finalizing.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "gravity-implementation-readiness",
+    "path": "skills/gravity-implementation-readiness/SKILL.md",
+    "category": "architecture",
+    "name": "gravity-implementation-readiness",
+    "description": "Pre-implementation gate that validates requirements, architecture, and task breakdown are complete and aligned. Use before starting implementation of complex features to catch planning gaps early.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "gravity-requirement-analysis",
+    "path": "skills/gravity-requirement-analysis/SKILL.md",
+    "category": "general",
+    "name": "gravity-requirement-analysis",
+    "description": "Toggleable requirement analysis inspired by BMAD. Auto-detects task complexity, clarifies requirements, creates structured plans, and tracks task progress. Use when starting any non-trivial feature, refactoring, or multi-step work. Can be disabled via config to save tokens.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "haskell-pro",
     "path": "skills/haskell-pro/SKILL.md",
     "category": "architecture",
@@ -5202,6 +5247,15 @@
     "source": "community"
   },
   {
+    "id": "n8n-code-javascript",
+    "path": "skills/n8n-code-javascript/SKILL.md",
+    "category": "development",
+    "name": "n8n-code-javascript",
+    "description": "Write JavaScript code in n8n Code nodes. Use when writing JavaScript in n8n, using $input/$json/$node syntax, making HTTP requests with $helpers, working with dates using DateTime, troubleshooting Code node errors, or choosing between Code node modes.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "n8n-code-python",
     "path": "skills/n8n-code-python/SKILL.md",
     "category": "development",
@@ -5209,6 +5263,15 @@
     "description": "Write Python code in n8n Code nodes. Use when writing Python in n8n, using _input/_json/_node syntax, working with standard library, or need to understand Python limitations in n8n Code nodes.",
     "risk": "safe",
     "source": "https://github.com/czlonkowski/n8n-skills/tree/main/skills/n8n-code-python"
+  },
+  {
+    "id": "n8n-expression-syntax",
+    "path": "skills/n8n-expression-syntax/SKILL.md",
+    "category": "data-ai",
+    "name": "n8n-expression-syntax",
+    "description": "Validate n8n expression syntax and fix common errors. Use when writing n8n expressions, using {{}} syntax, accessing $json/$node variables, troubleshooting expression errors, or working with webhook data in workflows.",
+    "risk": "unknown",
+    "source": "community"
   },
   {
     "id": "n8n-mcp-tools-expert",
@@ -5227,6 +5290,24 @@
     "description": "Operation-aware node configuration guidance. Use when configuring nodes, understanding property dependencies, determining required fields, choosing between get_node detail levels, or learning common configuration patterns by node type.",
     "risk": "safe",
     "source": "https://github.com/czlonkowski/n8n-skills/tree/main/skills/n8n-node-configuration"
+  },
+  {
+    "id": "n8n-validation-expert",
+    "path": "skills/n8n-validation-expert/SKILL.md",
+    "category": "general",
+    "name": "n8n-validation-expert",
+    "description": "Interpret validation errors and guide fixing them. Use when encountering validation errors, validation warnings, false positives, operator structure issues, or need help understanding validation results. Also use when asking about validation profiles, error types, or the validation loop process.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "n8n-workflow-patterns",
+    "path": "skills/n8n-workflow-patterns/SKILL.md",
+    "category": "data-ai",
+    "name": "n8n-workflow-patterns",
+    "description": "Proven workflow architectural patterns from real n8n workflows. Use when building new workflows, designing workflow structure, choosing workflow patterns, planning workflow architecture, or asking about webhook processing, HTTP API integration, database operations, AI agent workflows, or scheduled tasks.",
+    "risk": "unknown",
+    "source": "community"
   },
   {
     "id": "nanobanana-ppt-skills",
@@ -5306,6 +5387,15 @@
     "category": "data-ai",
     "name": "nft-standards",
     "description": "Implement NFT standards (ERC-721, ERC-1155) with proper metadata handling, minting strategies, and marketplace integration. Use when creating NFT contracts, building NFT marketplaces, or implementing digital asset systems.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "nocobase-plugin-developer",
+    "path": "skills/nocobase-plugin-developer/SKILL.md",
+    "category": "general",
+    "name": "nocobase-plugin-developer",
+    "description": "Guide for creating, structuring, and implementing NocoBase plugins (Server & Client).",
     "risk": "unknown",
     "source": "community"
   },
@@ -7043,6 +7133,15 @@
     "category": "data-ai",
     "name": "supabase-automation",
     "description": "Automate Supabase database queries, table management, project administration, storage, edge functions, and SQL execution via Rube MCP (Composio). Always search tools first for current schemas.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "supabase-postgres-best-practices",
+    "path": "skills/supabase-postgres-best-practices/SKILL.md",
+    "category": "data-ai",
+    "name": "supabase-postgres-best-practices",
+    "description": "Postgres performance optimization and best practices from Supabase. Use this skill when writing, reviewing, or optimizing Postgres queries, schema designs, or database configurations.",
     "risk": "unknown",
     "source": "community"
   },

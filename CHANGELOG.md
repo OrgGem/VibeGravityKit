@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.0] - 2026-03-30
+
+### Added
+
+- **Gravity Requirement Analysis** (`gravity-requirement-analysis`) — Toggleable BMAD-inspired requirement analysis with auto-complexity detection, targeted elicitation, structured plan creation, and task tracking. Configurable via `project_context.json` to save tokens when not needed.
+- **Gravity Adversarial Review** (`gravity-adversarial-review`) — Dual-mode quality review combining cynical adversarial analysis (10+ issue categories) with exhaustive edge-case path enumeration. Adapted from BMAD's review skills.
+- **Gravity Implementation Readiness** (`gravity-implementation-readiness`) — Pre-implementation gate that validates requirement completeness, plan coverage, dependency order, and architecture decisions before coding begins.
+- Requirement analysis templates: `requirement.md`, `plan.md`, `complexity-matrix.md`
+- `requirement_analysis` toggle config in `project_context.json` with `enabled`, `auto_detect`, `complexity_threshold` settings
+- New Requirement Analysis Phase and Quality Gate Phase in session lifecycle
+- Added `user-story-generator`, `task-estimator`, `strategic-planning-advisor`, `architecture` to `general-dev` group
+- Added `competitor-analyzer`, `market-trend-analyst`, `product-manager-toolkit`, `pricing-strategy`, `app-store-optimization` to `research` group
+- Added `planner`, `qa-engineer`, `code-reviewer` workflows to `nocobase-dev` group
+- Added `solution-architect` workflow to `general-dev` group
+- Added `planner`, `meta-thinker` workflows to `research` group
+
+### Changed
+
+- Updated `lifecycle.md` with Requirement Analysis Phase (toggleable) and Quality Gate Phase
+- Updated `default_skills.md` with documentation for 3 new gravity skills and toggle guide
+- Updated skill counts: `general-dev` (27→34), `research` (18→25), `nocobase-dev` (24→30)
+
 ## [3.1.0] - 2026-02-18
 
 ### Added

@@ -1,7 +1,7 @@
 # 🌌 VibeGravityKit
 
 > **The AI-Native Software House in a Box.**
-> _Build enterprise-grade software with a team of 887 AI Skills — organized into 16 focused groups for fast, token-efficient development._
+> _Build enterprise-grade software with a team of 887+ AI Skills organized into 16 focused groups, each enhanced with 12 default base skills for memory, lifecycle, and cross-platform compatibility._
 
 ---
 
@@ -41,24 +41,26 @@ Instead of loading all 887 skills, install only the group you need:
 gkt groups   # List all available groups
 ```
 
-| Group                  | Skills | Description                                     |
-| ---------------------- | ------ | ----------------------------------------------- |
-| `general-dev`          | 30     | Backend, Frontend, Full-stack development       |
-| `n8n-dev`              | 18     | n8n workflow automations                        |
-| `nocobase-dev`         | 25     | NocoBase plugin development                     |
-| `general-doc`          | 20     | Technical docs, RFC, ADR, wiki                  |
-| `research`             | 18     | Deep research, market analysis                  |
-| `cloud-deploy`         | 26     | Cloud, DevOps, CI/CD, Kubernetes                |
-| `security-audit`       | 28     | Pentest, vulnerability assessment               |
-| `seo-marketing`        | 28     | SEO, CRO, content marketing                     |
-| `ai-agent`             | 28     | LLM apps, RAG, multi-agent                      |
-| `saas-integrate`       | 28     | 28+ SaaS platform connectors                    |
-| `startup-biz`          | 26     | Market analysis, financial modeling             |
-| `api-graphql`          | 24     | API design, GraphQL, REST, OpenAPI, FastAPI     |
-| `claude-code`          | 22     | Claude Code skills, prompt engineering, MCP     |
-| `context-data-rag`     | 28     | Context engineering, RAG, data pipelines        |
-| `database`             | 26     | SQL/NoSQL, Postgres, migrations, CQRS           |
-| `observability-report` | 22     | Monitoring, Grafana, Prometheus, SLO, incidents |
+| Group                  | Skills | +Default | Description                                     |
+| ---------------------- | ------ | -------- | ----------------------------------------------- |
+| `general-dev`          | 31     | +8       | Backend, Frontend, Full-stack development       |
+| `n8n-dev`              | 18     | +10      | n8n workflow automations                        |
+| `nocobase-dev`         | 26     | +11      | NocoBase plugin development                     |
+| `general-doc`          | 20     | +10      | Technical docs, RFC, ADR, wiki                  |
+| `research`             | 18     | +11      | Deep research, market analysis                  |
+| `cloud-deploy`         | 26     | +11      | Cloud, DevOps, CI/CD, Kubernetes                |
+| `security-audit`       | 28     | +12      | Pentest, vulnerability assessment               |
+| `seo-marketing`        | 28     | +12      | SEO, CRO, content marketing                     |
+| `ai-agent`             | 28     | +12      | LLM apps, RAG, multi-agent                      |
+| `saas-integrate`       | 28     | +12      | 28+ SaaS platform connectors                    |
+| `startup-biz`          | 26     | +12      | Market analysis, financial modeling             |
+| `api-graphql`          | 24     | +12      | API design, GraphQL, REST, OpenAPI, FastAPI     |
+| `claude-code`          | 22     | +10      | Claude Code skills, prompt engineering, MCP     |
+| `context-data-rag`     | 28     | +11      | Context engineering, RAG, data pipelines        |
+| `database`             | 26     | +11      | SQL/NoSQL, Postgres, migrations, CQRS           |
+| `observability-report` | 22     | +12      | Monitoring, Grafana, Prometheus, SLO, incidents |
+
+> **+Default**: Each group automatically includes 12 base skills for memory management, lifecycle, and cross-platform compatibility. The `+N` value shows how many unique defaults are added (some groups already include overlapping skills).
 
 **Usage:**
 
@@ -105,6 +107,7 @@ gkt init antigravity                    # Install ALL skills (legacy behavior)
 | **Cline**          | `gkt init cline`       | `.clinerules/*.md`                       |
 | **Kilo Code**      | `gkt init kilocode`    | `.kilocode/rules/*.md`                   |
 | **GitHub Copilot** | `gkt init copilot`     | `.github/instructions/*.instructions.md` |
+| **Kiro**           | `gkt init kiro`        | `.kiro/` (skills, hooks, steering, specs)|
 | **All**            | `gkt init`             | All of the above                         |
 
 ---
@@ -183,9 +186,44 @@ One command, complete project. No approvals needed. Best for MVPs and prototypes
 ```
 .agent/
 ├── workflows/       # Instructions for each agent role (40 workflows)
-├── skills/          # 887 skills across 16 groups
+├── skills/          # 887+ skills across 16 groups + 12 default
 └── brain/           # Project context & memory
+    ├── default_skills.md     # Default skill reference & integration guide
+    ├── lifecycle.md          # Session lifecycle (init → plan → work → checkpoint → handoff)
+    ├── platform_notes.md     # Cross-platform compatibility (Windows/Linux/macOS)
+    ├── project_context.json  # Project metadata, architecture, decisions, conventions
+    └── agent_index.json      # Agent role definitions & handoff templates
 ```
+
+---
+
+## 🧠 Brain System
+
+Every installation includes the **Brain** — a structured knowledge base that agents read at session start:
+
+| Brain File              | Purpose                                                    |
+| ----------------------- | ---------------------------------------------------------- |
+| `default_skills.md`     | Documents 12 default skills, usage guide, workflow wiring  |
+| `lifecycle.md`          | Session lifecycle: init, plan, work, checkpoint, handoff   |
+| `platform_notes.md`     | Cross-platform guide: paths, shells, encoding, permissions |
+| `project_context.json`  | Project metadata template (tech stack, conventions, sprint)|
+| `agent_index.json`      | Agent role definitions and handoff protocol                |
+
+The brain files reference the 12 default skills, allowing agents to automatically:
+- Load context from previous sessions (`brain-manager`)
+- Break tasks into atomic checklists (`concise-planning`)
+- Apply platform-specific commands (`powershell-windows` / `bash-linux`)
+- Debug proactively (`debugger`)
+- Maintain clean code and semantic commits (`clean-code`, `git-manager`, `commit`)
+
+### 12 Default Skills (Always Installed)
+
+| Category             | Skills                                              |
+| -------------------- | --------------------------------------------------- |
+| Memory & Context     | `brain-manager`, `journal-manager`, `context-manager`, `codebase-navigator` |
+| Planning & Quality   | `concise-planning`, `writing-plans`, `clean-code`, `debugger`               |
+| Version Control      | `git-manager`, `commit`                             |
+| Cross-Platform       | `powershell-windows`, `bash-linux`                  |
 
 ---
 

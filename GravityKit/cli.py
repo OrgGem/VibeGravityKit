@@ -1,9 +1,19 @@
 #!/usr/bin/env python3
 import click
 import os
+import sys
+import re
 import json
 import shutil
 from pathlib import Path
+
+# Fix Unicode encoding on Windows (cp1252 cannot render emoji)
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass  # Fail silently if stream doesn't support reconfigure
 
 # Get the absolute path to the GravityKit source directory
 # This assumes cli.py is in the root of the repo
@@ -11,6 +21,12 @@ SOURCE_ROOT = Path(__file__).resolve().parent
 
 # IDE names that are valid targets for init
 IDE_NAMES = {"antigravity", "cursor", "windsurf", "cline", "kilocode", "copilot", "kiro", "all"}
+
+
+def get_default_skills(skill_groups):
+    """Get the list of default skills from _default group."""
+    default_group = skill_groups.get("_default", {})
+    return default_group.get("skills", [])
 
 
 def load_skill_groups():
@@ -22,7 +38,7 @@ def load_skill_groups():
         return json.load(f)
 
 
-def copy_group_selective(source_agent_dir, target_agent_dir, group_config):
+def copy_group_selective(source_agent_dir, target_agent_dir, group_config, default_skills=None):
     """Copy only the skills and workflows defined in a group config.
     
     Always copies: brain/
@@ -37,12 +53,19 @@ def copy_group_selective(source_agent_dir, target_agent_dir, group_config):
     if brain_src.exists():
         shutil.copytree(brain_src, target_agent_dir / "brain")
 
+    # Merge group skills + default skills (deduplicated)
+    all_skills = list(group_config.get("skills", []))
+    if default_skills:
+        for ds in default_skills:
+            if ds not in all_skills:
+                all_skills.append(ds)
+
     # Copy selected skills
     skills_target = target_agent_dir / "skills"
     skills_target.mkdir(parents=True, exist_ok=True)
     skills_src = source_agent_dir / "skills"
     copied_skills = 0
-    for skill_name in group_config.get("skills", []):
+    for skill_name in all_skills:
         src = skills_src / skill_name
         if src.exists():
             shutil.copytree(src, skills_target / skill_name)
@@ -84,8 +107,13 @@ def install_kiro(package_dir, group_config=None):
     copied_skills = 0
     if skills_src.exists():
         if group_config:
-            # Selective: only copy skills in the group
-            for skill_name in group_config.get("skills", []):
+            # Selective: copy group skills + _default skills
+            all_skills = list(group_config.get("skills", []))
+            default_group = load_skill_groups().get("_default", {})
+            for ds in default_group.get("skills", []):
+                if ds not in all_skills:
+                    all_skills.append(ds)
+            for skill_name in all_skills:
                 src = skills_src / skill_name
                 if src.exists():
                     shutil.copytree(src, skills_target / skill_name)
@@ -149,7 +177,7 @@ def init(target, group):
     if target in IDE_NAMES:
         ide_target = target
         group_name = group  # May be None (= install all)
-    elif target in skill_groups:
+    elif target in skill_groups and target != "_default":
         ide_target = "antigravity"  # Default IDE when group is specified directly
         group_name = target
     else:
@@ -211,8 +239,11 @@ def init(target, group):
 
     if group_name:
         grp = skill_groups[group_name]
+        default_skills = get_default_skills(skill_groups)
+        group_skills = grp.get('skills', [])
+        extra = len([s for s in default_skills if s not in group_skills])
         click.echo(f"🚀 Installing group '{group_name}' ({grp['description']})...")
-        click.echo(f"   Skills: {len(grp.get('skills', []))} | Workflows: {len(grp.get('workflows', []))}")
+        click.echo(f"   Skills: {len(group_skills)} + {extra} default | Workflows: {len(grp.get('workflows', []))}")
     else:
         click.echo(f"🚀 Installing GravityKit (all skills)...")
     
@@ -233,8 +264,9 @@ def init(target, group):
                 copied = install_kiro(package_dir, grp)
                 click.echo(f"  ✅ {config['label']} ({copied} skills)")
             elif group_name and target_ide == "antigravity":
-                # Selective copy for antigravity with group filter
-                copied = copy_group_selective(source_dir, target_dir, skill_groups[group_name])
+                # Selective copy for antigravity with group filter + _default merge
+                default_skills = get_default_skills(skill_groups)
+                copied = copy_group_selective(source_dir, target_dir, skill_groups[group_name], default_skills)
                 click.echo(f"  ✅ {config['label']} ({copied} skills)")
             else:
                 # Full copy (original behavior) for non-antigravity IDEs or no group
@@ -264,16 +296,21 @@ def groups():
     click.echo("\n📦 Available Skill Groups:\n")
     click.echo(f"{'Group':<18} {'Skills':>6} {'Workflows':>9}   {'Description':<50}")
     click.echo("-" * 90)
+    default_skills = get_default_skills(skill_groups)
     for name, config in skill_groups.items():
+        if name == "_default":
+            continue
         skills_count = len(config.get("skills", []))
+        extra = len([s for s in default_skills if s not in config.get("skills", [])])
         wf_count = len(config.get("workflows", []))
         desc = config.get("description", "No description")
-        click.echo(f"{name:<18} {skills_count:>6} {wf_count:>9}   {desc}")
+        click.echo(f"{name:<18} {skills_count:>3}+{extra:<2} {wf_count:>9}   {desc}")
+    click.echo(f"\n   * Each group includes +{len(default_skills)} default skills (memory, lifecycle, cross-platform)")
     click.echo(f"\n💡 Usage: gkt init <group-name>  (e.g. gkt init general-dev)")
     click.echo("")
 
-@main.command()
-def list():
+@main.command(name='list')
+def list_agents():
     """List available AI Agents and their roles."""
     # .agent is inside GravityKit package
     workflows_dir = Path(__file__).resolve().parent / ".agent" / "workflows"

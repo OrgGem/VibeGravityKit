@@ -1,4 +1,21 @@
 {
+  "_default": {
+    "description": "Default base skills — auto-merged into every group (memory, lifecycle, cross-platform, quality)",
+    "skills": [
+      "brain-manager",
+      "journal-manager",
+      "context-manager",
+      "concise-planning",
+      "writing-plans",
+      "git-manager",
+      "commit",
+      "powershell-windows",
+      "bash-linux",
+      "debugger",
+      "clean-code",
+      "codebase-navigator"
+    ]
+  },
   "general-dev": {
     "description": "General Development - Backend, Frontend, Full-stack",
     "skills": [

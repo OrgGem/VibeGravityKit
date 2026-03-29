@@ -13,7 +13,8 @@
       "bash-linux",
       "debugger",
       "clean-code",
-      "codebase-navigator"
+      "codebase-navigator",
+      "error-handling-patterns"
     ]
   },
   "general-dev": {
@@ -52,23 +53,16 @@
       "vercel-deployment"
     ],
     "workflows": [
-      "architect",
-      "backend-dev",
-      "frontend-dev",
-      "fullstack-coder",
-      "designer",
       "leader",
-      "planner",
       "quickstart",
+      "planner",
+      "architect",
+      "designer",
+      "frontend-dev",
+      "backend-dev",
+      "fullstack-coder",
       "qa-engineer",
-      "code-reviewer",
-      "devops",
-      "mobile-dev",
-      "security-engineer",
-      "release-manager",
-      "meta-thinker",
-      "solution-architect",
-      "quality-guardian"
+      "code-reviewer"
     ]
   },
   "n8n-dev": {
@@ -94,7 +88,9 @@
       "testing-patterns"
     ],
     "workflows": [
-      "n8n-automator"
+      "n8n-automator",
+      "backend-dev",
+      "code-reviewer"
     ]
   },
   "nocobase-dev": {
@@ -227,36 +223,46 @@
     ]
   },
   "security-audit": {
-    "description": "Security & Penetration Testing - Vulnerability assessment, threat modeling",
+    "description": "Security Core - Threat modeling, SAST, vulnerability analysis, code security",
+    "skills": [
+      "threat-modeling-expert",
+      "stride-analysis-patterns",
+      "vulnerability-scanner",
+      "sast-configuration",
+      "attack-tree-construction",
+      "security-requirement-extraction",
+      "threat-mitigation-mapping",
+      "security-bluebook-builder",
+      "top-web-vulnerabilities",
+      "broken-authentication",
+      "api-fuzzing-bug-bounty",
+      "sql-injection-testing",
+      "xss-html-injection",
+      "wireshark-analysis"
+    ],
+    "workflows": [
+      "security-engineer",
+      "security-auditor",
+      "code-reviewer"
+    ]
+  },
+  "security-pentest": {
+    "description": "Penetration Testing - Offensive security, red team, exploitation tools",
     "skills": [
       "ethical-hacking-methodology",
       "pentest-checklist",
       "pentest-commands",
       "scanning-tools",
-      "top-web-vulnerabilities",
-      "sql-injection-testing",
-      "xss-html-injection",
-      "api-fuzzing-bug-bounty",
       "red-team-tactics",
       "red-team-tools",
-      "threat-modeling-expert",
-      "stride-analysis-patterns",
-      "vulnerability-scanner",
-      "sast-configuration",
-      "wireshark-analysis",
-      "attack-tree-construction",
-      "security-requirement-extraction",
-      "threat-mitigation-mapping",
-      "security-bluebook-builder",
-      "broken-authentication",
+      "metasploit-framework",
+      "shodan-reconnaissance",
       "cloud-penetration-testing",
       "aws-penetration-testing",
       "linux-privilege-escalation",
       "windows-privilege-escalation",
       "wordpress-penetration-testing",
-      "ssh-penetration-testing",
-      "shodan-reconnaissance",
-      "metasploit-framework"
+      "ssh-penetration-testing"
     ],
     "workflows": [
       "security-engineer",
@@ -297,7 +303,8 @@
     ],
     "workflows": [
       "seo-specialist",
-      "seo-marketer"
+      "seo-marketer",
+      "researcher"
     ]
   },
   "ai-agent": {
@@ -337,41 +344,70 @@
       "ai-agent-builder"
     ]
   },
-  "saas-integrate": {
-    "description": "SaaS Integration - Automation connectors for 30+ SaaS platforms",
+  "saas-crm": {
+    "description": "SaaS CRM & Sales - HubSpot, Salesforce, Pipedrive, Stripe, Shopify connectors",
     "skills": [
-      "slack-automation",
-      "github-automation",
-      "jira-automation",
       "hubspot-automation",
       "salesforce-automation",
-      "gmail-automation",
-      "google-calendar-automation",
-      "google-drive-automation",
-      "googlesheets-automation",
-      "notion-automation",
-      "discord-automation",
+      "pipedrive-automation",
       "stripe-automation",
       "shopify-automation",
-      "twitter-automation",
-      "linkedin-automation",
-      "trello-automation",
-      "clickup-automation",
-      "zendesk-automation",
-      "sendgrid-automation",
-      "whatsapp-automation",
-      "airtable-automation",
-      "asana-automation",
-      "monday-automation",
-      "pipedrive-automation",
       "freshdesk-automation",
       "intercom-automation",
-      "mailchimp-automation",
-      "instagram-automation"
+      "zendesk-automation"
+    ],
+    "workflows": [
+      "n8n-automator",
+      "saas-connector",
+      "backend-dev"
+    ]
+  },
+  "saas-comms": {
+    "description": "SaaS Communications - Slack, Discord, WhatsApp, Gmail, email connectors",
+    "skills": [
+      "slack-automation",
+      "discord-automation",
+      "whatsapp-automation",
+      "gmail-automation",
+      "sendgrid-automation",
+      "mailchimp-automation"
     ],
     "workflows": [
       "n8n-automator",
       "saas-connector"
+    ]
+  },
+  "saas-project": {
+    "description": "SaaS Project Management - Jira, Asana, Trello, ClickUp, Monday, Notion connectors",
+    "skills": [
+      "jira-automation",
+      "asana-automation",
+      "trello-automation",
+      "clickup-automation",
+      "monday-automation",
+      "notion-automation",
+      "airtable-automation",
+      "github-automation"
+    ],
+    "workflows": [
+      "n8n-automator",
+      "saas-connector"
+    ]
+  },
+  "saas-marketing": {
+    "description": "SaaS Marketing & Social - Twitter, LinkedIn, Instagram, Google Suite connectors",
+    "skills": [
+      "twitter-automation",
+      "linkedin-automation",
+      "instagram-automation",
+      "google-calendar-automation",
+      "google-drive-automation",
+      "googlesheets-automation"
+    ],
+    "workflows": [
+      "n8n-automator",
+      "saas-connector",
+      "researcher"
     ]
   },
   "startup-biz": {

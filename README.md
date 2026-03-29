@@ -1,7 +1,7 @@
-# 🌌 VibeGravityKit
+# 🌌 Anti-Gravity Kit
 
 > **The AI-Native Software House in a Box.**
-> _Build enterprise-grade software with a team of 887+ AI Skills organized into 16 focused groups, each enhanced with 12 default base skills for memory, lifecycle, and cross-platform compatibility._
+> _Build enterprise-grade software with a team of 893+ AI Skills organized into 19 focused groups, each enhanced with 13 default base skills for memory, lifecycle, and cross-platform compatibility._
 
 ---
 
@@ -43,24 +43,28 @@ gkt groups   # List all available groups
 
 | Group                  | Skills | +Default | Description                                     |
 | ---------------------- | ------ | -------- | ----------------------------------------------- |
-| `general-dev`          | 31     | +8       | Backend, Frontend, Full-stack development       |
+| `general-dev`          | 31     | +9       | Backend, Frontend, Full-stack development       |
 | `n8n-dev`              | 18     | +10      | n8n workflow automations                        |
 | `nocobase-dev`         | 26     | +11      | NocoBase plugin development                     |
-| `general-doc`          | 20     | +10      | Technical docs, RFC, ADR, wiki                  |
-| `research`             | 18     | +11      | Deep research, market analysis                  |
-| `cloud-deploy`         | 26     | +11      | Cloud, DevOps, CI/CD, Kubernetes                |
-| `security-audit`       | 28     | +12      | Pentest, vulnerability assessment               |
-| `seo-marketing`        | 28     | +12      | SEO, CRO, content marketing                     |
-| `ai-agent`             | 28     | +12      | LLM apps, RAG, multi-agent                      |
-| `saas-integrate`       | 28     | +12      | 28+ SaaS platform connectors                    |
-| `startup-biz`          | 26     | +12      | Market analysis, financial modeling             |
+| `general-doc`          | 20     | +11      | Technical docs, RFC, ADR, wiki                  |
+| `research`             | 18     | +12      | Deep research, market analysis                  |
+| `cloud-deploy`         | 26     | +12      | Cloud, DevOps, CI/CD, Kubernetes                |
+| `security-audit`       | 14     | +13      | Threat modeling, SAST, vulnerability analysis   |
+| `security-pentest`     | 14     | +13      | Offensive security, red team, exploitation      |
+| `seo-marketing`        | 28     | +13      | SEO, CRO, content marketing                     |
+| `ai-agent`             | 28     | +13      | LLM apps, RAG, multi-agent                      |
+| `saas-crm`             | 8      | +13      | HubSpot, Salesforce, Stripe connectors          |
+| `saas-comms`           | 6      | +13      | Slack, Discord, WhatsApp, Gmail connectors      |
+| `saas-project`         | 8      | +13      | Jira, Asana, Trello, Notion connectors          |
+| `saas-marketing`       | 6      | +13      | Twitter, LinkedIn, Google Suite connectors      |
+| `startup-biz`          | 26     | +13      | Market analysis, financial modeling             |
 | `api-graphql`          | 24     | +12      | API design, GraphQL, REST, OpenAPI, FastAPI     |
-| `claude-code`          | 22     | +10      | Claude Code skills, prompt engineering, MCP     |
-| `context-data-rag`     | 28     | +11      | Context engineering, RAG, data pipelines        |
+| `claude-code`          | 22     | +11      | Claude Code skills, prompt engineering, MCP     |
+| `context-data-rag`     | 28     | +12      | Context engineering, RAG, data pipelines        |
 | `database`             | 26     | +11      | SQL/NoSQL, Postgres, migrations, CQRS           |
-| `observability-report` | 22     | +12      | Monitoring, Grafana, Prometheus, SLO, incidents |
+| `observability-report` | 22     | +13      | Monitoring, Grafana, Prometheus, SLO, incidents |
 
-> **+Default**: Each group automatically includes 12 base skills for memory management, lifecycle, and cross-platform compatibility. The `+N` value shows how many unique defaults are added (some groups already include overlapping skills).
+> **+Default**: Each group automatically includes 13 base skills for memory management, lifecycle, error handling, and cross-platform compatibility. The `+N` value shows how many unique defaults are added (some groups already include overlapping skills).
 
 **Usage:**
 
@@ -99,16 +103,16 @@ gkt init antigravity                    # Install ALL skills (legacy behavior)
 
 ## 🌐 Multi-IDE Support
 
-| IDE                | Command                | Creates                                  |
-| ------------------ | ---------------------- | ---------------------------------------- |
-| **Antigravity**    | `gkt init antigravity` | `.agent/` (workflows + skills)           |
-| **Cursor**         | `gkt init cursor`      | `.cursor/rules/*.mdc`                    |
-| **Windsurf**       | `gkt init windsurf`    | `.windsurf/rules/*.md`                   |
-| **Cline**          | `gkt init cline`       | `.clinerules/*.md`                       |
-| **Kilo Code**      | `gkt init kilocode`    | `.kilocode/rules/*.md`                   |
-| **GitHub Copilot** | `gkt init copilot`     | `.github/instructions/*.instructions.md` |
-| **Kiro**           | `gkt init kiro`        | `.kiro/` (skills, hooks, steering, specs)|
-| **All**            | `gkt init`             | All of the above                         |
+| IDE                | Command                | Creates                                   |
+| ------------------ | ---------------------- | ----------------------------------------- |
+| **Antigravity**    | `gkt init antigravity` | `.agent/` (workflows + skills)            |
+| **Cursor**         | `gkt init cursor`      | `.cursor/rules/*.mdc`                     |
+| **Windsurf**       | `gkt init windsurf`    | `.windsurf/rules/*.md`                    |
+| **Cline**          | `gkt init cline`       | `.clinerules/*.md`                        |
+| **Kilo Code**      | `gkt init kilocode`    | `.kilocode/rules/*.md`                    |
+| **GitHub Copilot** | `gkt init copilot`     | `.github/instructions/*.instructions.md`  |
+| **Kiro**           | `gkt init kiro`        | `.kiro/` (skills, hooks, steering, specs) |
+| **All**            | `gkt init`             | All of the above                          |
 
 ---
 
@@ -186,13 +190,14 @@ One command, complete project. No approvals needed. Best for MVPs and prototypes
 ```
 .agent/
 ├── workflows/       # Instructions for each agent role (40 workflows)
-├── skills/          # 887+ skills across 16 groups + 12 default
+├── skills/          # 893+ skills across 19 groups + 13 default
 └── brain/           # Project context & memory
     ├── default_skills.md     # Default skill reference & integration guide
+    ├── skills_manifest.json  # Lightweight index of all skills (lazy-loading)
     ├── lifecycle.md          # Session lifecycle (init → plan → work → checkpoint → handoff)
     ├── platform_notes.md     # Cross-platform compatibility (Windows/Linux/macOS)
     ├── project_context.json  # Project metadata, architecture, decisions, conventions
-    └── agent_index.json      # Agent role definitions & handoff templates
+    └── agent_index.json      # Agent role definitions and handoff templates
 ```
 
 ---
@@ -201,39 +206,44 @@ One command, complete project. No approvals needed. Best for MVPs and prototypes
 
 Every installation includes the **Brain** — a structured knowledge base that agents read at session start:
 
-| Brain File              | Purpose                                                    |
-| ----------------------- | ---------------------------------------------------------- |
-| `default_skills.md`     | Documents 12 default skills, usage guide, workflow wiring  |
-| `lifecycle.md`          | Session lifecycle: init, plan, work, checkpoint, handoff   |
-| `platform_notes.md`     | Cross-platform guide: paths, shells, encoding, permissions |
-| `project_context.json`  | Project metadata template (tech stack, conventions, sprint)|
-| `agent_index.json`      | Agent role definitions and handoff protocol                |
+| Brain File               | Purpose                                                     |
+| ------------------------ | ----------------------------------------------------------- |
+| `default_skills.md`      | Documents 13 default skills, usage guide, workflow wiring   |
+| `skills_manifest.json`   | Lightweight index of ALL 893+ skills for lazy-loading       |
+| `lifecycle.md`           | Session lifecycle: init, plan, work, checkpoint, handoff    |
+| `platform_notes.md`      | Cross-platform guide: paths, shells, encoding, permissions  |
+| `project_context.json`   | Project metadata template (tech stack, conventions, sprint) |
+| `agent_index.json`       | Agent role definitions and handoff protocol                 |
 
-The brain files reference the 12 default skills, allowing agents to automatically:
+The brain files reference the 13 default skills, allowing agents to automatically:
+
 - Load context from previous sessions (`brain-manager`)
 - Break tasks into atomic checklists (`concise-planning`)
 - Apply platform-specific commands (`powershell-windows` / `bash-linux`)
 - Debug proactively (`debugger`)
+- Handle errors consistently (`error-handling-patterns`)
 - Maintain clean code and semantic commits (`clean-code`, `git-manager`, `commit`)
+- **Lazy-load** additional skills via `skills_manifest.json` (saves 40-60% tokens)
 
-### 12 Default Skills (Always Installed)
+### 13 Default Skills (Always Installed)
 
-| Category             | Skills                                              |
-| -------------------- | --------------------------------------------------- |
-| Memory & Context     | `brain-manager`, `journal-manager`, `context-manager`, `codebase-navigator` |
-| Planning & Quality   | `concise-planning`, `writing-plans`, `clean-code`, `debugger`               |
-| Version Control      | `git-manager`, `commit`                             |
-| Cross-Platform       | `powershell-windows`, `bash-linux`                  |
+| Category           | Skills                                                                                       |
+| ------------------ | -------------------------------------------------------------------------------------------- |
+| Memory & Context   | `brain-manager`, `journal-manager`, `context-manager`, `codebase-navigator`                  |
+| Planning & Quality | `concise-planning`, `writing-plans`, `clean-code`, `debugger`, `error-handling-patterns`     |
+| Version Control    | `git-manager`, `commit`                                                                      |
+| Cross-Platform     | `powershell-windows`, `bash-linux`                                                           |
 
 ---
 
 ## 🧰 Token Optimization
 
-| Tool                | What it does                                  | Savings     |
-| ------------------- | --------------------------------------------- | ----------- |
-| **Context Manager** | Minifies code before AI sees it               | ~50% tokens |
-| **Context Router**  | Queries only relevant data from 34+ sources   | ~70% tokens |
-| **Diff Applier**    | Applies surgical patches instead of rewriting | ~90% tokens |
+| Tool                   | What it does                                   | Savings     |
+| ---------------------- | ---------------------------------------------- | ----------- |
+| **Skills Manifest**    | Lightweight index — load full SKILL.md on demand | ~50% tokens |
+| **Context Manager**    | Minifies code before AI sees it                | ~50% tokens |
+| **Context Router**     | Queries only relevant data from 34+ sources    | ~70% tokens |
+| **Diff Applier**       | Applies surgical patches instead of rewriting  | ~90% tokens |
 
 ---
 

@@ -1,7 +1,10 @@
 # Default Skills Reference
 
-This file documents the 12 default skills that are auto-installed with every GravityKit group.
+This file documents the 13 default skills that are auto-installed with every GravityKit group.
 Agents should use these skills proactively to maintain quality, consistency, and cross-platform compatibility.
+
+> **Lazy-Loading**: See `skills_manifest.json` for a lightweight index of ALL 893+ skills.
+> Load full SKILL.md only when needed to save tokens.
 
 ## Memory & Context Skills
 
@@ -47,6 +50,11 @@ Agents should use these skills proactively to maintain quality, consistency, and
 - **Use when**: Any error, test failure, or unexpected behavior encountered
 - **Integration**: Use proactively before proposing fixes
 
+### error-handling-patterns
+- **Purpose**: Standard error handling patterns across languages and frameworks
+- **Use when**: Implementing try/catch, error boundaries, API error responses, validation
+- **Integration**: Ensures consistent error handling in all code
+
 ## Version Control Skills
 
 ### git-manager
@@ -78,10 +86,28 @@ When building or optimizing workflows, agents should reference these default ski
 1. **Session Start**: Use `brain-manager` to load previous context, check `journal-manager` for recent lessons
 2. **Planning Phase**: Use `concise-planning` to break down the task, `writing-plans` for complex multi-step work
 3. **Implementation**: Use `clean-code` as a quality gate, `codebase-navigator` to find relevant code quickly
-4. **Debugging**: Use `debugger` proactively when any issue is encountered
-5. **Commit**: Use `git-manager` + `commit` for semantic commits
-6. **Platform**: Check `powershell-windows` or `bash-linux` before running platform-specific commands
-7. **Session End**: Use `brain-manager` to export context, `journal-manager` to log lessons learned
+4. **Error Handling**: Apply `error-handling-patterns` for robust error management
+5. **Debugging**: Use `debugger` proactively when any issue is encountered
+6. **Commit**: Use `git-manager` + `commit` for semantic commits
+7. **Platform**: Check `powershell-windows` or `bash-linux` before running platform-specific commands
+8. **Session End**: Use `brain-manager` to export context, `journal-manager` to log lessons learned
+
+## Skills Manifest (Lazy-Loading)
+
+The file `skills_manifest.json` contains a lightweight index of ALL installed skills:
+```json
+{
+  "skill-name": {
+    "description": "One-line summary of what the skill does",
+    "size_kb": 5.2
+  }
+}
+```
+
+**Usage pattern for agents:**
+1. Read `skills_manifest.json` to find relevant skills by description
+2. Load only the needed SKILL.md files (saves 40-60% context vs loading all)
+3. Default skills (listed above) are always safe to load immediately
 
 ## How to Reference in Workflows
 
@@ -90,6 +116,7 @@ Workflow files (.md) can reference default skills using:
 @skill[brain-manager] - Load project context before starting
 @skill[concise-planning] - Break down task into atomic checklist
 @skill[debugger] - Debug any errors encountered
+@skill[error-handling-patterns] - Apply standard error handling
 ```
 
 These skills are always available regardless of which group was installed.

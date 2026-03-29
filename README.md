@@ -1,7 +1,7 @@
 # 🌌 Anti-Gravity Kit
 
 > **The AI-Native Software House in a Box.**
-> _Build enterprise-grade software with a team of 893+ AI Skills organized into 19 focused groups, each enhanced with 13 default base skills for memory, lifecycle, and cross-platform compatibility._
+> _Build enterprise-grade software with a team of 893+ AI Skills organized into 21 focused groups, each enhanced with 13 default base skills for memory, lifecycle, and cross-platform compatibility._
 
 ---
 
@@ -118,70 +118,75 @@ gkt init antigravity                    # Install ALL skills (legacy behavior)
 
 ## 🚀 How It Works
 
-### Mode 1: `@[/leader]` — Smart Delegation
+### Mode 1: `@[/wf-leader]` — Smart Delegation
 
 ```
 You → Leader → Agents → Report per phase → You approve → Next phase
 ```
 
-| Phase                       | Agent                                                  | Mode        |
-| --------------------------- | ------------------------------------------------------ | ----------- |
-| 📋 Planning                 | `@[/planner]`                                          | Sequential  |
-| 🏗️ Architecture + 🎨 Design | `@[/architect]` + `@[/designer]`                       | ⚡ PARALLEL |
-| 💻 Development              | `@[/frontend-dev]` + `@[/backend-dev]`                 | ⚡ PARALLEL |
-| 🧪 QA & Fix                 | `@[/qa-engineer]`                                      | Sequential  |
-| 🚀 Launch                   | `@[/devops]` + `@[/security]` + `@[/seo]` + `@[/docs]` | ⚡ PARALLEL |
+| Phase                       | Agent                                                          | Mode        |
+| --------------------------- | -------------------------------------------------------------- | ----------- |
+| 📋 Planning                 | `@[/wf-planner]`                                               | Sequential  |
+| 🏗️ Architecture + 🎨 Design | `@[/wf-architect]` + `@[/wf-designer]`                         | ⚡ PARALLEL |
+| 💻 Development              | `@[/wf-frontend-dev]` + `@[/wf-backend-dev]`                   | ⚡ PARALLEL |
+| 🧪 QA & Fix                 | `@[/wf-qa-engineer]`                                           | Sequential  |
+| 🚀 Launch                   | `@[/wf-devops]` + `@[/wf-security-engineer]` + `@[/wf-seo-specialist]` + `@[/wf-tech-writer]` | ⚡ PARALLEL |
 
-### Mode 2: `@[/quickstart]` — Full Autopilot
+### Mode 2: `@[/wf-quickstart]` — Full Autopilot
 
 One command, complete project. No approvals needed. Best for MVPs and prototypes.
 
+> 💡 **Tip:** After `gkt init <group>`, a workflow guide is displayed showing all available workflows with descriptions and sample prompts.
+
 ---
 
-## 🔄 Workflows (40)
+## 🔄 Workflows (41)
 
-| Workflow                  | Description                                              |
-| ------------------------- | -------------------------------------------------------- |
-| `/leader`                 | Orchestrates the entire team from concept to production  |
-| `/quickstart`             | Fully automated project build from idea to production    |
-| `/planner`                | Analyzes requirements, writes PRD, breaks down tasks     |
-| `/meta-thinker`           | Creative advisor, brainstorming, vision development      |
-| `/architect`              | Systems design, database, API                            |
-| `/solution-architect`     | Strategic technical planning, trade-off analysis         |
-| `/designer`               | UI/UX design system and assets                           |
-| `/frontend-dev`           | Component, layout, state management (React/Vue/Tailwind) |
-| `/backend-dev`            | API implementation, DB queries (Node/Python/Go)          |
-| `/fullstack-coder`        | Architecture, backend, frontend, testing in one workflow |
-| `/mobile-dev`             | iOS/Android (React Native/Expo)                          |
-| `/devops`                 | Docker, CI/CD, cloud deployment                          |
-| `/cloud-deployer`         | AWS deployment, CI/CD, Docker, Kubernetes, serverless    |
-| `/n8n-automator`          | n8n workflow builder with 70+ SaaS connectors            |
-| `/nocobase-plugin-expert` | NocoBase plugin development (Server, Client, DB, API)    |
-| `/nocobase-plugin-build`  | Build NocoBase plugins                                   |
-| `/qa-engineer`            | Test case, API, SQL, automation, performance             |
-| `/quality-guardian`       | Code review, testing, security audit in one pass         |
-| `/code-reviewer`          | Automated code quality review                            |
-| `/security-engineer`      | Security workflow (Audit/Pen-Test/Incident)              |
-| `/security-auditor`       | Penetration testing, vulnerability assessment            |
-| `/seo-specialist`         | Search engine optimization                               |
-| `/seo-marketer`           | SEO optimization, content strategy, CRO                  |
-| `/ai-agent-builder`       | Build LLM apps, RAG systems, multi-agent architectures   |
-| `/saas-connector`         | Automate 20+ SaaS platforms via API integrations         |
-| `/startup-advisor`        | Market analysis, financial modeling, GTM planning        |
-| `/tech-writer`            | Documentation & API refs                                 |
-| `/doc-writer`             | Professional technical documentation, reports, RFC, ADR  |
-| `/knowledge-guide`        | Code explainer, note taker, handoff specialist           |
-| `/researcher`             | Market analysis, web search, trend discovery             |
-| `/research-analyst`       | Deep research, analysis, file I/O, translation           |
-| `/deep-researcher`        | Comprehensive research and professional reports          |
-| `/release-manager`        | Changelog generation, version bumping                    |
-| `/prompt-engineer`        | Create optimized prompts for any AI model                |
-| `/image-creator`          | AI image generation, design assets, diagrams             |
-| `/api-graphql-dev`        | API & GraphQL development workflow                       |
-| `/claude-code-dev`        | Claude Code skills, prompt engineering, MCP              |
-| `/context-data-eng`       | Context engineering, RAG, data pipelines                 |
-| `/database-eng`           | Database design, optimization, migrations, CQRS          |
-| `/observability-eng`      | Monitoring, tracing, Grafana, Prometheus, SLO            |
+> **Naming convention:** All workflows use the `wf-` prefix. Type `/wf-` in your AI chat to filter only workflows.
+
+| Workflow                     | Description                                              |
+| ---------------------------- | -------------------------------------------------------- |
+| `/wf-leader`                 | Orchestrates the entire team from concept to production  |
+| `/wf-quickstart`             | Fully automated project build from idea to production    |
+| `/wf-planner`                | Analyzes requirements, writes PRD, breaks down tasks     |
+| `/wf-meta-thinker`           | Creative advisor, brainstorming, vision development      |
+| `/wf-architect`              | Systems design, database, API                            |
+| `/wf-solution-architect`     | Strategic technical planning, trade-off analysis         |
+| `/wf-designer`               | UI/UX design system and assets                           |
+| `/wf-frontend-dev`           | Component, layout, state management (React/Vue/Tailwind) |
+| `/wf-backend-dev`            | API implementation, DB queries (Node/Python/Go)          |
+| `/wf-fullstack-coder`        | Architecture, backend, frontend, testing in one workflow |
+| `/wf-mobile-dev`             | iOS/Android (React Native/Expo)                          |
+| `/wf-devops`                 | Docker, CI/CD, cloud deployment                          |
+| `/wf-cloud-deployer`         | AWS deployment, CI/CD, Docker, Kubernetes, serverless    |
+| `/wf-n8n-automator`          | n8n workflow builder with 70+ SaaS connectors            |
+| `/wf-nocobase-plugin-expert` | NocoBase plugin development (Server, Client, DB, API)    |
+| `/wf-nocobase-plugin-build`  | Build NocoBase plugins                                   |
+| `/wf-qa-engineer`            | Test case, API, SQL, automation, performance             |
+| `/wf-quality-guardian`       | Code review, testing, security audit in one pass         |
+| `/wf-code-reviewer`          | Automated code quality review                            |
+| `/wf-security-engineer`      | Security workflow (Audit/Pen-Test/Incident)              |
+| `/wf-security-auditor`       | Penetration testing, vulnerability assessment            |
+| `/wf-seo-specialist`         | Search engine optimization                               |
+| `/wf-seo-marketer`           | SEO optimization, content strategy, CRO                  |
+| `/wf-ai-agent-builder`       | Build LLM apps, RAG systems, multi-agent architectures   |
+| `/wf-saas-connector`         | Automate 20+ SaaS platforms via API integrations         |
+| `/wf-startup-advisor`        | Market analysis, financial modeling, GTM planning        |
+| `/wf-tech-writer`            | Documentation & API refs                                 |
+| `/wf-doc-writer`             | Professional technical documentation, reports, RFC, ADR  |
+| `/wf-knowledge-guide`        | Code explainer, note taker, handoff specialist           |
+| `/wf-researcher`             | Market analysis, web search, trend discovery             |
+| `/wf-research-analyst`       | Deep research, analysis, file I/O, translation           |
+| `/wf-deep-researcher`        | Comprehensive research and professional reports          |
+| `/wf-release-manager`        | Changelog generation, version bumping                    |
+| `/wf-prompt-engineer`        | Create optimized prompts for any AI model                |
+| `/wf-image-creator`          | AI image generation, design assets, diagrams             |
+| `/wf-translator`             | Multi-language translation and i18n management           |
+| `/wf-api-graphql-dev`        | API & GraphQL development workflow                       |
+| `/wf-claude-code-dev`        | Claude Code skills, prompt engineering, MCP              |
+| `/wf-context-data-eng`       | Context engineering, RAG, data pipelines                 |
+| `/wf-database-eng`           | Database design, optimization, migrations, CQRS          |
+| `/wf-observability-eng`      | Monitoring, tracing, Grafana, Prometheus, SLO            |
 
 ---
 
@@ -189,7 +194,7 @@ One command, complete project. No approvals needed. Best for MVPs and prototypes
 
 ```
 .agent/
-├── workflows/       # Instructions for each agent role (40 workflows)
+├── workflows/       # Instructions for each agent role (41 workflows, wf-* prefix)
 ├── skills/          # 893+ skills across 19 groups + 13 default
 └── brain/           # Project context & memory
     ├── default_skills.md     # Default skill reference & integration guide

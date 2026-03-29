@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 Nhqvu2005
+Copyright (c) 2026 GKT
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,4 @@ SOFTWARE.
 
 ACKNOWLEDGEMENTS & THIRD PARTY NOTICES
 
-This project incorporates concepts and logic patterns from the open-source community:
-
-1. ui-ux-pro-max-skill
-   - Source: https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
-   - Credit: Foundation for the Data-Driven Implementation of user interfaces.
+This project incorporates concepts and logic patterns from other open-source projects.

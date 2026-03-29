@@ -34,6 +34,6 @@ python .agent/skills/template-marketplace/scripts/template_engine.py --action se
 - **Mobile App**: React Native/Expo with navigation, auth, API
 
 ## Integration
-- Used by `@[/quickstart]` to auto-select the best template based on user's idea.
-- Used by `@[/leader]` during Step 1 to suggest starting points.
+- Used by `@[/wf-quickstart]` to auto-select the best template based on user's idea.
+- Used by `@[/wf-leader]` during Step 1 to suggest starting points.
 - Integrates with `project-scaffolder` for enhanced structure.

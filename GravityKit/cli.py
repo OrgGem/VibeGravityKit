@@ -23,6 +23,110 @@ SOURCE_ROOT = Path(__file__).resolve().parent
 IDE_NAMES = {"antigravity", "cursor", "windsurf", "cline", "kilocode", "copilot", "kiro", "all"}
 
 
+# Sample prompts for common workflow types (used in post-init display)
+WORKFLOW_SAMPLE_PROMPTS = {
+    "wf-leader": "Build a SaaS app for task management with auth and billing",
+    "wf-quickstart": "I want to create a landing page for my startup",
+    "wf-planner": "Analyze requirements and create PRD for an e-commerce platform",
+    "wf-architect": "Design the database schema and API for a booking system",
+    "wf-designer": "Create a modern design system with dark mode support",
+    "wf-frontend-dev": "Build the React dashboard with charts and user settings",
+    "wf-backend-dev": "Implement REST API with auth, CRUD, and file upload",
+    "wf-fullstack-coder": "Build a full-stack todo app with Next.js and PostgreSQL",
+    "wf-mobile-dev": "Create a React Native app with push notifications",
+    "wf-qa-engineer": "Write test cases and run E2E tests for the login flow",
+    "wf-code-reviewer": "Review my latest changes for security and best practices",
+    "wf-security-engineer": "Run a security audit on the authentication module",
+    "wf-security-auditor": "Audit the codebase for OWASP top 10 vulnerabilities",
+    "wf-devops": "Setup Docker and CI/CD pipeline for production deployment",
+    "wf-cloud-deployer": "Deploy the app to AWS with auto-scaling and monitoring",
+    "wf-doc-writer": "Generate API documentation and developer guides",
+    "wf-tech-writer": "Write technical docs for the SDK integration",
+    "wf-deep-researcher": "Research the latest trends in AI agent frameworks",
+    "wf-researcher": "Analyze the competitive landscape for project management tools",
+    "wf-research-analyst": "Create a market analysis report for fintech in SEA",
+    "wf-meta-thinker": "I have a vague idea about a social app — help me shape it",
+    "wf-prompt-engineer": "Optimize this prompt for better code generation results",
+    "wf-n8n-automator": "Build an n8n workflow to sync Slack messages to Notion",
+    "wf-nocobase-plugin-expert": "Create a NocoBase plugin for document management",
+    "wf-nocobase-plugin-build": "Build and deploy my NocoBase plugin to production",
+    "wf-seo-specialist": "Optimize my website for search engines",
+    "wf-seo-marketer": "Create an SEO content strategy for my blog",
+    "wf-solution-architect": "Design a microservices architecture for our platform",
+    "wf-image-creator": "Generate marketing screenshots and visual assets",
+    "wf-release-manager": "Generate changelog and prepare v2.0 release",
+    "wf-quality-guardian": "Run a comprehensive quality check on the codebase",
+    "wf-knowledge-guide": "Explain how the authentication module works",
+    "wf-translator": "Translate the app UI to Vietnamese and Japanese",
+    "wf-observability-eng": "Setup monitoring with Grafana and Prometheus",
+    "wf-api-graphql-dev": "Design and implement a GraphQL API with subscriptions",
+    "wf-claude-code-dev": "Build a custom MCP tool for database queries",
+    "wf-context-data-eng": "Build a RAG pipeline with vector search",
+    "wf-database-eng": "Design a PostgreSQL schema with migrations and CQRS",
+    "wf-startup-advisor": "Create a business plan for my SaaS startup",
+    "wf-saas-connector": "Integrate HubSpot CRM with our backend via API",
+    "wf-ai-agent-builder": "Build an AI agent with tool calling and memory",
+}
+
+
+def get_workflow_info(workflows_dir, workflow_names):
+    """Read workflow .md files and extract description from frontmatter."""
+    results = []
+    for wf_name in workflow_names:
+        wf_file = workflows_dir / f"{wf_name}.md"
+        description = "No description available."
+        if wf_file.exists():
+            try:
+                with open(wf_file, "r", encoding="utf-8") as f:
+                    content = f.read(500)  # Only read first 500 chars for frontmatter
+                match = re.search(r"description:\s*(.+)", content)
+                if match:
+                    description = match.group(1).strip()
+            except Exception:
+                pass
+        sample = WORKFLOW_SAMPLE_PROMPTS.get(wf_name, "Help me with this task")
+        # Extract short role from description (before the dash)
+        parts = description.split(" - ", 1)
+        role = parts[0] if len(parts) > 1 else description[:40]
+        detail = parts[1] if len(parts) > 1 else ""
+        results.append({
+            "name": wf_name,
+            "role": role,
+            "detail": detail,
+            "description": description,
+            "sample": sample,
+        })
+    return results
+
+
+def show_group_workflows(workflows_dir, workflow_names):
+    """Display a formatted guide of workflows after init."""
+    infos = get_workflow_info(workflows_dir, workflow_names)
+    if not infos:
+        return
+
+    click.echo(f"\n📋 Available Workflows ({len(infos)}):\n")
+    click.echo(f"{'Workflow':<30} {'Description':<55}")
+    click.echo("─" * 85)
+
+    for info in infos:
+        slash_name = f"/{info['name']}"
+        click.echo(f"  {slash_name:<28} {info['description'][:53]}")
+
+    click.echo(f"\n💡 How to use — type the workflow name in your AI chat:\n")
+    # Show up to 3 sample prompts
+    shown = 0
+    for info in infos:
+        if shown >= 3:
+            break
+        click.echo(f"  📎 {info['name']}")
+        click.echo(f"     Prompt: \"{info['sample']}\"")
+        click.echo("")
+        shown += 1
+
+    click.echo(f"  💬 Tip: Type /wf- to filter only workflows in the / menu.")
+
+
 def get_default_skills(skill_groups):
     """Get the list of default skills from _default group."""
     default_group = skill_groups.get("_default", {})
@@ -281,9 +385,11 @@ def init(target, group):
     
     click.echo(f"\n✨ Done! Installed for {installed} IDE(s).")
     if group_name:
-        click.echo(f"👉 Group '{group_name}' is ready. Use the workflows in .agent/workflows/.")
+        grp = skill_groups[group_name]
+        workflows_dir = package_dir / ".agent" / "workflows"
+        show_group_workflows(workflows_dir, grp.get('workflows', []))
     else:
-        click.echo("👉 Use @[/planner], @[/architect], etc. in your AI chat.")
+        click.echo("👉 Use @[/wf-planner], @[/wf-architect], etc. in your AI chat.")
 
 @main.command()
 def groups():

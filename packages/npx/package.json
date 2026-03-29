@@ -1,0 +1,45 @@
+{
+  "name": "gkt-node",
+  "version": "3.7.0",
+  "description": "GravityKit — The AI-Native Software House in a Box (npx installer)",
+  "bin": {
+    "gkt": "./bin/cli.js",
+    "gkt-node": "./bin/cli.js"
+  },
+  "scripts": {
+    "build": "node scripts/build-assets.js",
+    "prepublishOnly": "node scripts/build-assets.js"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "assets/",
+    "scripts/"
+  ],
+  "keywords": [
+    "ai",
+    "agents",
+    "llm",
+    "coding",
+    "automation",
+    "gravitykit",
+    "antigravity",
+    "cursor",
+    "windsurf",
+    "cline"
+  ],
+  "author": "GravityKit Team <contact@gravitykit.ai>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OrgGem/VibeGravityKit.git",
+    "directory": "packages/npx"
+  },
+  "homepage": "https://github.com/OrgGem/VibeGravityKit",
+  "bugs": {
+    "url": "https://github.com/OrgGem/VibeGravityKit/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

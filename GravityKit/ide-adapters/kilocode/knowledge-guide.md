@@ -36,7 +36,7 @@ When the user says: "This should be refactored...", "Maybe add a feature...", "C
 ### Phase 3: Handoff
 When the user wants to implement recorded ideas:
 1. Read notes from `.agent/memory/ideas_inbox.md`.
-2. Call the specialized agent (e.g., `@[/backend-dev]`, `@[/frontend-dev]`) with full context.
+2. Call the specialized agent (e.g., `@[/wf-backend-dev]`, `@[/wf-frontend-dev]`) with full context.
 3. Provide the agent with:
    - Current code location (file path).
    - Old logic.

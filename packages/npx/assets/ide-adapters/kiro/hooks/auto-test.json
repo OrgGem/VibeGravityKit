@@ -1,0 +1,8 @@
+{
+  "title": "Auto Test on Save",
+  "description": "Automatically run related tests when source files are saved",
+  "event": "fileSave",
+  "filePattern": "**/*.{ts,tsx,js,jsx,py}",
+  "action": "askKiro",
+  "instructions": "The file {{filePath}} was just saved. Find and run the tests that are most relevant to this file. If tests fail, suggest a fix. If no tests exist for this file, suggest creating one."
+}

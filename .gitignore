@@ -33,4 +33,4 @@ MANIFEST
 Thumbs.db
 
 # GravityKit specific
-/.agent/
+.agent/

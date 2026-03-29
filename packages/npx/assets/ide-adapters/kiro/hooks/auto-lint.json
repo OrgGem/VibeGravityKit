@@ -1,0 +1,8 @@
+{
+  "title": "Auto Lint on Save",
+  "description": "Automatically check code quality and fix lint issues when files are saved",
+  "event": "fileSave",
+  "filePattern": "**/*.{ts,tsx,js,jsx,py,css,scss}",
+  "action": "askKiro",
+  "instructions": "The file {{filePath}} was just saved. Check for lint errors, formatting issues, and code style violations. Fix any issues found automatically while preserving the original intent of the code."
+}

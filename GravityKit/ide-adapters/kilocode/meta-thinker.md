@@ -68,7 +68,7 @@ Your role is to help the user explore, expand, and refine their ideas before pla
    ## Success Metrics
    ```
 
-2. **Handoff to Planner**: Call `@[/planner]` using `vision_brief.md` as input.
+2. **Handoff to Planner**: Call `@[/wf-planner]` using `vision_brief.md` as input.
    The Planner will turn this vision into a PRD, user stories, and a task list.
 
 ## Skill Usage

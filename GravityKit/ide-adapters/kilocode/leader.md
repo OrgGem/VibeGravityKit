@@ -24,7 +24,7 @@ When Manager shares an idea (e.g. "I need a fashion e-commerce site"):
    - Strategic advice: `.agent/skills/strategic-planning-advisor/SKILL.md`
 3. **Check for Vague Ideas:**
    - If requirements are unclear or user needs brainstorming:
-   - Call `@[/meta-thinker]` to expand ideas and generate `vision_brief.md`.
+   - Call `@[/wf-meta-thinker]` to expand ideas and generate `vision_brief.md`.
 
 4. Determine Tech Stack:
    - New Project: Suggest stack using `.agent/skills/tech-stack-advisor/SKILL.md`

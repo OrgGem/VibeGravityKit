@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.7.0] - 2026-03-30
+
+### Added
+
+- **Post-init Workflow Guide** — After `gkt init <group>`, displays a formatted table of all installed workflows with descriptions and sample prompts to help new users get started immediately.
+- Sample prompt database for all 41 workflows (used in post-init display)
+
+### Changed
+
+- **Workflow `wf-` Prefix** — All 41 workflow files renamed with `wf-` prefix (e.g., `leader.md` → `wf-leader.md`) to enable easy filtering in IDE command menus. Type `/wf-` to filter only workflows.
+- Updated all cross-references (`@[/xxx]` → `@[/wf-xxx]`) across 7 workflow files, 12 IDE adapter files, and 1 skill file
+- Updated `skill_groups.json` — all 21 groups now reference `wf-` prefixed workflow names
+- Updated CLI and NPX init output hints to use `wf-` prefixed names
+- Bumped NPX package version to 3.7.0
+
 ## [3.6.0] - 2026-03-30
 
 ### Added

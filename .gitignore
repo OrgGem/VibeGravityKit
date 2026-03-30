@@ -32,5 +32,7 @@ MANIFEST
 .DS_Store
 Thumbs.db
 
-# GravityKit specific
-.agent/
+# Root .agent — ignore brain & skills, track workflows only
+# Leading "/" scopes to root; GravityKit/.agent/ is fully tracked
+/.agent/brain/
+/.agent/skills/

@@ -186,9 +186,9 @@ def copy_group_selective(source_agent_dir, target_agent_dir, group_config, defau
     return copied_skills
 
 
-def install_kiro(package_dir, group_config=None):
+def install_kiro(package_dir, group_config=None, skill_groups=None):
     """Install GravityKit for Kiro IDE.
-    
+
     Maps .agent/ structure to Kiro's .kiro/ structure:
       .agent/skills/ → .kiro/skills/
       ide-adapters/kiro/steering/ → .kiro/steering/
@@ -213,7 +213,8 @@ def install_kiro(package_dir, group_config=None):
         if group_config:
             # Selective: copy group skills + _default skills
             all_skills = list(group_config.get("skills", []))
-            default_group = load_skill_groups().get("_default", {})
+            resolved_groups = skill_groups if skill_groups is not None else load_skill_groups()
+            default_group = resolved_groups.get("_default", {})
             for ds in default_group.get("skills", []):
                 if ds not in all_skills:
                     all_skills.append(ds)
@@ -241,9 +242,21 @@ def install_kiro(package_dir, group_config=None):
     if hooks_src.exists():
         shutil.copytree(hooks_src, hooks_target)
 
-    # 4. Create specs directory
+    # 4. Copy workflows → .kiro/specs/
     specs_dir = kiro_dir / "specs"
     specs_dir.mkdir(parents=True, exist_ok=True)
+    workflows_src = agent_dir / "workflows"
+    if workflows_src.exists():
+        if group_config:
+            # Selective: only workflows listed in the group
+            for wf_name in group_config.get("workflows", []):
+                src = workflows_src / f"{wf_name}.md"
+                if src.exists():
+                    shutil.copy2(src, specs_dir / f"{wf_name}.md")
+        else:
+            # Full: copy all workflow files
+            for wf_file in workflows_src.glob("*.md"):
+                shutil.copy2(wf_file, specs_dir / wf_file.name)
 
     return copied_skills
 
@@ -262,7 +275,7 @@ def init(target, group):
     TARGET can be an IDE name or a skill group name.
     
     \b
-    IDE names: all (default), antigravity, cursor, windsurf, cline, kilocode, copilot
+    IDE names: all (default), antigravity, cursor, windsurf, cline, kilocode, copilot, kiro
     Group names: general-dev, n8n-dev, nocobase-dev, general-doc, research,
                  cloud-deploy, security-audit, seo-marketing, ai-agent,
                  saas-integrate, startup-biz
@@ -365,7 +378,7 @@ def init(target, group):
             if target_ide == "kiro":
                 # Special install for Kiro: maps .agent/ to .kiro/ structure
                 grp = skill_groups[group_name] if group_name else None
-                copied = install_kiro(package_dir, grp)
+                copied = install_kiro(package_dir, grp, skill_groups)
                 click.echo(f"  ✅ {config['label']} ({copied} skills)")
             elif group_name and target_ide == "antigravity":
                 # Selective copy for antigravity with group filter + _default merge
@@ -383,6 +396,25 @@ def init(target, group):
         except Exception as e:
             click.echo(f"  ❌ {target_ide}: {str(e)}")
     
+    # For single IDE adapter installs (not antigravity/kiro/all), adapter files reference
+    # .agent/skills/ paths. Auto-install .agent/ if it's not already present.
+    IDE_ADAPTERS = {"cursor", "windsurf", "cline", "kilocode", "copilot"}
+    if ide_target in IDE_ADAPTERS and installed > 0:
+        agent_target = Path.cwd() / ".agent"
+        if not agent_target.exists():
+            agent_src = package_dir / ".agent"
+            if agent_src.exists():
+                try:
+                    if group_name:
+                        default_skills = get_default_skills(skill_groups)
+                        copy_group_selective(agent_src, agent_target, skill_groups[group_name], default_skills)
+                    else:
+                        shutil.copytree(agent_src, agent_target)
+                    click.echo(f"  ✅ .agent/ (skills referenced by {ide_target} adapter)")
+                    installed += 1
+                except Exception as e:
+                    click.echo(f"  ⚠️  .agent/ not installed: {str(e)}")
+
     click.echo(f"\n✨ Done! Installed for {installed} IDE(s).")
     if group_name:
         grp = skill_groups[group_name]

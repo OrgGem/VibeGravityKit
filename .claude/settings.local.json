@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -h -oP '\\(?<=skills/\\)[^\\\\s/]+' c:/Users/gem/Documents/GitHub/VibeGravityKit/GravityKit/.agent/workflows/*.md)",
+      "Bash(grep -oE '`[a-z][a-z0-9-]+`')",
+      "Bash(sort -u grep -oE '`[a-z][a-z0-9-]+`' \"c:/Users/gem/Documents/GitHub/VibeGravityKit/GravityKit/.agent/brain/default_skills.md\")",
+      "Bash(python3 -c ':*)",
+      "Bash(sort comm:*)",
+      "Bash(grep -rh '`__TRACKED_VAR__`' c:/Users/gem/Documents/GitHub/VibeGravityKit/GravityKit/.agent/workflows/)",
+      "Bash(grep -rh '`__TRACKED_VAR__`\\\\|skills/__TRACKED_VAR__' c:/Users/gem/Documents/GitHub/VibeGravityKit/GravityKit/.agent/workflows/)",
+      "Bash([ -f \"$SKILLS_DIR/$skill/SKILL.md\" ])",
+      "Bash(python -m py_compile c:/Users/gem/Documents/GitHub/VibeGravityKit/GravityKit/cli.py)",
+      "Bash(du -sh \"c:/Users/gem/Documents/GitHub/VibeGravityKit/UiPathSkillCollection/uipath-ai-skills/uipath-core/\"*)"
+    ]
+  }
+}

@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.8.0] - 2026-04-05
+
+### Added
+
+- **UiPath RPA Suite** — 4 new professional workflows for UiPath automation:
+    - `wf-uipath-analyst` — Business process analysis and PDD generation.
+    - `wf-uipath-developer` — XAML generation, REFramework, and coded workflows (C#).
+    - `wf-uipath-reviewer` — Quality gate and best practice audits for UiPath projects.
+    - `wf-uipath-deploy` — Orchestrator deployment and CI/CD integration.
+- **New Core Skills** — Expanded skill library across multiple domains:
+    - `uipath-core`, `uipath-rpa-workflows`, `uipath-coded-workflows`, `uipath-platform`, `uipath-agents`, `uipath-shared`.
+    - `nextjs-developer`, `observability-framework`, `owasp-security-practices`, `react-pro`, `vue-nuxt-developer`, `web-search`.
+- **UiPath Skill Collection** — Comprehensive resource library for RPA developers.
+
+### Changed
+
+- Updated `skills_index.json` to include 199 unique skills.
+- Synchronized NPX assets to include the new `uipath` group and workflows.
+
+## [3.7.1] - 2026-04-04
+
+### Changed
+
+- Maintenance release and dependency updates.
+
 ## [3.7.0] - 2026-03-30
 
 ### Added

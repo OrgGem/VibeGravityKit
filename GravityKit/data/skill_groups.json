@@ -649,5 +649,22 @@
       "wf-quality-guardian",
       "wf-observability-eng"
     ]
+  },
+  "uipath": {
+    "description": "UiPath RPA — XAML generation, REFramework, coded workflows (C#), Orchestrator/deploy, AI agents, uip CLI, lint validation",
+    "skills": [
+      "uipath-core",
+      "uipath-rpa-workflows",
+      "uipath-coded-workflows",
+      "uipath-platform",
+      "uipath-agents",
+      "uipath-shared"
+    ],
+    "workflows": [
+      "wf-uipath-analyst",
+      "wf-uipath-developer",
+      "wf-uipath-reviewer",
+      "wf-uipath-deploy"
+    ]
   }
 }

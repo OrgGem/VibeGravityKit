@@ -1,5 +1,5 @@
 ---
-description: UiPath Developer — phát triển dự án UiPath Studio end-to-end: scaffold, inspect UI, generate XAML, wire framework, validate, deploy.
+description: "UiPath Developer — phát triển dự án UiPath Studio end-to-end: scaffold, inspect UI, generate XAML, wire framework, validate, deploy."
 ---
 
 # UiPath Developer Workflow

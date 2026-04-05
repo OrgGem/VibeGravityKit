@@ -183,6 +183,11 @@ def copy_group_selective(source_agent_dir, target_agent_dir, group_config, defau
         if src.exists():
             shutil.copy2(src, workflows_target / f"{wf_name}.md")
 
+    # Copy all agents (agents are universal — not filtered by group)
+    agents_src = source_agent_dir / "agents"
+    if agents_src.exists():
+        shutil.copytree(agents_src, target_agent_dir / "agents")
+
     return copied_skills
 
 
@@ -257,6 +262,16 @@ def install_kiro(package_dir, group_config=None, skill_groups=None):
             # Full: copy all workflow files
             for wf_file in workflows_src.glob("*.md"):
                 shutil.copy2(wf_file, specs_dir / wf_file.name)
+
+    # 5. Copy agents → .kiro/agents/
+    agents_src = agent_dir / "agents"
+    if agents_src.exists():
+        shutil.copytree(agents_src, kiro_dir / "agents")
+
+    # 6. Copy brain/ → .kiro/brain/ (session continuity + workflow checkpoints)
+    brain_src = agent_dir / "brain"
+    if brain_src.exists():
+        shutil.copytree(brain_src, kiro_dir / "brain")
 
     return copied_skills
 

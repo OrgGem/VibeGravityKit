@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ':*)",
+      "Bash(grep -E \"\\\\.md$|README\")",
+      "Bash(ls -la /c/Users/gem/Documents/GitHub/VibeGravityKit/GravityKit/*.md)",
+      "Bash(ls /c/Users/gem/Documents/GitHub/VibeGravityKit/GravityKit/.agent/workflows/*.md)",
+      "WebSearch"
+    ]
+  }
+}

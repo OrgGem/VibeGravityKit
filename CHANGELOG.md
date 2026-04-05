@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.8.1] - 2026-04-05
+
+### Added
+
+- **UiPath Project Orchestration** — New `wf-uipath-project.md` workflow to serve as the master entry point for UiPath automation architecture and implementation.
+- **System Architecture Docs** — Initial release of `ARCHITECTURE.md` documenting the core components and communication patterns of GravityKit.
+- **New IDE Adapter Refinements** — Enhanced Copilot leader instructions and Kiro steering configurations for better agent coordination.
+
+### Changed
+
+- Updated `uipath` group in `skill_groups.json` to include the new project workflow.
+- Regenerated `skills_index.json` to include updated skill definitions and the new project workflow.
+
 ## [3.8.0] - 2026-04-05
 
 ### Added

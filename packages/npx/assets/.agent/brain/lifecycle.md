@@ -6,6 +6,10 @@
 - Detect platform (Windows/Linux/macOS) → use `powershell-windows` or `bash-linux`
 - Load `project_context.json` via `brain-manager` for project awareness
 - Check `journal-manager` for recent decisions, lessons, and known issues
+- **Check `brain/workflow_sessions/`** for in-progress sessions:
+  - If `{workflow-name}-latest.md` exists → read it, report current phase, ask user: "Resume from [Phase N] or start fresh?"
+  - If user resumes → skip completed phases, continue from the checkpoint
+  - If user restarts → archive the old session file (rename with `-archived` suffix) and create a new one
 - Build codebase index via `codebase-navigator` if not cached
 
 ## Requirement Analysis Phase (Optional — toggle via project_context.json)

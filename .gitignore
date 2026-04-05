@@ -36,3 +36,4 @@ Thumbs.db
 # Leading "/" scopes to root; GravityKit/.agent/ is fully tracked
 /.agent/brain/
 /.agent/skills/
+UiPathSkillCollection/

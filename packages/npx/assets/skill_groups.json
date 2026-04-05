@@ -661,6 +661,7 @@
       "uipath-shared"
     ],
     "workflows": [
+      "wf-uipath-project",
       "wf-uipath-analyst",
       "wf-uipath-developer",
       "wf-uipath-reviewer",

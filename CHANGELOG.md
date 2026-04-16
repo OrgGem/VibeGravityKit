@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.1] - 2026-04-17
+
+### Changed
+
+- **UX Improvements**: Upgraded `gkt init` CLI command to provide a richer help menu with specific IDE/Group use-cases.
+- **Workflow Suggestions**: Added a smart post-init suggestion engine that highlights the exact workflow commands to get started when setting up an empty IDE.
+
 ## [3.9.0] - 2026-04-16
 
 ### Added

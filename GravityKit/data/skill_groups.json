@@ -667,5 +667,14 @@
       "wf-uipath-reviewer",
       "wf-uipath-deploy"
     ]
+  },
+  "gen-doc": {
+    "description": "Document Generation - Multi-format Markdown to PPTX with AI design",
+    "skills": [
+      "gen-doc-ppt-master"
+    ],
+    "workflows": [
+      "wf-gen-doc"
+    ]
   }
 }

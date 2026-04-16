@@ -106,12 +106,13 @@ def show_group_workflows(workflows_dir, workflow_names):
         return
 
     click.echo(f"\n📋 Available Workflows ({len(infos)}):\n")
-    click.echo(f"{'Workflow':<30} {'Description':<55}")
-    click.echo("─" * 85)
+    click.echo(f"{'Workflow':<30} {'Purpose & Features'}")
+    click.echo("─" * 90)
 
     for info in infos:
         slash_name = f"/{info['name']}"
-        click.echo(f"  {slash_name:<28} {info['description'][:53]}")
+        # Print full description, wrapping or taking a larger slice
+        click.echo(f"  {slash_name:<28} {info['description'][:80]}")
 
     click.echo(f"\n💡 How to use — type the workflow name in your AI chat:\n")
     # Show up to 3 sample prompts
@@ -290,17 +291,20 @@ def init(target, group):
     TARGET can be an IDE name or a skill group name.
     
     \b
-    IDE names: all (default), antigravity, cursor, windsurf, cline, kilocode, copilot, kiro
+    IDE units: all (default), antigravity, cursor, windsurf, cline, kilocode, copilot, kiro
     Group names: general-dev, n8n-dev, nocobase-dev, general-doc, research,
                  cloud-deploy, security-audit, seo-marketing, ai-agent,
-                 saas-integrate, startup-biz
+                 saas-crm, saas-comms, saas-project, saas-marketing,
+                 startup-biz, api-graphql, claude-code, context-data-rag,
+                 database, observability-report, uipath, gen-doc
     
     \b
     Examples:
-      gkt init antigravity              # Install all skills for Antigravity
-      gkt init general-dev              # Install general-dev group (Antigravity)
-      gkt init antigravity --group n8n-dev  # Install n8n-dev group for Antigravity
-      gkt init all --group nocobase-dev # Install nocobase-dev group for all IDEs
+      gkt init kiro                         # Install ALL skills for Kiro IDE
+      gkt init general-dev                  # Install 'general-dev' group for Antigravity (default)
+      gkt init antigravity --group gen-doc  # Install 'gen-doc' group for Antigravity
+      gkt init kiro --group uipath          # Install 'uipath' group for Kiro IDE
+      gkt init all --group nocobase-dev     # Install 'nocobase-dev' group for all IDEs
     """
     package_dir = Path(__file__).resolve().parent
     skill_groups = load_skill_groups()
@@ -436,7 +440,13 @@ def init(target, group):
         workflows_dir = package_dir / ".agent" / "workflows"
         show_group_workflows(workflows_dir, grp.get('workflows', []))
     else:
-        click.echo("👉 Use @[/wf-planner], @[/wf-architect], etc. in your AI chat.")
+        click.echo("\n💡 Suggestions for your next steps (Type these in your AI chat):")
+        click.echo("  👉 @[/wf-leader]       : Orchestrate the entire team from concept to production")
+        click.echo("  👉 @[/wf-quickstart]   : Build an entire project automatically (no approvals needed)")
+        click.echo("  👉 @[/wf-planner]      : Analyze requirements and create detailed PRDs")
+        click.echo("  👉 @[/wf-gen-doc]      : Generate AI-designed PowerPoint presentations")
+        click.echo("  👉 @[/wf-uipath-project]: End-to-end UiPath RPA automation workflow")
+        click.echo("\n💬 Tip: Type /wf- to filter and view all 40+ available workflows.")
 
 @main.command()
 def groups():

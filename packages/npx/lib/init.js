@@ -84,12 +84,12 @@ function showGroupWorkflows(sourceAgentDir, workflowNames) {
   }
 
   console.log(`\n\ud83d\udccb Available Workflows (${infos.length}):\n`);
-  console.log(`${'Workflow'.padEnd(30)} ${'Description'.padEnd(55)}`);
-  console.log('\u2500'.repeat(85));
+  console.log(`${'Workflow'.padEnd(30)} ${'Purpose & Features'}`);
+  console.log('\u2500'.repeat(90));
 
   for (const info of infos) {
     const slash = `/${info.name}`;
-    console.log(`  ${slash.padEnd(28)} ${info.description.slice(0, 53)}`);
+    console.log(`  ${slash.padEnd(28)} ${info.description.slice(0, 80)}`);
   }
 
   console.log(`\n\ud83d\udca1 How to use \u2014 type the workflow name in your AI chat:\n`);
@@ -381,7 +381,13 @@ async function initCommand(target = 'all', group = null) {
         : path.join(sourceRoot, 'GravityKit', '.agent');
       showGroupWorkflows(agentDir, grp.workflows || []);
     } else {
-      console.log('👉 Use @[/wf-planner], @[/wf-architect], etc. in your AI chat.');
+      console.log('\n💡 Suggestions for your next steps (Type these in your AI chat):');
+      console.log('  👉 @[/wf-leader]       : Orchestrate the entire team from concept to production');
+      console.log('  👉 @[/wf-quickstart]   : Build an entire project automatically (no approvals needed)');
+      console.log('  👉 @[/wf-planner]      : Analyze requirements and create detailed PRDs');
+      console.log('  👉 @[/wf-gen-doc]      : Generate AI-designed PowerPoint presentations');
+      console.log('  👉 @[/wf-uipath-project]: End-to-end UiPath RPA automation workflow');
+      console.log('\n💬 Tip: Type /wf- to filter and view all available workflows.');
     }
   } finally {
     // Clean up temp directory if we downloaded

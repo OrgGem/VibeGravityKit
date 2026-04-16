@@ -63,7 +63,8 @@ gkt groups   # List all available groups
 | `context-data-rag`     | 28     | +12      | Context engineering, RAG, data pipelines        |
 | `database`             | 26     | +11      | SQL/NoSQL, Postgres, migrations, CQRS           |
 | `observability-report` | 22     | +13      | Monitoring, Grafana, Prometheus, SLO, incidents |
-| `uipath` ⭐ **New**    | 6      | +13      | UiPath RPA — XAML generation, REFramework, Orchestrator, coded workflows, AI agents |
+| `uipath`               | 6      | +13      | UiPath RPA — XAML generation, REFramework, Orchestrator, coded workflows, AI agents |
+| `gen-doc` ⭐ **New**    | 1      | +13      | Document Generation — AI-driven multi-format Markdown to PPTX system |
 
 > **+Default**: Each group automatically includes 13 base skills for memory management, lifecycle, error handling, and cross-platform compatibility.
 
@@ -238,6 +239,7 @@ One command, complete project. No approvals needed. Best for MVPs and prototypes
 | `/wf-context-data-eng`       | Context engineering, RAG, data pipelines                 |
 | `/wf-database-eng`           | Database design, optimization, migrations, CQRS          |
 | `/wf-observability-eng`      | Monitoring, tracing, Grafana, Prometheus, SLO            |
+| `/wf-gen-doc` ⭐ **New**     | Document Generator — Multi-format source to editable PPTX|
 
 ### UiPath RPA ⭐ New
 
@@ -294,6 +296,35 @@ Phase 4: Final Validation & Handoff
     → XAML quality checklist
     → Handoff document
     ↓ [Session marked complete in brain]
+```
+
+---
+
+## 📝 Gen-Doc Group ⭐ New
+
+The `gen-doc` skill group provides an automated pipeline for generating AI-designed PowerPoint presentations from raw documents. Use `gkt init antigravity --group gen-doc` or `gkt init kiro --group gen-doc`.
+
+### Skills included
+
+| Skill                    | Description                                                                 |
+| ------------------------ | --------------------------------------------------------------------------- |
+| `gen-doc-ppt-master`     | Core document generation skill: source parsing, SVG templating, and PPTX export |
+
+### `/wf-gen-doc` — Presentation Generator Workflow
+
+The presentation workflow takes you from source files to a fully editable `.pptx`:
+
+```text
+Phase 0: Environment Validation
+    ↓ Auto-installs required environment dependencies
+Phase 1: Source Material Assimilation
+    → Import and convert PDF/DOCX/URL/TEXT into Markdown
+Phase 2: Template Selection & Strategy
+    → Determine layouts, styling, and compile a design blueprint
+Phase 3: Visual & Content Execution
+    → Generate AI imagery and bind content into vector pages
+Phase 4: Finalize & Export
+    → Post-process SVG layers and export directly to native PPTX
 ```
 
 ---

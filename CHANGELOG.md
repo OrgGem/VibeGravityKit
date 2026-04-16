@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.0] - 2026-04-16
+
+### Added
+
+- **Document Generation** — Fully migrated the PPT Master workflow into `wf-gen-doc.md` along with its complete skill set under `gen-doc-ppt-master`. Allows AI to generate multi-format Markdown to PPTX with full design capability.
+- Registered `gen-doc` as a new first-class skill group in `skill_groups.json` natively reachable by Kiro IDE.
+- Added Auto-Dependency Resolution rule so `gen-doc` automates system dependency installation on step 0 or when missing modules are encountered.
+
 ## [3.8.1] - 2026-04-05
 
 ### Added

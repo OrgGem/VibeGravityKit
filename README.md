@@ -64,7 +64,7 @@ gkt groups   # List all available groups
 | `database`             | 26     | +11      | SQL/NoSQL, Postgres, migrations, CQRS           |
 | `observability-report` | 22     | +13      | Monitoring, Grafana, Prometheus, SLO, incidents |
 | `uipath`               | 6      | +13      | UiPath RPA — XAML generation, REFramework, Orchestrator, coded workflows, AI agents |
-| `gen-doc` ⭐ **New**    | 1      | +13      | Document Generation — AI-driven multi-format Markdown to PPTX system |
+| `gen-doc` ⭐ **New**    | 4      | +13      | Document Generation — Word, Excel, PDF, and PPTX pipelines |
 
 > **+Default**: Each group automatically includes 13 base skills for memory management, lifecycle, error handling, and cross-platform compatibility.
 
@@ -239,7 +239,7 @@ One command, complete project. No approvals needed. Best for MVPs and prototypes
 | `/wf-context-data-eng`       | Context engineering, RAG, data pipelines                 |
 | `/wf-database-eng`           | Database design, optimization, migrations, CQRS          |
 | `/wf-observability-eng`      | Monitoring, tracing, Grafana, Prometheus, SLO            |
-| `/wf-gen-doc` ⭐ **New**     | Document Generator — Multi-format source to editable PPTX|
+| `/wf-doc-generator` ⭐ **New** | Document Generator — Orchestrates Word, Excel, PDF, and PPTX|
 
 ### UiPath RPA ⭐ New
 
@@ -302,17 +302,20 @@ Phase 4: Final Validation & Handoff
 
 ## 📝 Gen-Doc Group ⭐ New
 
-The `gen-doc` skill group provides an automated pipeline for generating AI-designed PowerPoint presentations from raw documents. Use `gkt init antigravity --group gen-doc` or `gkt init kiro --group gen-doc`.
+The `gen-doc` skill group provides an automated pipeline for generating AI-designed and properly formatted Documents. Use `gkt init antigravity --group gen-doc` or `gkt init kiro --group gen-doc`.
 
 ### Skills included
 
 | Skill                    | Description                                                                 |
 | ------------------------ | --------------------------------------------------------------------------- |
-| `gen-doc-ppt-master`     | Core document generation skill: source parsing, SVG templating, and PPTX export |
+| `gen-doc-docx`           | Word generation and MS Office XSD Gate check validation                     |
+| `gen-doc-xlsx`           | Safe Excel tabular data editing + Formula persistence via precise XML       |
+| `gen-doc-pdf`            | Vectorized PDF Design System using NodeJS and Python                        |
+| `gen-doc-ppt-master`     | Core document presentation skill: SVG templating and PPTX export            |
 
-### `/wf-gen-doc` — Presentation Generator Workflow
+### `/wf-doc-generator` — Document Generator Workflow
 
-The presentation workflow takes you from source files to a fully editable `.pptx`:
+The document generator workflow takes you from requirements to a fully editable artifact:
 
 ```text
 Phase 0: Environment Validation

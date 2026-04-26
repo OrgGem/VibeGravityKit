@@ -27,15 +27,6 @@
     "source": "community"
   },
   {
-    "id": "agent-skill-creator/references/examples/stock-analyzer",
-    "path": "skills/agent-skill-creator/references/examples/stock-analyzer/SKILL.md",
-    "category": "data-ai",
-    "name": "stock-analyzer",
-    "description": "Provides comprehensive technical analysis for stocks and ETFs using RSI, MACD, Bollinger Bands, and other indicators. Activates when user requests stock analysis, technical indicators, trading signals, or market data for specific ticker symbols.",
-    "risk": "unknown",
-    "source": "community"
-  },
-  {
     "id": "agent-tool-builder",
     "path": "skills/agent-tool-builder/SKILL.md",
     "category": "data-ai",
@@ -126,6 +117,15 @@
     "source": "community"
   },
   {
+    "id": "architecture",
+    "path": "skills/architecture/SKILL.md",
+    "category": "architecture",
+    "name": "architecture",
+    "description": "Architectural decision-making framework. Requirements analysis, trade-off evaluation, ADR documentation. Use when making architecture decisions or analyzing system design.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "architecture-auditor",
     "path": "skills/architecture-auditor/SKILL.md",
     "category": "security",
@@ -174,7 +174,7 @@
     "id": "aws-penetration-testing",
     "path": "skills/aws-penetration-testing/SKILL.md",
     "category": "security",
-    "name": "AWS Penetration Testing",
+    "name": "aws-penetration-testing",
     "description": "This skill should be used when the user asks to \"pentest AWS\", \"test AWS security\", \"enumerate IAM\", \"exploit cloud infrastructure\", \"AWS privilege escalation\", \"S3 bucket testing\", \"metadata SSRF\", \"Lambda exploitation\", or needs guidance on Amazon Web Services security assessment.",
     "risk": "unknown",
     "source": "community"
@@ -264,7 +264,7 @@
     "id": "cc-skill-backend-patterns",
     "path": "skills/cc-skill-backend-patterns/SKILL.md",
     "category": "data-ai",
-    "name": "backend-patterns",
+    "name": "cc-skill-backend-patterns",
     "description": "Backend architecture patterns, API design, database optimization, and server-side best practices for Node.js, Express, and Next.js API routes.",
     "risk": "unknown",
     "source": "community"
@@ -273,7 +273,7 @@
     "id": "cc-skill-clickhouse-io",
     "path": "skills/cc-skill-clickhouse-io/SKILL.md",
     "category": "data-ai",
-    "name": "clickhouse-io",
+    "name": "cc-skill-clickhouse-io",
     "description": "ClickHouse database patterns, query optimization, analytics, and data engineering best practices for high-performance analytical workloads.",
     "risk": "unknown",
     "source": "community"
@@ -282,7 +282,7 @@
     "id": "cc-skill-coding-standards",
     "path": "skills/cc-skill-coding-standards/SKILL.md",
     "category": "development",
-    "name": "coding-standards",
+    "name": "cc-skill-coding-standards",
     "description": "Universal coding standards, best practices, and patterns for TypeScript, JavaScript, React, and Node.js development.",
     "risk": "unknown",
     "source": "community"
@@ -300,7 +300,7 @@
     "id": "cc-skill-frontend-patterns",
     "path": "skills/cc-skill-frontend-patterns/SKILL.md",
     "category": "development",
-    "name": "frontend-patterns",
+    "name": "cc-skill-frontend-patterns",
     "description": "Frontend development patterns for React, Next.js, state management, performance optimization, and UI best practices.",
     "risk": "unknown",
     "source": "community"
@@ -309,7 +309,7 @@
     "id": "cc-skill-security-review",
     "path": "skills/cc-skill-security-review/SKILL.md",
     "category": "security",
-    "name": "security-review",
+    "name": "cc-skill-security-review",
     "description": "Use this skill when adding authentication, handling user input, working with secrets, creating API endpoints, or implementing payment/sensitive features. Provides comprehensive security checklist and patterns.",
     "risk": "unknown",
     "source": "community"
@@ -363,10 +363,19 @@
     "id": "cloud-penetration-testing",
     "path": "skills/cloud-penetration-testing/SKILL.md",
     "category": "security",
-    "name": "Cloud Penetration Testing",
+    "name": "cloud-penetration-testing",
     "description": "This skill should be used when the user asks to \"perform cloud penetration testing\", \"assess Azure or AWS or GCP security\", \"enumerate cloud resources\", \"exploit cloud misconfigurations\", \"test O365 security\", \"extract secrets from cloud environments\", or \"audit cloud infrastructure\". It provides comprehensive techniques for security assessment across major cloud platforms.",
     "risk": "unknown",
     "source": "community"
+  },
+  {
+    "id": "code-graph-index",
+    "path": "skills/code-graph-index/SKILL.md",
+    "category": "data-ai",
+    "name": "code-graph-index",
+    "description": "Build a hybrid code knowledge base — symbolic graph (functions, classes, imports, call edges) plus a FAISS semantic vector index — and auto-wire MCP servers into Antigravity, Kiro, and Claude Code so any AI agent can search, traverse, and reason about the codebase locally without re-reading whole files.",
+    "risk": "safe",
+    "source": "VibeGravityKit (merged from code-review-graph)"
   },
   {
     "id": "code-reviewer",
@@ -666,6 +675,15 @@
     "source": "community"
   },
   {
+    "id": "debugging-strategies",
+    "path": "skills/debugging-strategies/SKILL.md",
+    "category": "general",
+    "name": "debugging-strategies",
+    "description": "Master systematic debugging techniques, profiling tools, and root cause analysis to efficiently track down bugs across any codebase or technology stack. Use when investigating bugs, performance issues, or unexpected behavior.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "diff-applier",
     "path": "skills/diff-applier/SKILL.md",
     "category": "general",
@@ -716,6 +734,24 @@
     "category": "infrastructure",
     "name": "docker-wizard",
     "description": "Auto-generate Dockerfile & Compose configs.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "document-reader",
+    "path": "skills/document-reader/SKILL.md",
+    "category": "data-ai",
+    "name": "document-reader",
+    "description": "Provides an MCP server that reads PDF, DOCX, and XLSX files, converting them to Markdown text so AI agents can natively read them.",
+    "risk": "safe",
+    "source": "VibeGravityKit"
+  },
+  {
+    "id": "e2e-testing-patterns",
+    "path": "skills/e2e-testing-patterns/SKILL.md",
+    "category": "infrastructure",
+    "name": "e2e-testing-patterns",
+    "description": "Master end-to-end testing with Playwright and Cypress to build reliable test suites that catch bugs, improve confidence, and enable fast deployment. Use when implementing E2E tests, debugging flaky tests, or establishing testing standards.",
     "risk": "unknown",
     "source": "community"
   },
@@ -824,6 +860,24 @@
     "category": "development",
     "name": "frontend-developer",
     "description": "Build React components, implement responsive layouts, and handle client-side state management. Masters React 19, Next.js 15, and modern frontend architecture. Optimizes performance and ensures accessibility. Use PROACTIVELY when creating UI components or fixing frontend issues.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "gen-doc-ppt-master",
+    "path": "skills/gen-doc-ppt-master/SKILL.md",
+    "category": "data-ai",
+    "name": "gen-doc-ppt-master",
+    "description": "AI-driven multi-format SVG content generation system. Converts source documents (PDF/DOCX/URL/Markdown) into high-quality SVG pages and exports to PPTX through multi-role collaboration. Use when user asks to \"create PPT\", \"make presentation\", \"生成PPT\", \"做PPT\", \"制作演示文稿\", or mentions \"gen-doc-ppt-master\".",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "git-advanced-workflows",
+    "path": "skills/git-advanced-workflows/SKILL.md",
+    "category": "data-ai",
+    "name": "git-advanced-workflows",
+    "description": "Master advanced Git workflows including rebasing, cherry-picking, bisect, worktrees, and reflog to maintain clean history and recover from any situation. Use when managing complex Git histories, collaborating on feature branches, or troubleshooting repository issues.",
     "risk": "unknown",
     "source": "community"
   },
@@ -1008,6 +1062,15 @@
     "source": "community"
   },
   {
+    "id": "javascript-mastery",
+    "path": "skills/javascript-mastery/SKILL.md",
+    "category": "data-ai",
+    "name": "javascript-mastery",
+    "description": "Comprehensive JavaScript reference covering 33+ essential concepts every developer should know. From fundamentals like primitives and closures to advanced patterns like async/await and functional programming. Use when explaining JS concepts, debugging JavaScript issues, or teaching JavaScript fundamentals.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "journal-manager",
     "path": "skills/journal-manager/SKILL.md",
     "category": "general",
@@ -1139,6 +1202,15 @@
     "category": "architecture",
     "name": "nestjs-expert",
     "description": "Nest.js framework expert specializing in module architecture, dependency injection, middleware, guards, interceptors, testing with Jest/Supertest, TypeORM/Mongoose integration, and Passport.js authentication. Use PROACTIVELY for any Nest.js application issues including architecture decisions, testing strategies, performance optimization, or debugging complex dependency injection problems. If a specialized expert is a better fit, I will recommend switching and stop.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "nextjs-best-practices",
+    "path": "skills/nextjs-best-practices/SKILL.md",
+    "category": "data-ai",
+    "name": "nextjs-best-practices",
+    "description": "Next.js App Router principles. Server Components, data fetching, routing patterns.",
     "risk": "unknown",
     "source": "community"
   },
@@ -1395,6 +1467,15 @@
     "source": "community"
   },
   {
+    "id": "react-patterns",
+    "path": "skills/react-patterns/SKILL.md",
+    "category": "development",
+    "name": "react-patterns",
+    "description": "Modern React patterns and principles. Hooks, composition, performance, TypeScript best practices.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "react-pro",
     "path": "skills/react-pro/SKILL.md",
     "category": "development",
@@ -1506,7 +1587,7 @@
     "id": "skill-creator-ms",
     "path": "skills/skill-creator-ms/SKILL.md",
     "category": "data-ai",
-    "name": "skill-creator",
+    "name": "skill-creator-ms",
     "description": "Guide for creating effective skills for AI coding agents working with Azure SDKs and Microsoft Foundry services. Use when creating new skills or updating existing skills.",
     "risk": "unknown",
     "source": "community"
@@ -1656,6 +1737,15 @@
     "source": "community"
   },
   {
+    "id": "testing-patterns",
+    "path": "skills/testing-patterns/SKILL.md",
+    "category": "architecture",
+    "name": "testing-patterns",
+    "description": "Jest testing patterns, factory functions, mocking strategies, and TDD workflow. Use when writing unit tests, creating test factories, or following TDD red-green-refactor cycle.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "typescript-pro",
     "path": "skills/typescript-pro/SKILL.md",
     "category": "development",
@@ -1753,6 +1843,15 @@
     "description": "Optimize vector index performance for latency, recall, and memory. Use when tuning HNSW parameters, selecting quantization strategies, or scaling vector search infrastructure.",
     "risk": "unknown",
     "source": "community"
+  },
+  {
+    "id": "vercel-deployment",
+    "path": "skills/vercel-deployment/SKILL.md",
+    "category": "infrastructure",
+    "name": "vercel-deployment",
+    "description": "Expert knowledge for deploying to Vercel with Next.js Use when: vercel, deploy, deployment, hosting, production.",
+    "risk": "safe",
+    "source": "vibeship-spawner-skills (Apache 2.0)"
   },
   {
     "id": "vue-nuxt-developer",

@@ -1,5 +1,5 @@
 ---
-name: coding-standards
+name: cc-skill-coding-standards
 description: Universal coding standards, best practices, and patterns for TypeScript, JavaScript, React, and Node.js development.
 author: affaan-m
 version: "1.0"

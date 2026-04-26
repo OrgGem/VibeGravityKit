@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "code-graph": {
+      "command": "python",
+      "args": [
+        "{SCRIPTS_DIR}/graph_mcp_server.py",
+        "--graph",
+        ".code-graph-index/graph.json"
+      ],
+      "env": {},
+      "disabled": false
+    },
+    "faiss-code-index": {
+      "command": "python",
+      "args": [
+        "{SCRIPTS_DIR}/faiss_mcp_server.py",
+        "--index-dir",
+        ".code-graph-index/faiss-index"
+      ],
+      "env": {},
+      "disabled": false
+    }
+  }
+}

@@ -1,7 +1,7 @@
 # 🌌 Anti-Gravity Kit
 
 > **The AI-Native Software House in a Box.**  
-> _Build enterprise-grade software with a team of 893+ AI Skills organized into 21 focused groups — each powered by 18 specialist agents, 46 workflows, and a persistent brain that remembers decisions across sessions._
+> _Build enterprise-grade software with a team of 209+ packaged AI Skills organized into 22 focused groups — each powered by 18 specialist agents, 47 workflows, and a persistent brain that remembers decisions across sessions._
 
 ---
 
@@ -16,9 +16,9 @@ cd /path/to/your-project
 gkt init antigravity
 
 # Or install only the skills you need
-gkt init general-dev     # 30 core dev skills
+gkt init general-dev     # 39 core dev skills
 gkt init uipath          # UiPath RPA automation skills
-gkt init ai-agent        # 28 AI/LLM/RAG skills
+gkt init ai-agent        # 29 AI/LLM/RAG skills
 ```
 
 > **Requirements:** Python 3.9+
@@ -43,30 +43,30 @@ gkt groups   # List all available groups
 
 | Group                  | Skills | +Default | Description                                     |
 | ---------------------- | ------ | -------- | ----------------------------------------------- |
-| `general-dev`          | 31     | +9       | Backend, Frontend, Full-stack development       |
-| `n8n-dev`              | 18     | +10      | n8n workflow automations                        |
-| `nocobase-dev`         | 26     | +11      | NocoBase plugin development                     |
+| `general-dev`          | 39     | +9       | Backend, Frontend, Full-stack development       |
+| `n8n-dev`              | 18     | +11      | n8n workflow automations                        |
+| `nocobase-dev`         | 32     | +12      | NocoBase plugin development                     |
 | `general-doc`          | 20     | +11      | Technical docs, RFC, ADR, wiki                  |
 | `research`             | 18     | +12      | Deep research, market analysis                  |
 | `cloud-deploy`         | 26     | +12      | Cloud, DevOps, CI/CD, Kubernetes                |
 | `security-audit`       | 14     | +13      | Threat modeling, SAST, vulnerability analysis   |
 | `security-pentest`     | 14     | +13      | Offensive security, red team, exploitation      |
 | `seo-marketing`        | 28     | +13      | SEO, CRO, content marketing                     |
-| `ai-agent`             | 28     | +13      | LLM apps, RAG, multi-agent                      |
+| `ai-agent`             | 29     | +13      | LLM apps, RAG, multi-agent                      |
 | `saas-crm`             | 8      | +13      | HubSpot, Salesforce, Stripe connectors          |
 | `saas-comms`           | 6      | +13      | Slack, Discord, WhatsApp, Gmail connectors      |
 | `saas-project`         | 8      | +13      | Jira, Asana, Trello, Notion connectors          |
 | `saas-marketing`       | 6      | +13      | Twitter, LinkedIn, Google Suite connectors      |
 | `startup-biz`          | 26     | +13      | Market analysis, financial modeling             |
 | `api-graphql`          | 24     | +12      | API design, GraphQL, REST, OpenAPI, FastAPI     |
-| `claude-code`          | 22     | +11      | Claude Code skills, prompt engineering, MCP     |
-| `context-data-rag`     | 28     | +12      | Context engineering, RAG, data pipelines        |
+| `claude-code`          | 23     | +11      | Claude Code skills, prompt engineering, MCP     |
+| `context-data-rag`     | 29     | +12      | Context engineering, RAG, data pipelines        |
 | `database`             | 26     | +11      | SQL/NoSQL, Postgres, migrations, CQRS           |
 | `observability-report` | 22     | +13      | Monitoring, Grafana, Prometheus, SLO, incidents |
 | `uipath`               | 6      | +13      | UiPath RPA — XAML generation, REFramework, Orchestrator, coded workflows, AI agents |
-| `gen-doc` ⭐ **New**    | 4      | +13      | Document Generation — Word, Excel, PDF, and PPTX pipelines |
+| `gen-doc` ⭐ **New**    | 1      | +14      | Document Generation — PPTX pipeline             |
 
-> **+Default**: Each group automatically includes 13 base skills for memory management, lifecycle, error handling, and cross-platform compatibility.
+> **+Default**: Each group automatically includes 14 base skills for memory management, lifecycle, error handling, code graph indexing, and cross-platform compatibility.
 
 **Usage:**
 
@@ -92,6 +92,7 @@ gkt init antigravity                    # Install ALL skills
 | `gkt version`                      | Show current version                                   |
 | `gkt brain`                        | Manage project brain — context, decisions, conventions |
 | `gkt journal`                      | Knowledge journal — capture lessons, bugs, insights    |
+| `gkt graph`                        | Build code graph + FAISS index and wire MCP into IDEs  |
 | `gkt skills list [--all]`          | List active skills (or all including disabled)         |
 | `gkt skills search <query>`        | Search skills by keyword                               |
 | `gkt skills enable <name>`         | Enable a disabled skill                                |
@@ -239,7 +240,7 @@ One command, complete project. No approvals needed. Best for MVPs and prototypes
 | `/wf-context-data-eng`       | Context engineering, RAG, data pipelines                 |
 | `/wf-database-eng`           | Database design, optimization, migrations, CQRS          |
 | `/wf-observability-eng`      | Monitoring, tracing, Grafana, Prometheus, SLO            |
-| `/wf-doc-generator` ⭐ **New** | Document Generator — Orchestrates Word, Excel, PDF, and PPTX|
+| `/wf-gen-doc` ⭐ **New**       | Document Generator — orchestrates the PPTX generation pipeline |
 
 ### UiPath RPA ⭐ New
 
@@ -302,18 +303,15 @@ Phase 4: Final Validation & Handoff
 
 ## 📝 Gen-Doc Group ⭐ New
 
-The `gen-doc` skill group provides an automated pipeline for generating AI-designed and properly formatted Documents. Use `gkt init antigravity --group gen-doc` or `gkt init kiro --group gen-doc`.
+The `gen-doc` skill group provides an automated pipeline for generating AI-designed PPTX presentations. Use `gkt init antigravity --group gen-doc` or `gkt init kiro --group gen-doc`.
 
 ### Skills included
 
 | Skill                    | Description                                                                 |
 | ------------------------ | --------------------------------------------------------------------------- |
-| `gen-doc-docx`           | Word generation and MS Office XSD Gate check validation                     |
-| `gen-doc-xlsx`           | Safe Excel tabular data editing + Formula persistence via precise XML       |
-| `gen-doc-pdf`            | Vectorized PDF Design System using NodeJS and Python                        |
 | `gen-doc-ppt-master`     | Core document presentation skill: SVG templating and PPTX export            |
 
-### `/wf-doc-generator` — Document Generator Workflow
+### `/wf-gen-doc` — Document Generator Workflow
 
 The document generator workflow takes you from requirements to a fully editable artifact:
 
@@ -340,11 +338,11 @@ Phase 4: Finalize & Export
 │   ├── leader.md
 │   ├── architect.md
 │   └── ... (16 more)
-├── workflows/           # 46 workflows (wf-* prefix)
+├── workflows/           # 47 workflows (wf-* prefix)
 │   ├── wf-leader.md
 │   ├── wf-uipath-project.md
 │   └── ...
-├── skills/              # 893+ skills across 21 groups + 13 default
+├── skills/              # 209+ packaged skills across 22 groups + 14 default
 │   ├── uipath-core/
 │   ├── brain-manager/
 │   └── ...
@@ -371,8 +369,8 @@ Every installation includes the **Brain** — persistent memory that agents read
 
 | Brain File               | Purpose                                                     |
 | ------------------------ | ----------------------------------------------------------- |
-| `default_skills.md`      | 13 default skills, usage guide, workflow wiring             |
-| `skills_manifest.json`   | Lightweight index of ALL 893+ skills for lazy-loading       |
+| `default_skills.md`      | 14 default skills, usage guide, workflow wiring             |
+| `skills_manifest.json`   | Lightweight index of all packaged skills for lazy-loading   |
 | `lifecycle.md`           | Session lifecycle: init, plan, work, checkpoint, handoff    |
 | `platform_notes.md`      | Cross-platform guide: paths, shells, encoding, permissions  |
 | `project_context.json`   | Project metadata template (tech stack, conventions, sprint) |
@@ -420,11 +418,11 @@ status: in_progress
 | **Kiro**           | `.kiro/brain/workflow_sessions/`   | `steering/brain.md` (always-loaded steering) |
 | **GitHub Copilot** | `.agent/brain/workflow_sessions/`  | `leader.instructions.md` Session Init block  |
 
-### 13 Default Skills (Always Installed)
+### 14 Default Skills (Always Installed)
 
 | Category           | Skills                                                                               |
 | ------------------ | ------------------------------------------------------------------------------------ |
-| Memory & Context   | `brain-manager`, `journal-manager`, `context-manager`, `codebase-navigator`         |
+| Memory & Context   | `brain-manager`, `journal-manager`, `context-manager`, `codebase-navigator`, `code-graph-index` |
 | Planning & Quality | `concise-planning`, `writing-plans`, `clean-code`, `debugger`, `error-handling-patterns` |
 | Version Control    | `git-manager`, `commit`                                                              |
 | Cross-Platform     | `powershell-windows`, `bash-linux`                                                   |

@@ -17,8 +17,21 @@ npx gkt-node init kilocode
 npx gkt-node init copilot
 npx gkt-node init kiro
 ```
-
 > **Tip:** After global install (`npm i -g gkt-node`), you can use either `gkt` or `gkt-node` as the command.
+
+### Step 2: Enable Semantic Code Graph (Optional but Recommended)
+
+GravityKit includes a powerful offline-first semantic search engine. After initializing the skills, build the index and register the MCP servers (requires Python 3.9+):
+
+```bash
+npx gkt mcp
+```
+
+This will:
+1. Auto-install required dependencies (`faiss-cpu`, `onnxruntime`) if missing.
+2. Extract the bundled ONNX model (`all-MiniLM-L6-v2`) locally — zero network needed.
+3. Build a structural code graph and a FAISS semantic index of your codebase.
+4. Auto-configure the `code-graph` and `faiss-code-index` MCP servers for your IDE.
 
 ## Commands
 
@@ -26,6 +39,7 @@ npx gkt-node init kiro
 |---------|-------------|
 | `npx gkt-node init [target]` | Install GravityKit skills & workflows into current directory |
 | `npx gkt-node init [target] --group <name>` | Install a specific skill group |
+| `npx gkt-node mcp` | Setup Semantic Code Graph & MCP (aliases: `graph`) |
 | `npx gkt-node groups` | List available skill groups |
 | `npx gkt-node list` | List installed AI Agents (requires `gkt-node init` first) |
 | `npx gkt-node doctor` | Check environment health (Python, Node, Git, npm) |

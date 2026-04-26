@@ -14,7 +14,9 @@
       "debugger",
       "clean-code",
       "codebase-navigator",
-      "error-handling-patterns"
+      "code-graph-index",
+      "error-handling-patterns",
+      "document-reader"
     ]
   },
   "general-dev": {
@@ -35,6 +37,7 @@
       "task-estimator",
       "architecture",
       "codebase-navigator",
+      "code-graph-index",
       "context-manager",
       "diff-applier",
       "git-manager",
@@ -135,7 +138,8 @@
       "docker-expert",
       "git-advanced-workflows",
       "ci-cd-setup",
-      "api-documentation-generator"
+      "api-documentation-generator",
+      "code-graph-index"
     ],
     "workflows": [
       "wf-nocobase-plugin-expert",
@@ -155,6 +159,7 @@
       "architecture-decision-records",
       "system-diagrammer",
       "codebase-navigator",
+      "code-graph-index",
       "context-manager",
       "knowledge-guide",
       "mermaid-expert",
@@ -358,6 +363,7 @@
       "gemini-api-dev",
       "agent-memory-systems",
       "agent-memory-mcp",
+      "code-graph-index",
       "agent-evaluation",
       "agent-orchestration-multi-agent-optimize",
       "computer-use-agents",
@@ -527,6 +533,7 @@
       "prompt-caching",
       "agent-tool-builder",
       "mcp-builder",
+      "code-graph-index",
       "skill-developer",
       "skill-creator",
       "autonomous-agent-patterns",
@@ -559,6 +566,7 @@
       "embedding-strategies",
       "vector-database-engineer",
       "vector-index-tuning",
+      "code-graph-index",
       "data-engineer",
       "data-engineering-data-pipeline",
       "data-engineering-data-driven-feature",

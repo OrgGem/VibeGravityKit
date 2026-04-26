@@ -5,6 +5,7 @@ import sys
 import re
 import json
 import shutil
+import subprocess as sp
 from pathlib import Path
 
 # Fix Unicode encoding on Windows (cp1252 cannot render emoji)
@@ -143,6 +144,46 @@ def load_skill_groups():
         return json.load(f)
 
 
+def merge_group_skills(group_config, default_skills=None):
+    """Return group skills plus defaults, preserving order and removing duplicates."""
+    all_skills = []
+    for skill_name in group_config.get("skills", []):
+        if skill_name not in all_skills:
+            all_skills.append(skill_name)
+    for skill_name in default_skills or []:
+        if skill_name not in all_skills:
+            all_skills.append(skill_name)
+    return all_skills
+
+
+def split_existing_skills(skills_src, skill_names):
+    existing = []
+    missing = []
+    for skill_name in skill_names:
+        skill_dir = skills_src / skill_name
+        if skill_dir.is_dir() and (skill_dir / "SKILL.md").exists():
+            existing.append(skill_name)
+        else:
+            missing.append(skill_name)
+    return existing, missing
+
+
+def warn_missing(label, names, limit=10):
+    if not names:
+        return
+    shown = ", ".join(names[:limit])
+    suffix = f", ... +{len(names) - limit} more" if len(names) > limit else ""
+    click.echo(f"  Warning: {len(names)} configured {label} not found: {shown}{suffix}")
+
+
+def run_python_script(script, args=None):
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
+    result = sp.run([sys.executable, str(script), *(args or [])], env=env)
+    if result.returncode:
+        sys.exit(result.returncode)
+
+
 def copy_group_selective(source_agent_dir, target_agent_dir, group_config, default_skills=None):
     """Copy only the skills and workflows defined in a group config.
     
@@ -158,31 +199,34 @@ def copy_group_selective(source_agent_dir, target_agent_dir, group_config, defau
     if brain_src.exists():
         shutil.copytree(brain_src, target_agent_dir / "brain")
 
-    # Merge group skills + default skills (deduplicated)
-    all_skills = list(group_config.get("skills", []))
-    if default_skills:
-        for ds in default_skills:
-            if ds not in all_skills:
-                all_skills.append(ds)
+    all_skills = merge_group_skills(group_config, default_skills)
 
     # Copy selected skills
     skills_target = target_agent_dir / "skills"
     skills_target.mkdir(parents=True, exist_ok=True)
     skills_src = source_agent_dir / "skills"
     copied_skills = 0
+    missing_skills = []
     for skill_name in all_skills:
         src = skills_src / skill_name
-        if src.exists():
+        if src.is_dir() and (src / "SKILL.md").exists():
             shutil.copytree(src, skills_target / skill_name)
             copied_skills += 1
+        else:
+            missing_skills.append(skill_name)
+    warn_missing("skills", missing_skills)
 
     # Copy selected workflows
     workflows_target = target_agent_dir / "workflows"
     workflows_target.mkdir(parents=True, exist_ok=True)
+    missing_workflows = []
     for wf_name in group_config.get("workflows", []):
         src = source_agent_dir / "workflows" / f"{wf_name}.md"
         if src.exists():
             shutil.copy2(src, workflows_target / f"{wf_name}.md")
+        else:
+            missing_workflows.append(wf_name)
+    warn_missing("workflows", missing_workflows)
 
     # Copy all agents (agents are universal — not filtered by group)
     agents_src = source_agent_dir / "agents"
@@ -218,17 +262,20 @@ def install_kiro(package_dir, group_config=None, skill_groups=None):
     if skills_src.exists():
         if group_config:
             # Selective: copy group skills + _default skills
-            all_skills = list(group_config.get("skills", []))
             resolved_groups = skill_groups if skill_groups is not None else load_skill_groups()
-            default_group = resolved_groups.get("_default", {})
-            for ds in default_group.get("skills", []):
-                if ds not in all_skills:
-                    all_skills.append(ds)
+            all_skills = merge_group_skills(
+                group_config,
+                resolved_groups.get("_default", {}).get("skills", []),
+            )
+            missing_skills = []
             for skill_name in all_skills:
                 src = skills_src / skill_name
-                if src.exists():
+                if src.is_dir() and (src / "SKILL.md").exists():
                     shutil.copytree(src, skills_target / skill_name)
                     copied_skills += 1
+                else:
+                    missing_skills.append(skill_name)
+            warn_missing("skills", missing_skills)
         else:
             # Full: copy all skills
             for skill_folder in skills_src.iterdir():
@@ -378,8 +425,14 @@ def init(target, group):
         default_skills = get_default_skills(skill_groups)
         group_skills = grp.get('skills', [])
         extra = len([s for s in default_skills if s not in group_skills])
+        all_skills = merge_group_skills(grp, default_skills)
+        available, _missing = split_existing_skills(SOURCE_ROOT / ".agent" / "skills", all_skills)
         click.echo(f"🚀 Installing group '{group_name}' ({grp['description']})...")
-        click.echo(f"   Skills: {len(group_skills)} + {extra} default | Workflows: {len(grp.get('workflows', []))}")
+        click.echo(
+            f"   Skills: {len(group_skills)} + {extra} default "
+            f"({len(available)}/{len(all_skills)} available) | "
+            f"Workflows: {len(grp.get('workflows', []))}"
+        )
     else:
         click.echo(f"🚀 Installing GravityKit (all skills)...")
     
@@ -448,6 +501,10 @@ def init(target, group):
         click.echo("  👉 @[/wf-uipath-project]: End-to-end UiPath RPA automation workflow")
         click.echo("\n💬 Tip: Type /wf- to filter and view all 40+ available workflows.")
 
+        click.echo("\n🧠 Enable Semantic Code Graph Search (Requires Python 3.9+):")
+        click.echo("  Run this command to build the FAISS index and auto-configure MCP servers for your IDEs:")
+        click.echo("  👉 gkt mcp")
+
 @main.command()
 def groups():
     """List available skill groups."""
@@ -457,18 +514,24 @@ def groups():
         return
 
     click.echo("\n📦 Available Skill Groups:\n")
-    click.echo(f"{'Group':<18} {'Skills':>6} {'Workflows':>9}   {'Description':<50}")
-    click.echo("-" * 90)
+    click.echo(f"{'Group':<18} {'Skills':>6} {'Avail':>8} {'Workflows':>9}   {'Description':<50}")
+    click.echo("-" * 101)
     default_skills = get_default_skills(skill_groups)
+    skills_src = SOURCE_ROOT / ".agent" / "skills"
     for name, config in skill_groups.items():
         if name == "_default":
             continue
         skills_count = len(config.get("skills", []))
         extra = len([s for s in default_skills if s not in config.get("skills", [])])
+        all_skills = merge_group_skills(config, default_skills)
+        available, _missing = split_existing_skills(skills_src, all_skills)
         wf_count = len(config.get("workflows", []))
         desc = config.get("description", "No description")
-        click.echo(f"{name:<18} {skills_count:>3}+{extra:<2} {wf_count:>9}   {desc}")
-    click.echo(f"\n   * Each group includes +{len(default_skills)} default skills (memory, lifecycle, cross-platform)")
+        click.echo(
+            f"{name:<18} {skills_count:>3}+{extra:<2} "
+            f"{len(available):>3}/{len(all_skills):<3} {wf_count:>9}   {desc}"
+        )
+    click.echo(f"\n   * Each group includes +{len(default_skills)} default skills (memory, lifecycle, code graph, cross-platform)")
     click.echo(f"\n💡 Usage: gkt init <group-name>  (e.g. gkt init general-dev)")
     click.echo("")
 
@@ -597,24 +660,56 @@ def version():
 @click.pass_context
 def brain(ctx):
     """Manage project brain — context, decisions, conventions."""
-    import subprocess as sp
     script = Path(__file__).resolve().parent / ".agent" / "skills" / "brain-manager" / "scripts" / "brain.py"
     if not script.exists():
         click.echo("❌ brain-manager skill not found. Run 'gkt init' first.")
         return
-    sp.run(["python", str(script)] + ctx.args)
+    run_python_script(script, ctx.args)
 
 @main.command(context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
 @click.pass_context
 def journal(ctx):
     """Knowledge journal — capture lessons, bugs, insights."""
-    import subprocess as sp
     script = Path(__file__).resolve().parent / ".agent" / "skills" / "journal-manager" / "scripts" / "journal.py"
     if not script.exists():
         click.echo("❌ journal-manager skill not found. Run 'gkt init' first.")
         return
-    sp.run(["python", str(script)] + ctx.args)
+    run_python_script(script, ctx.args)
 
+
+@main.command(context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
+@click.pass_context
+def graph(ctx):
+    """Build code graph + FAISS index and wire MCP into Antigravity / Kiro / Claude.
+
+    \b
+    Examples:
+      gkt graph                                # Default: write .mcp.json + build both indexes
+      gkt graph --auto                         # Detect IDEs from working dir markers
+      gkt graph --ides antigravity,kiro,claude # Pick targets explicitly
+      gkt graph --all                          # Configure every supported IDE
+      gkt graph --incremental                  # Fast graph rebuild (skip unchanged files)
+    """
+    script = (
+        Path(__file__).resolve().parent
+        / ".agent" / "skills" / "code-graph-index" / "scripts" / "setup_mcp.py"
+    )
+    if not script.exists():
+        click.echo("❌ code-graph-index skill not found. Run 'gkt init' first.")
+        return
+    run_python_script(script, ctx.args)
+
+
+
+@main.command(context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
+@click.pass_context
+def mcp(ctx):
+    """Setup Semantic Code Graph & MCP (alias for graph)."""
+    if "--all" not in ctx.args:
+        ctx.args.append("--all")
+    if "--ensure-model" not in ctx.args:
+        ctx.args.append("--ensure-model")
+    ctx.forward(graph)
 
 @main.group()
 def skills():
@@ -626,70 +721,60 @@ def skills():
 @click.option("--all", "show_all", is_flag=True, help="Include disabled skills")
 def skills_list(show_all):
     """List all active skills."""
-    import subprocess as sp
     script = Path(__file__).resolve().parent / "scripts" / "skills_manager.py"
-    args = ["python", str(script), "list"]
+    args = ["list"]
     if show_all:
         args.append("--all")
-    sp.run(args)
+    run_python_script(script, args)
 
 
 @skills.command("enable")
 @click.argument("name")
 def skills_enable(name):
     """Enable a disabled skill."""
-    import subprocess as sp
     script = Path(__file__).resolve().parent / "scripts" / "skills_manager.py"
-    sp.run(["python", str(script), "enable", name])
+    run_python_script(script, ["enable", name])
 
 
 @skills.command("disable")
 @click.argument("name")
 def skills_disable(name):
     """Disable a skill (move to .disabled/)."""
-    import subprocess as sp
     script = Path(__file__).resolve().parent / "scripts" / "skills_manager.py"
-    sp.run(["python", str(script), "disable", name])
+    run_python_script(script, ["disable", name])
 
 
 @skills.command("search")
 @click.argument("query")
 def skills_search(query):
     """Search skills by keyword."""
-    import subprocess as sp
     script = Path(__file__).resolve().parent / "scripts" / "skills_manager.py"
-    sp.run(["python", str(script), "search", query])
+    run_python_script(script, ["search", query])
 
 
 @skills.command("count")
 def skills_count():
     """Show total skill count."""
-    import subprocess as sp
     script = Path(__file__).resolve().parent / "scripts" / "skills_manager.py"
-    sp.run(["python", str(script), "count"])
+    run_python_script(script, ["count"])
 
 
 @main.command()
 @click.option("--strict", is_flag=True, help="Fail on any validation error (for CI)")
 def validate(strict):
     """Validate all SKILL.md files in the toolkit."""
-    import subprocess as sp
     script = Path(__file__).resolve().parent / "scripts" / "validate_skills.py"
-    args = ["python", str(script)]
+    args = []
     if strict:
         args.append("--strict")
-    sp.run(args)
+    run_python_script(script, args)
 
 
 @main.command("generate-index")
 def generate_index():
     """Generate skills_index.json from the skills directory."""
-    import subprocess as sp
-    import os as _os
-    env = _os.environ.copy()
-    env["PYTHONIOENCODING"] = "utf-8"
     script = Path(__file__).resolve().parent / "scripts" / "generate_index.py"
-    sp.run(["python", str(script)], env=env)
+    run_python_script(script)
 
 
 

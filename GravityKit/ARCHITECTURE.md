@@ -14,8 +14,8 @@ GravityKit/
 ├── .agent/                    ← The toolkit source (installed into user projects)
 │   ├── agents/                ← Sub-agent definitions (one .md per agent role)
 │   ├── brain/                 ← Session memory, lifecycle, agent index, skill manifest
-│   ├── skills/                ← 194 skill modules (each with SKILL.md + references/)
-│   └── workflows/             ← 46 workflow files (slash-command invocable)
+│   ├── skills/                ← 209 skill modules (each with SKILL.md + references/)
+│   └── workflows/             ← 47 workflow files (slash-command invocable)
 ├── ide-adapters/              ← IDE-specific config templates
 │   ├── kiro/                  ← Kiro IDE: steering/, hooks/, specs/
 │   ├── cursor/                ← Cursor: .cursorrules
@@ -60,7 +60,7 @@ Workflows are invoked via slash commands (`/wf-architect`, `/wf-uipath-project`,
 ### Brain
 `.agent/brain/` contains cross-session memory and metadata:
 - `agent_index.json` — canonical registry of all agents with roles and skills
-- `skills_manifest.json` — index of all 194 skills with descriptions and sizes
+- `skills_manifest.json` — index of all 209 packaged skills with descriptions and sizes
 - `lifecycle.md` — session phases: Init → Analysis → Planning → Work → Quality Gate → Checkpoint → Handoff
 - `default_skills.md` — skills always loaded regardless of group
 - `platform_notes.md` — OS-specific behavior notes
@@ -77,15 +77,15 @@ Groups are defined in `data/skill_groups.json`. Each group specifies:
 
 The `_default` group is merged into every other group automatically.
 
-**21 groups available:**
-`general-dev`, `n8n-dev`, `nocobase-dev`, `general-doc`, `research`, `cloud-deploy`, `security-audit`, `security-pentest`, `seo-marketing`, `ai-agent`, `saas-crm`, `saas-comms`, `saas-project`, `saas-marketing`, `startup-biz`, `api-graphql`, `claude-code`, `context-data-rag`, `database`, `observability-report`, `uipath`
+**22 groups available:**
+`general-dev`, `n8n-dev`, `nocobase-dev`, `general-doc`, `research`, `cloud-deploy`, `security-audit`, `security-pentest`, `seo-marketing`, `ai-agent`, `saas-crm`, `saas-comms`, `saas-project`, `saas-marketing`, `startup-biz`, `api-graphql`, `claude-code`, `context-data-rag`, `database`, `observability-report`, `uipath`, `gen-doc`
 
 ---
 
 ## Install Flow
 
 ```
-gkt init <ide> [--group <name>] [--path <dir>]
+gkt init <ide> [--group <name>]
 ```
 
 ### antigravity (Claude Code)
@@ -163,11 +163,13 @@ lifecycle.md         ← defines session phases
 ```bash
 gkt init <ide>                    # Full install (all skills + workflows)
 gkt init <ide> --group <name>     # Selective install for a group
-gkt init <ide> --path <dir>       # Install to specific directory
 gkt list-groups                   # Show all available groups
 gkt list-skills                   # Show all skills with descriptions
 gkt list-agents                   # Show all agent definitions
 gkt validate                      # Validate all SKILL.md frontmatter
+gkt brain                         # Manage project brain — context, decisions
+gkt journal                       # Knowledge journal — lessons, bugs, insights
+gkt graph                         # Build code graph + FAISS index + auto-wire MCP
 ```
 
 **Supported IDEs:** `antigravity`, `kiro`, `cursor`, `windsurf`, `cline`, `kilocode`, `copilot`

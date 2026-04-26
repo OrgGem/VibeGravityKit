@@ -37,3 +37,4 @@ Thumbs.db
 /.agent/brain/
 /.agent/skills/
 UiPathSkillCollection/
+.code-graph-index/

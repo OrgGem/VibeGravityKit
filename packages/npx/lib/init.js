@@ -142,6 +142,42 @@ function loadSkillGroups(sourceRoot) {
   return JSON.parse(fs.readFileSync(groupsFile, 'utf8'));
 }
 
+function getDefaultSkills(skillGroups) {
+  return ((skillGroups && skillGroups._default && skillGroups._default.skills) || []);
+}
+
+function mergeGroupSkills(groupConfig, defaultSkills = []) {
+  const merged = [];
+  for (const skillName of ((groupConfig && groupConfig.skills) || [])) {
+    if (!merged.includes(skillName)) merged.push(skillName);
+  }
+  for (const skillName of defaultSkills) {
+    if (!merged.includes(skillName)) merged.push(skillName);
+  }
+  return merged;
+}
+
+function splitExistingSkills(skillsSrc, skillNames) {
+  const existing = [];
+  const missing = [];
+  for (const skillName of skillNames) {
+    const skillPath = path.join(skillsSrc, skillName, 'SKILL.md');
+    if (fs.existsSync(skillPath)) {
+      existing.push(skillName);
+    } else {
+      missing.push(skillName);
+    }
+  }
+  return { existing, missing };
+}
+
+function warnMissing(label, names, limit = 10) {
+  if (!names.length) return;
+  const shown = names.slice(0, limit).join(', ');
+  const suffix = names.length > limit ? `, ... +${names.length - limit} more` : '';
+  console.log(`  Warning: ${names.length} configured ${label} not found: ${shown}${suffix}`);
+}
+
 /**
  * Check if bundled assets exist and contain the needed source dirs.
  */
@@ -163,7 +199,7 @@ function getBundledSourceRoot() {
  * Merge only the skills and workflows defined in a group config.
  * Only creates folders/files that don't already exist.
  */
-function copyGroupSelective(sourceAgentDir, targetAgentDir, groupConfig) {
+function copyGroupSelective(sourceAgentDir, targetAgentDir, groupConfig, defaultSkills = []) {
   fs.mkdirSync(targetAgentDir, { recursive: true });
 
   // Copy brain/ only if it doesn't exist yet
@@ -178,14 +214,18 @@ function copyGroupSelective(sourceAgentDir, targetAgentDir, groupConfig) {
   fs.mkdirSync(skillsTarget, { recursive: true });
   const skillsSrc = path.join(sourceAgentDir, 'skills');
   let copiedSkills = 0;
-  for (const skillName of (groupConfig.skills || [])) {
+  const missingSkills = [];
+  for (const skillName of mergeGroupSkills(groupConfig, defaultSkills)) {
     const src = path.join(skillsSrc, skillName);
     const dst = path.join(skillsTarget, skillName);
-    if (fs.existsSync(src) && !fs.existsSync(dst)) {
+    if (fs.existsSync(path.join(src, 'SKILL.md')) && !fs.existsSync(dst)) {
       copyDir(src, dst);
       copiedSkills++;
+    } else if (!fs.existsSync(path.join(src, 'SKILL.md'))) {
+      missingSkills.push(skillName);
     }
   }
+  warnMissing('skills', missingSkills);
 
   // Copy selected workflows — skip if already exists
   const wfTarget = path.join(targetAgentDir, 'workflows');
@@ -205,7 +245,7 @@ function copyGroupSelective(sourceAgentDir, targetAgentDir, groupConfig) {
  * Install for Kiro IDE — merges .agent/ → .kiro/ structure.
  * Only creates folders/files that don't already exist.
  */
-function installKiro(sourceRoot, cwd, groupConfig, useBundled) {
+function installKiro(sourceRoot, cwd, groupConfig, useBundled, defaultSkills = []) {
   const kiroDir = path.join(cwd, '.kiro');
   const agentDir = useBundled
     ? path.join(sourceRoot, '.agent')
@@ -224,14 +264,18 @@ function installKiro(sourceRoot, cwd, groupConfig, useBundled) {
 
   if (fs.existsSync(skillsSrc)) {
     if (groupConfig) {
-      for (const skillName of (groupConfig.skills || [])) {
+      const missingSkills = [];
+      for (const skillName of mergeGroupSkills(groupConfig, defaultSkills)) {
         const src = path.join(skillsSrc, skillName);
         const dst = path.join(skillsTarget, skillName);
-        if (fs.existsSync(src) && !fs.existsSync(dst)) {
+        if (fs.existsSync(path.join(src, 'SKILL.md')) && !fs.existsSync(dst)) {
           copyDir(src, dst);
           copiedSkills++;
+        } else if (!fs.existsSync(path.join(src, 'SKILL.md'))) {
+          missingSkills.push(skillName);
         }
       }
+      warnMissing('skills', missingSkills);
     } else {
       for (const entry of fs.readdirSync(skillsSrc, { withFileTypes: true })) {
         const dst = path.join(skillsTarget, entry.name);
@@ -334,8 +378,19 @@ async function initCommand(target = 'all', group = null) {
 
     if (groupName) {
       const grp = skillGroups[groupName];
+      const defaultSkills = getDefaultSkills(skillGroups);
+      const allSkills = mergeGroupSkills(grp, defaultSkills);
+      const agentDir = useBundled
+        ? path.join(sourceRoot, '.agent')
+        : path.join(sourceRoot, 'GravityKit', '.agent');
+      const { existing } = splitExistingSkills(path.join(agentDir, 'skills'), allSkills);
+      const extra = defaultSkills.filter(skillName => !(grp.skills || []).includes(skillName)).length;
       console.log(`🚀 Installing group '${groupName}' (${grp.description})...`);
-      console.log(`   Skills: ${(grp.skills || []).length} | Workflows: ${(grp.workflows || []).length}`);
+      console.log(
+        `   Skills: ${(grp.skills || []).length} + ${extra} default ` +
+        `(${existing.length}/${allSkills.length} available) | ` +
+        `Workflows: ${(grp.workflows || []).length}`,
+      );
     } else {
       console.log(`🚀 Installing GravityKit (all skills)...`);
     }
@@ -356,10 +411,10 @@ async function initCommand(target = 'all', group = null) {
       try {
         if (ide === 'kiro') {
           const grp = groupName ? skillGroups[groupName] : null;
-          const copied = installKiro(sourceRoot, cwd, grp, useBundled);
+          const copied = installKiro(sourceRoot, cwd, grp, useBundled, getDefaultSkills(skillGroups));
           console.log(`  ✅ ${config.label} (${copied} skills)`);
         } else if (groupName && ide === 'antigravity') {
-          const copied = copyGroupSelective(sourceDir, targetDir, skillGroups[groupName]);
+          const copied = copyGroupSelective(sourceDir, targetDir, skillGroups[groupName], getDefaultSkills(skillGroups));
           console.log(`  ✅ ${config.label} (${copied} skills)`);
         } else {
           // Full copy — merge into existing directory
@@ -388,6 +443,10 @@ async function initCommand(target = 'all', group = null) {
       console.log('  👉 @[/wf-gen-doc]      : Generate AI-designed PowerPoint presentations');
       console.log('  👉 @[/wf-uipath-project]: End-to-end UiPath RPA automation workflow');
       console.log('\n💬 Tip: Type /wf- to filter and view all available workflows.');
+
+      console.log('\n🧠 Enable Semantic Code Graph Search (Requires Python 3.9+):');
+      console.log('  Run this command to build the FAISS index and auto-configure MCP servers for your IDEs:');
+      console.log('  👉 npx gkt mcp');
     }
   } finally {
     // Clean up temp directory if we downloaded
@@ -396,4 +455,3 @@ async function initCommand(target = 'all', group = null) {
 }
 
 module.exports = { initCommand };
-

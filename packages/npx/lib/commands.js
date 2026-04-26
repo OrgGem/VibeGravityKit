@@ -130,4 +130,48 @@ async function groupsCommand() {
   }
 }
 
-module.exports = { versionCommand, doctorCommand, listCommand, groupsCommand };
+/**
+ * Setup Semantic Code Graph MCP server (wrapper around Python script).
+ */
+function mcpCommand() {
+  const fs = require('fs');
+  const path = require('path');
+  const { spawnSync } = require('child_process');
+
+  const setupScript = path.join(process.cwd(), '.agent', 'skills', 'code-graph-index', 'scripts', 'setup_mcp.py');
+
+  if (!fs.existsSync(setupScript)) {
+    console.log(`❌ Setup script not found at: ${setupScript}`);
+    console.log(`   Make sure you run 'gkt init' first in the root of your project.`);
+    process.exitCode = 1;
+    return;
+  }
+
+  console.log(`\n🚀 Setting up Semantic Code Graph & MCP...\n`);
+
+  try {
+    const result = spawnSync('python', [setupScript, '--all', '--ensure-model'], {
+      stdio: 'inherit'
+    });
+
+    if (result.error) {
+      if (result.error.code === 'ENOENT') {
+        console.log(`❌ Python is not installed or not in your PATH.`);
+        console.log(`   Please install Python 3.9+ to use the Semantic Code Graph.`);
+      } else {
+        console.log(`❌ Failed to start Python process: ${result.error.message}`);
+      }
+      process.exitCode = 1;
+    } else if (result.status !== 0) {
+      console.log(`\n❌ MCP setup failed with exit code ${result.status}.`);
+      process.exitCode = result.status;
+    } else {
+      console.log(`\n✅ MCP setup completed successfully!`);
+    }
+  } catch (err) {
+    console.log(`❌ Unexpected error: ${err.message}`);
+    process.exitCode = 1;
+  }
+}
+
+module.exports = { versionCommand, doctorCommand, listCommand, groupsCommand, mcpCommand };

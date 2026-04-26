@@ -35,3 +35,7 @@ python .agent/skills/codebase-navigator/scripts/navigator.py --action search --q
 - Java (.java)
 - C# (.cs)
 - Go (.go)
+
+## Related Skills
+
+- **`code-graph-index`** — Provides a deeper structural graph (AST-level for Python, call edges, import edges) plus FAISS semantic search and two auto-wired MCP servers. Use `code-graph-index` when you need call-graph traversal, semantic chunk search, or MCP integration; use `codebase-navigator` for quick regex-based symbol lookup without extra dependencies.

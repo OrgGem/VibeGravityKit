@@ -32,6 +32,7 @@ function copyDir(src, dest) {
   fs.mkdirSync(dest, { recursive: true });
   let count = 0;
   for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+    if (entry.name === '__pycache__' || entry.name.endsWith('.pyc')) continue;
     const s = path.join(src, entry.name);
     const d = path.join(dest, entry.name);
     if (entry.isDirectory()) {
@@ -82,8 +83,21 @@ function main() {
     for (const w of (config.workflows || [])) allWorkflows.add(w);
   }
 
+  // Full npx installs copy the bundled .agent directory, so the asset bundle
+  // must include every packaged top-level skill, not only group references.
+  for (const sourceDir of [GK_AGENT_DIR]) {
+    const skillsDir = path.join(sourceDir, 'skills');
+    if (!fs.existsSync(skillsDir)) continue;
+    for (const entry of fs.readdirSync(skillsDir, { withFileTypes: true })) {
+      if (entry.name.startsWith('.') || !entry.isDirectory()) continue;
+      if (fs.existsSync(path.join(skillsDir, entry.name, 'SKILL.md'))) {
+        allSkills.add(entry.name);
+      }
+    }
+  }
+
   console.log(`📊 Found ${Object.keys(groups).length} groups`);
-  console.log(`   → ${allSkills.size} unique skills`);
+  console.log(`   → ${allSkills.size} unique skill refs + packaged skills`);
   console.log(`   → ${allWorkflows.size} unique workflows\n`);
 
   // 2. Copy workflows (search root .agent/ first, then GravityKit/.agent/)
@@ -117,17 +131,29 @@ function main() {
 
   let skillsCopied = 0;
   let skillsMissing = 0;
+  const missingSkillNames = [];
   for (const skillName of allSkills) {
-    // Resolve alias if the skill name doesn't exist directly
-    const realName = aliases[skillName] || skillName;
-    const found = skillSrcDirs.find(d => fs.existsSync(path.join(d, realName)));
+    let realName = skillName;
+    let found = skillSrcDirs.find(d => fs.existsSync(path.join(d, realName)));
+    if (!found && aliases[skillName]) {
+      realName = aliases[skillName];
+      found = skillSrcDirs.find(d => fs.existsSync(path.join(d, realName)));
+    }
     if (found) {
       // Copy using the original name so group references work
       copyDir(path.join(found, realName), path.join(skillsDestDir, skillName));
       skillsCopied++;
     } else {
-      console.log(`   ⚠️  Skill not found: ${skillName}${realName !== skillName ? ` (alias: ${realName})` : ''}`);
+      missingSkillNames.push(`${skillName}${realName !== skillName ? ` (alias: ${realName})` : ''}`);
       skillsMissing++;
+    }
+  }
+  if (missingSkillNames.length) {
+    for (const name of missingSkillNames.slice(0, 25)) {
+      console.log(`   ⚠️  Skill not found: ${name}`);
+    }
+    if (missingSkillNames.length > 25) {
+      console.log(`   ⚠️  ... and ${missingSkillNames.length - 25} more missing skills`);
     }
   }
   console.log(`✅ Skills: ${skillsCopied}/${allSkills.size} copied (${skillsMissing} missing)`);

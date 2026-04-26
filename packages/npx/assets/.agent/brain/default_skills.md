@@ -3,7 +3,7 @@
 This file documents the default skills that are auto-installed with every GravityKit group.
 Agents should use these skills proactively to maintain quality, consistency, and cross-platform compatibility.
 
-> **Lazy-Loading**: See `skills_manifest.json` for a lightweight index of ALL 893+ skills.
+> **Lazy-Loading**: See `skills_manifest.json` for a lightweight index of all packaged skills.
 > Load full SKILL.md only when needed to save tokens.
 
 ## Memory & Context Skills
@@ -27,6 +27,11 @@ Agents should use these skills proactively to maintain quality, consistency, and
 - **Purpose**: Index and search code quickly (Token Saver)
 - **Use when**: Need to find functions, classes, or patterns without reading entire files
 - **Integration**: Builds searchable index of the codebase
+
+### code-graph-index
+- **Purpose**: Build a local structural graph and optional FAISS index for code search, traversal, and MCP-backed navigation
+- **Use when**: Working in large repositories, reviewing broad changes, or before architecture/debugging workflows that need precise symbol context
+- **Integration**: Generates `.code-graph-index/` artifacts and MCP config for Antigravity, Kiro, Claude Code, Cursor, and Windsurf
 
 ## Requirement Analysis & Planning Skills
 
@@ -170,4 +175,3 @@ Workflow files (.md) can reference default skills using:
 ```
 
 These skills are always available regardless of which group was installed.
-

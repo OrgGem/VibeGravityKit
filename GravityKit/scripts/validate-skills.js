@@ -7,7 +7,7 @@ const path = require("path");
 const { listSkillIds, parseFrontmatter } = require("../lib/skill-utils");
 
 const ROOT = path.resolve(__dirname, "..");
-const SKILLS_DIR = path.join(ROOT, "skills");
+const SKILLS_DIR = path.join(ROOT, ".agent", "skills");
 const BASELINE_PATH = path.join(ROOT, "validation-baseline.json");
 
 const errors = [];
@@ -41,6 +41,17 @@ const ALLOWED_FIELDS = new Set([
   "metadata",
   "allowed-tools",
   "package",
+  "author",
+  "category",
+  "color",
+  "created",
+  "displayName",
+  "platforms",
+  "requires",
+  "tags",
+  "updated",
+  "user-invocable",
+  "version",
 ]);
 
 const USE_SECTION_PATTERNS = [

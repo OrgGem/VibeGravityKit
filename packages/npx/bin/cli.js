@@ -19,6 +19,7 @@ const {
   doctorCommand,
   listCommand,
   groupsCommand,
+  mcpCommand,
 } = require('../lib/commands');
 
 const HELP = `
@@ -26,6 +27,7 @@ const HELP = `
 
   Usage:
     gkt init [target] [--group <name>]   Install GravityKit in the current directory
+    gkt mcp                               Setup Semantic Code Graph & MCP (aliases: graph)
     gkt list                              List available AI Agents
     gkt groups                            List available skill groups
     gkt doctor                            Check environment health
@@ -41,6 +43,10 @@ const HELP = `
     npx gkt init antigravity             Install all skills for Antigravity
     npx gkt init general-dev             Install general-dev group
     npx gkt init antigravity --group n8n-dev
+
+  Semantic Code Graph Setup (After Init):
+    npx gkt mcp
+    (or: python .agent/skills/code-graph-index/scripts/setup_mcp.py --all --ensure-model)
 `;
 
 async function main() {
@@ -63,6 +69,11 @@ async function main() {
       await initCommand(target, group);
       break;
     }
+
+    case 'mcp':
+    case 'graph':
+      mcpCommand();
+      break;
 
     case 'list':
       listCommand();

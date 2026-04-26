@@ -1,6 +1,11 @@
 const fs = require('fs');
 const path = require('path');
-const yaml = require('yaml');
+let yaml = null;
+try {
+  yaml = require('yaml');
+} catch (_) {
+  yaml = null;
+}
 
 function stripQuotes(value) {
   if (typeof value !== 'string') return value;
@@ -35,6 +40,41 @@ function isPlainObject(value) {
   return value && typeof value === 'object' && !Array.isArray(value);
 }
 
+function parseScalar(raw) {
+  const value = stripQuotes(String(raw || '').trim());
+  const inlineList = parseInlineList(value);
+  return inlineList.length ? inlineList : value;
+}
+
+function parseSimpleYamlMap(fmText) {
+  const data = {};
+  let currentMap = null;
+
+  for (const rawLine of fmText.split(/\r?\n/)) {
+    if (!rawLine.trim() || rawLine.trim().startsWith('#')) continue;
+
+    const nested = rawLine.match(/^\s{2,}([A-Za-z0-9_-]+):\s*(.*)$/);
+    if (nested && currentMap) {
+      currentMap[nested[1]] = parseScalar(nested[2]);
+      continue;
+    }
+
+    const top = rawLine.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
+    if (!top) continue;
+
+    const [, key, value] = top;
+    if (!value.trim()) {
+      data[key] = {};
+      currentMap = data[key];
+    } else {
+      data[key] = parseScalar(value);
+      currentMap = null;
+    }
+  }
+
+  return data;
+}
+
 function parseFrontmatter(content) {
   const sanitized = content.replace(/^\uFEFF/, '');
   const lines = sanitized.split(/\r?\n/);
@@ -63,15 +103,19 @@ function parseFrontmatter(content) {
   const fmText = lines.slice(1, endIndex).join('\n');
   let data = {};
 
-  try {
-    const doc = yaml.parseDocument(fmText, { prettyErrors: false });
-    if (doc.errors && doc.errors.length) {
-      errors.push(...doc.errors.map(error => error.message));
+  if (yaml) {
+    try {
+      const doc = yaml.parseDocument(fmText, { prettyErrors: false });
+      if (doc.errors && doc.errors.length) {
+        errors.push(...doc.errors.map(error => error.message));
+      }
+      data = doc.toJS();
+    } catch (err) {
+      errors.push(err.message);
+      data = {};
     }
-    data = doc.toJS();
-  } catch (err) {
-    errors.push(err.message);
-    data = {};
+  } else {
+    data = parseSimpleYamlMap(fmText);
   }
 
   if (!isPlainObject(data)) {

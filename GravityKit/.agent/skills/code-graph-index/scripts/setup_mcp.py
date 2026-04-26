@@ -46,7 +46,7 @@ GITIGNORE_LINE = ".code-graph-index/\n"
 
 # Where each IDE picks up MCP config
 IDE_CONFIG_PATHS = {
-    "antigravity": Path(".mcp.json"),
+    "antigravity": Path.home() / ".gemini" / "antigravity" / "mcp_config.json",
     "claude": Path(".claude") / "mcp_servers.json",
     "kiro": Path(".kiro") / "settings" / "mcp.json",
     "cursor": Path(".cursor") / "mcp.json",
@@ -334,7 +334,11 @@ def main() -> None:
     for ide in ides:
         try:
             target = write_ide_config(project_root, ide, new_servers)
-            print(f"   ✅ {ide:<12} → {target.relative_to(project_root)}")
+            try:
+                rel_target = target.relative_to(project_root)
+            except ValueError:
+                rel_target = target
+            print(f"   ✅ {ide:<12} → {rel_target}")
             written.append(ide)
         except Exception as exc:
             print(f"   ❌ {ide}: {exc}")

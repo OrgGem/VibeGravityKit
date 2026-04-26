@@ -7,21 +7,37 @@
 
 ## ⚡ Quick Start
 
+Get started with GravityKit in 3 easy steps:
+
+### 1. Install GravityKit
+Install the CLI tool globally or in your virtual environment:
 ```bash
-# Install from PyPI
 pip install gkt
-
-# Init in your project (all skills)
 cd /path/to/your-project
-gkt init antigravity
-
-# Or install only the skills you need
-gkt init general-dev     # 39 core dev skills
-gkt init uipath          # UiPath RPA automation skills
-gkt init ai-agent        # 29 AI/LLM/RAG skills
 ```
 
+### 2. Initialize Skills & Agents
+Choose your AI IDE to scaffold the required agent files and skill sets.
+
+| Goal | Antigravity Command | Kiro Command |
+|------|---------------------|--------------|
+| **Init all skills** | `gkt init antigravity` | `gkt init kiro` |
+| **Init specific group** | `gkt init antigravity --group general-dev` | `gkt init kiro --group general-dev` |
+| **Where files go** | `.agent/` folder | `.kiro/` folder |
+
+> **Tip:** You can replace `general-dev` with other groups like `uipath`, `ai-agent`, or `seo-marketing`.
+
+### 3. Enable Semantic Code Graph & MCP Servers
+Wiring up the Model Context Protocol (MCP) gives your agents native ability to search code via FAISS, read office documents, and access the Brain Manager.
+
+| Goal | Command (Both IDEs) |
+|------|---------------------|
+| **Generate & Wire MCP** | `gkt mcp` |
+
+*(Note: `gkt mcp` automatically detects your initialized IDEs and configures them all at once).*
+
 > **Requirements:** Python 3.9+
+> **Supported IDEs:** `antigravity`, `kiro`, `cursor`, `windsurf`, `cline`, `kilocode`, `copilot`, `claude` (Claude Code)
 
 **For development / contributing:**
 
@@ -30,6 +46,17 @@ git clone https://github.com/OrgGem/VibeGravityKit.git
 cd VibeGravityKit
 pip install -e .
 ```
+
+---
+
+## 🔌 Core Features & MCP Integration ⭐ **New**
+
+GravityKit ships with powerful **Model Context Protocol (MCP)** servers out of the box. Running `gkt mcp` will automatically index your codebase and wire up these servers to your IDE:
+
+1. **Code Graph (`code-graph`)**: Builds a structural graph of your codebase using Tree-sitter. AI agents can traverse function calls, imports, and classes without reading entire files.
+2. **Semantic Search (`faiss-code-index`)**: Generates an embedded vector index using FAISS. AI agents can perform deep semantic searches across your code.
+3. **Document Reader (`document-reader`)**: Allows AI agents to natively read `.pdf`, `.docx`, and `.xlsx` files without you having to copy-paste the contents.
+4. **Brain Manager (`brain-manager`)**: Grants agents direct read/write access to project architecture decisions, conventions, and checkpoints.
 
 ---
 
@@ -92,7 +119,7 @@ gkt init antigravity                    # Install ALL skills
 | `gkt version`                      | Show current version                                   |
 | `gkt brain`                        | Manage project brain — context, decisions, conventions |
 | `gkt journal`                      | Knowledge journal — capture lessons, bugs, insights    |
-| `gkt graph`                        | Build code graph + FAISS index and wire MCP into IDEs  |
+| `gkt mcp`                          | Wire MCP servers (Code Graph, FAISS, Document Reader) into IDEs |
 | `gkt skills list [--all]`          | List active skills (or all including disabled)         |
 | `gkt skills search <query>`        | Search skills by keyword                               |
 | `gkt skills enable <name>`         | Enable a disabled skill                                |

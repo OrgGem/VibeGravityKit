@@ -39,8 +39,16 @@ if sys.platform == "win32":
 SCRIPT_DIR = Path(__file__).resolve().parent
 SKILL_DIR = SCRIPT_DIR.parent
 
-# Server entries (relative paths so the config travels with the repo)
+# Server entries — script AND data paths are absolute to avoid CWD issues
 SERVER_NAMES = ("code-graph", "faiss-code-index", "document-reader", "brain-manager")
+
+# Servers that are project-specific (contain data paths tied to a project).
+# These go into the project-local .mcp.json, NOT the global config.
+_PROJECT_LOCAL_SERVERS = {"code-graph", "faiss-code-index"}
+
+# Servers that are universal (no project-specific data paths).
+# These go into the global config and work across all projects.
+_GLOBAL_SERVERS = {"document-reader", "brain-manager"}
 
 GITIGNORE_LINE = ".code-graph-index/\n"
 
@@ -68,21 +76,28 @@ def _python_cmd() -> str:
     return sys.executable or ("python" if shutil.which("python") else "python3")
 
 
-def build_server_entries(include_graph: bool = True, include_faiss: bool = True) -> dict:
-    """Return the two MCP server entries pinned to absolute script paths.
+def build_server_entries(
+    project_root: Path,
+    include_graph: bool = True,
+    include_faiss: bool = True,
+) -> dict:
+    """Return the MCP server entries pinned to absolute script AND data paths.
 
-    Absolute paths are used so the IDE can launch the servers regardless of
-    its CWD; the *data* paths (`graph.json`, `faiss-index/`) stay relative
-    to the project root.
+    Both script paths and data paths are absolute so the IDE can launch
+    the servers regardless of its CWD.  Previously, data paths like
+    `.code-graph-index/graph.json` were relative, which caused
+    FileNotFoundError when the server process started in a directory
+    other than the project root.
     """
     py = _python_cmd()
+    pr = project_root.resolve()
     entries = {
         "code-graph": {
             "command": py,
             "args": [
                 str((SCRIPT_DIR / "graph_mcp_server.py").resolve()),
                 "--graph",
-                ".code-graph-index/graph.json",
+                str(pr / ".code-graph-index" / "graph.json"),
             ],
             "env": {},
             "disabled": False,
@@ -94,7 +109,7 @@ def build_server_entries(include_graph: bool = True, include_faiss: bool = True)
             "args": [
                 str((SCRIPT_DIR / "faiss_mcp_server.py").resolve()),
                 "--index-dir",
-                ".code-graph-index/faiss-index",
+                str(pr / ".code-graph-index" / "faiss-index"),
             ],
             "env": {},
             "disabled": False,
@@ -141,6 +156,23 @@ def merge_config(existing: dict, new_servers: dict) -> dict:
 
 
 def write_ide_config(project_root: Path, ide: str, new_servers: dict) -> Path:
+    """Write MCP config for an IDE.
+
+    For Antigravity, the config is split into two files:
+      - Global config (~/.gemini/antigravity/mcp_config.json):
+        Only universal servers (document-reader, brain-manager).
+      - Project-local config (<project>/.mcp.json):
+        Project-specific servers (code-graph, faiss-code-index).
+
+    This prevents `gkt mcp` from overwriting project-specific paths
+    when run from different projects.  Antigravity reads BOTH files,
+    merging them at runtime.
+
+    For all other IDEs, all servers go into the single project-local config.
+    """
+    if ide == "antigravity":
+        return _write_antigravity_config(project_root, new_servers)
+
     target = project_root / IDE_CONFIG_PATHS[ide]
     target.parent.mkdir(parents=True, exist_ok=True)
 
@@ -156,6 +188,71 @@ def write_ide_config(project_root: Path, ide: str, new_servers: dict) -> Path:
     merged = merge_config(existing, new_servers)
     target.write_text(json.dumps(merged, indent=2, ensure_ascii=False), encoding="utf-8")
     return target
+
+
+def _write_antigravity_config(project_root: Path, new_servers: dict) -> Path:
+    """Split Antigravity MCP config into global + project-local.
+
+    Global (~/.gemini/antigravity/mcp_config.json):
+      Universal servers that work across all projects.
+    Project-local (<project>/.mcp.json):
+      Servers with project-specific data paths (code-graph, faiss-code-index).
+    """
+    # 1. Write global config: only universal servers
+    global_servers = {k: v for k, v in new_servers.items() if k in _GLOBAL_SERVERS}
+    global_target = IDE_CONFIG_PATHS["antigravity"]  # absolute path
+    global_target.parent.mkdir(parents=True, exist_ok=True)
+
+    global_existing: dict = {}
+    if global_target.exists():
+        try:
+            global_existing = json.loads(global_target.read_text(encoding="utf-8-sig"))
+        except json.JSONDecodeError:
+            global_target.with_suffix(global_target.suffix + ".bak").write_bytes(
+                global_target.read_bytes()
+            )
+            global_existing = {}
+
+    # Clean stale project-specific entries from global config
+    global_merged = dict(global_existing) if global_existing else {}
+    global_mcp = dict(global_merged.get("mcpServers", {}))
+    # Remove any project-local servers that may have leaked into global config
+    for name in _PROJECT_LOCAL_SERVERS:
+        global_mcp.pop(name, None)
+    global_mcp.update(global_servers)
+    global_merged["mcpServers"] = global_mcp
+    global_target.write_text(
+        json.dumps(global_merged, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+    print(f"   ✅ antigravity (global) → {global_target}")
+
+    # 2. Write project-local .mcp.json: project-specific servers
+    local_servers = {k: v for k, v in new_servers.items() if k in _PROJECT_LOCAL_SERVERS}
+    local_target = project_root / ".mcp.json"
+
+    local_existing: dict = {}
+    if local_target.exists():
+        try:
+            local_existing = json.loads(local_target.read_text(encoding="utf-8-sig"))
+        except json.JSONDecodeError:
+            local_target.with_suffix(local_target.suffix + ".bak").write_bytes(
+                local_target.read_bytes()
+            )
+            local_existing = {}
+
+    local_merged = dict(local_existing) if local_existing else {}
+    local_mcp = dict(local_merged.get("mcpServers", {}))
+    # Clean stale project-local server entries
+    for name in _PROJECT_LOCAL_SERVERS:
+        if name not in local_servers:
+            local_mcp.pop(name, None)
+    local_mcp.update(local_servers)
+    local_merged["mcpServers"] = local_mcp
+    local_target.write_text(
+        json.dumps(local_merged, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+
+    return local_target
 
 
 def detect_ides(project_root: Path) -> list[str]:
@@ -324,7 +421,7 @@ def main() -> None:
     )
     include_graph = graph_ok or graph_exists
     include_faiss = faiss_ok or faiss_exists
-    new_servers = build_server_entries(include_graph=include_graph, include_faiss=include_faiss)
+    new_servers = build_server_entries(project_root, include_graph=include_graph, include_faiss=include_faiss)
     if not new_servers:
         print("   ❌ No MCP servers were registered because no usable index artifacts exist.")
         sys.exit(1)
@@ -334,11 +431,13 @@ def main() -> None:
     for ide in ides:
         try:
             target = write_ide_config(project_root, ide, new_servers)
-            try:
-                rel_target = target.relative_to(project_root)
-            except ValueError:
-                rel_target = target
-            print(f"   ✅ {ide:<12} → {rel_target}")
+            if ide != "antigravity":
+                # Antigravity already prints its own status in _write_antigravity_config
+                try:
+                    rel_target = target.relative_to(project_root)
+                except ValueError:
+                    rel_target = target
+                print(f"   ✅ {ide:<12} → {rel_target}")
             written.append(ide)
         except Exception as exc:
             print(f"   ❌ {ide}: {exc}")

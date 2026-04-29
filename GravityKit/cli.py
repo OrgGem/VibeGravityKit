@@ -621,7 +621,7 @@ def update():
              click.echo("⚠️  Not a git repository. Attempting update via Pip...")
              subprocess.run([
                  "pip", "install", "--upgrade", 
-                 "git+https://github.com/Nhqvu2005/VibeGravityKit.git"
+                 "git+https://github.com/OrgGem/VibeGravityKit.git"
              ], check=True)
              click.echo("✅ Updated to latest version via Pip.")
              return

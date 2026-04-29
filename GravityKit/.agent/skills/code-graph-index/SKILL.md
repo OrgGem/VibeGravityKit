@@ -2,7 +2,7 @@
 name: code-graph-index
 description: Build a hybrid code knowledge base — symbolic graph (functions, classes, imports, call edges) plus a FAISS semantic vector index — and auto-wire MCP servers into Antigravity, Kiro, and Claude Code so any AI agent can search, traverse, and reason about the codebase locally without re-reading whole files.
 risk: safe
-source: VibeGravityKit (merged from code-review-graph)
+source: VibeGravityKit
 ---
 
 # Code Graph Index (Graph + FAISS + MCP)
@@ -143,12 +143,7 @@ python .agent/skills/code-graph-index/scripts/faiss_mcp_server.py \
 | `search_symbols(query, kind?)` | Find symbols by name / signature. Returns `{name, kind, path, line}`. |
 | `get_neighbors(node_id, edge_kind?, depth?)` | Traverse `contains` / `imports` / `calls` edges. |
 | `find_callers(symbol)` | Reverse call graph — who calls this function. |
-| `outline(path?)` | Compact per-file symbol outline (huge token saver). Supports path prefix filter. |
-| `get_review_context(path, depth?)` | **Review context** for a file/module: outline + incoming/outgoing edges + coupling score. |
-| `get_architecture_overview(limit?)` | **Architecture map**: top-level modules, symbol counts, cross-module coupling. Use first! |
-| `get_impact_radius(node_id, depth?)` | **Blast radius** of a symbol: what it affects + what depends on it. |
-| `find_hotspots(top_n?)` | Most-connected symbols (architectural hotspots with high change risk). |
-| `find_dependencies(path)` | Dependency view: what a file imports/calls and who imports/calls it. |
+| `outline(path?)` | Compact per-file symbol outline (huge token saver). |
 
 ### `faiss-code-index` server
 

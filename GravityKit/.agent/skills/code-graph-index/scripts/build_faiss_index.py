@@ -23,6 +23,14 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+# Make Windows consoles tolerate the progress glyphs printed below.
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 try:
     import faiss
 except ImportError:
@@ -78,7 +86,7 @@ def build_index(project_root: Path, output_dir: Path, dim: int = 384) -> tuple[i
     if not graph_path.exists():
         raise RuntimeError(f"Missing graph.json at {graph_path}. Run build_graph.py first.")
 
-    graph_data = json.loads(graph_path.read_text(encoding="utf-8"))
+    graph_data = json.loads(graph_path.read_text(encoding="utf-8-sig"))
     nodes = graph_data.get("nodes", [])
 
     # Get the best available embedder

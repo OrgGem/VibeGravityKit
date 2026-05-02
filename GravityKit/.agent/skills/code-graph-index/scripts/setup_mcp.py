@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -41,6 +42,7 @@ SKILL_DIR = SCRIPT_DIR.parent
 
 # Server entries — script AND data paths are absolute to avoid CWD issues
 SERVER_NAMES = ("code-graph", "faiss-code-index", "document-reader", "brain-manager")
+UTF8_ENV = {"PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1"}
 
 # Servers that are project-specific (contain data paths tied to a project).
 # These go into the project-local .mcp.json, NOT the global config.
@@ -50,7 +52,7 @@ _PROJECT_LOCAL_SERVERS = {"code-graph", "faiss-code-index"}
 # These go into the global config and work across all projects.
 _GLOBAL_SERVERS = {"document-reader", "brain-manager"}
 
-GITIGNORE_LINE = ".code-graph-index/\n"
+GITIGNORE_LINES = (".code-graph-index/", ".code-review-graph/")
 
 # Where each IDE picks up MCP config
 IDE_CONFIG_PATHS = {
@@ -99,7 +101,7 @@ def build_server_entries(
                 "--graph",
                 str(pr / ".code-graph-index" / "graph.json"),
             ],
-            "env": {},
+            "env": dict(UTF8_ENV),
             "disabled": False,
         },
     }
@@ -111,7 +113,7 @@ def build_server_entries(
                 "--index-dir",
                 str(pr / ".code-graph-index" / "faiss-index"),
             ],
-            "env": {},
+            "env": dict(UTF8_ENV),
             "disabled": False,
         }
     
@@ -120,7 +122,7 @@ def build_server_entries(
         "args": [
             str((SKILL_DIR.parent / "document-reader" / "scripts" / "reader_mcp_server.py").resolve()),
         ],
-        "env": {},
+        "env": dict(UTF8_ENV),
         "disabled": False,
     }
 
@@ -129,7 +131,7 @@ def build_server_entries(
         "args": [
             str((SKILL_DIR.parent / "brain-manager" / "scripts" / "brain_mcp_server.py").resolve()),
         ],
-        "env": {},
+        "env": dict(UTF8_ENV),
         "disabled": False,
     }
 
@@ -272,21 +274,87 @@ def detect_ides(project_root: Path) -> list[str]:
 
 def ensure_gitignore(project_root: Path) -> None:
     gi = project_root / ".gitignore"
-    line = GITIGNORE_LINE
+    lines = list(GITIGNORE_LINES)
     if gi.exists():
         text = gi.read_text(encoding="utf-8", errors="ignore")
-        if line.strip() in text:
+        missing = [line for line in lines if line not in text.splitlines()]
+        if not missing:
             return
-        gi.write_text(text.rstrip() + "\n" + line, encoding="utf-8")
+        gi.write_text(text.rstrip() + "\n" + "\n".join(missing) + "\n", encoding="utf-8")
     else:
-        gi.write_text(line, encoding="utf-8")
+        gi.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _posix_path(path: Path) -> str:
+    return str(path.resolve()).replace("\\", "/")
+
+
+def _setup_hook_command(project_root: Path, *, skip_faiss: bool = False) -> str:
+    args = [
+        "python",
+        "-X",
+        "utf8",
+        f'"{_posix_path(SCRIPT_DIR / "setup_mcp.py")}"',
+        "--project-root",
+        f'"{_posix_path(project_root)}"',
+        "--all",
+        "--incremental",
+    ]
+    if skip_faiss:
+        args.append("--skip-faiss")
+    return " ".join(args)
+
+
+def migrate_legacy_claude_hooks(project_root: Path) -> int:
+    """Replace old code-review-graph Claude hooks with code-graph-index hooks.
+
+    The migration is intentionally narrow: it only touches command hooks whose
+    command string still invokes the retired `code-review-graph` CLI.
+    """
+    settings_path = project_root / ".claude" / "settings.json"
+    if not settings_path.exists():
+        return 0
+
+    try:
+        settings = json.loads(settings_path.read_text(encoding="utf-8-sig"))
+    except json.JSONDecodeError:
+        settings_path.with_suffix(settings_path.suffix + ".bak").write_bytes(settings_path.read_bytes())
+        return 0
+
+    changed = 0
+
+    def visit(value):
+        nonlocal changed
+        if isinstance(value, dict):
+            command = value.get("command")
+            if isinstance(command, str) and "code-review-graph" in command:
+                if "status" in command:
+                    value["command"] = _setup_hook_command(project_root, skip_faiss=True)
+                    value["timeout"] = max(int(value.get("timeout", 0) or 0), 60)
+                    changed += 1
+                elif "update" in command or "serve" in command:
+                    value["command"] = _setup_hook_command(project_root)
+                    value["timeout"] = max(int(value.get("timeout", 0) or 0), 120)
+                    changed += 1
+            for child in value.values():
+                visit(child)
+        elif isinstance(value, list):
+            for child in value:
+                visit(child)
+
+    visit(settings)
+    if changed:
+        settings_path.write_text(json.dumps(settings, indent=2, ensure_ascii=False), encoding="utf-8")
+    return changed
 
 
 def run_step(label: str, cmd: list[str], cwd: Path) -> bool:
     print(f"\n▶ {label}")
     print(f"   {' '.join(cmd)}")
+    env = os.environ.copy()
+    env.update(UTF8_ENV)
     try:
-        subprocess.run(cmd, check=True, cwd=cwd)
+        subprocess.run(cmd, check=True, cwd=cwd, env=env)
         return True
     except subprocess.CalledProcessError as exc:
         print(f"   ❌ {label} failed (exit {exc.returncode})")
@@ -344,19 +412,20 @@ def main() -> None:
     print(f"   target IDEs : {', '.join(ides)}")
 
     py = _python_cmd()
-    graph_ok = True
-    faiss_ok = True
+    graph_ok = False
+    faiss_ok = False
 
     # 0. Check and install dependencies
     missing_deps = []
-    try:
-        import faiss
-    except ImportError:
-        missing_deps.append("faiss-cpu")
-    try:
-        import onnxruntime
-    except ImportError:
-        missing_deps.append("onnxruntime")
+    if not args.skip_faiss:
+        try:
+            import faiss
+        except ImportError:
+            missing_deps.append("faiss-cpu")
+        try:
+            import onnxruntime
+        except ImportError:
+            missing_deps.append("onnxruntime")
     
     # Document reader dependencies
     try:
@@ -375,8 +444,10 @@ def main() -> None:
     if missing_deps:
         print(f"\n▶ Auto-installing missing dependencies: {', '.join(missing_deps)}")
         cmd = [py, "-m", "pip", "install"] + missing_deps
+        env = os.environ.copy()
+        env.update(UTF8_ENV)
         try:
-            subprocess.run(cmd, check=True, capture_output=True, text=True)
+            subprocess.run(cmd, check=True, capture_output=True, text=True, env=env)
             print("   ✅ Dependencies installed successfully")
         except subprocess.CalledProcessError as e:
             print(f"   ⚠️  Dependency installation failed. Please install manually:")
@@ -444,6 +515,9 @@ def main() -> None:
 
     # 4. .gitignore hygiene
     ensure_gitignore(project_root)
+    migrated_hooks = migrate_legacy_claude_hooks(project_root)
+    if migrated_hooks:
+        print(f"   ✅ migrated {migrated_hooks} legacy Claude hook(s)")
 
     print("\n✨ Done.")
     print(f"   Servers registered: {', '.join(new_servers)}")

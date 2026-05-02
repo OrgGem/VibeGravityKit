@@ -179,6 +179,7 @@ def warn_missing(label, names, limit=10):
 def run_python_script(script, args=None):
     env = os.environ.copy()
     env["PYTHONIOENCODING"] = "utf-8"
+    env["PYTHONUTF8"] = "1"
     result = sp.run([sys.executable, str(script), *(args or [])], env=env)
     if result.returncode:
         sys.exit(result.returncode)

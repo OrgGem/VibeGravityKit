@@ -41,7 +41,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 SKILL_DIR = SCRIPT_DIR.parent
 
 # Server entries (relative paths so the config travels with the repo)
-SERVER_NAMES = ("code-graph", "faiss-code-index", "document-reader")
+SERVER_NAMES = ("code-graph", "faiss-code-index", "document-reader", "skill-router")
 
 GITIGNORE_LINE = ".code-graph-index/\n"
 
@@ -105,6 +105,15 @@ def build_server_entries(include_graph: bool = True, include_faiss: bool = True)
         "command": py,
         "args": [
             str((SKILL_DIR.parent / "document-reader" / "scripts" / "reader_mcp_server.py").resolve()),
+        ],
+        "env": {},
+        "disabled": False,
+    }
+    
+    entries["skill-router"] = {
+        "command": py,
+        "args": [
+            str((SKILL_DIR.parent / "skill-router" / "scripts" / "skill_router_mcp.py").resolve()),
         ],
         "env": {},
         "disabled": False,

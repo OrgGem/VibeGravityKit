@@ -661,7 +661,9 @@ def version():
 @click.pass_context
 def brain(ctx):
     """Manage project brain — context, decisions, conventions."""
-    script = Path(__file__).resolve().parent / ".agent" / "skills" / "brain-manager" / "scripts" / "brain.py"
+    local_script = Path.cwd() / ".agent" / "skills" / "brain-manager" / "scripts" / "brain.py"
+    global_script = Path(__file__).resolve().parent / ".agent" / "skills" / "brain-manager" / "scripts" / "brain.py"
+    script = local_script if local_script.exists() else global_script
     if not script.exists():
         click.echo("❌ brain-manager skill not found. Run 'gkt init' first.")
         return
@@ -671,7 +673,9 @@ def brain(ctx):
 @click.pass_context
 def journal(ctx):
     """Knowledge journal — capture lessons, bugs, insights."""
-    script = Path(__file__).resolve().parent / ".agent" / "skills" / "journal-manager" / "scripts" / "journal.py"
+    local_script = Path.cwd() / ".agent" / "skills" / "journal-manager" / "scripts" / "journal.py"
+    global_script = Path(__file__).resolve().parent / ".agent" / "skills" / "journal-manager" / "scripts" / "journal.py"
+    script = local_script if local_script.exists() else global_script
     if not script.exists():
         click.echo("❌ journal-manager skill not found. Run 'gkt init' first.")
         return
@@ -691,10 +695,9 @@ def graph(ctx):
       gkt graph --all                          # Configure every supported IDE
       gkt graph --incremental                  # Fast graph rebuild (skip unchanged files)
     """
-    script = (
-        Path(__file__).resolve().parent
-        / ".agent" / "skills" / "code-graph-index" / "scripts" / "setup_mcp.py"
-    )
+    local_script = Path.cwd() / ".agent" / "skills" / "code-graph-index" / "scripts" / "setup_mcp.py"
+    global_script = Path(__file__).resolve().parent / ".agent" / "skills" / "code-graph-index" / "scripts" / "setup_mcp.py"
+    script = local_script if local_script.exists() else global_script
     if not script.exists():
         click.echo("❌ code-graph-index skill not found. Run 'gkt init' first.")
         return

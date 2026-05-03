@@ -715,6 +715,35 @@ def mcp(ctx):
         ctx.args.append("--ensure-model")
     ctx.forward(graph)
 
+@main.command()
+@click.option("--debounce", default=2000, help="Debounce interval in ms (default: 2000)")
+@click.option("--verbose", is_flag=True, help="Show individual file change events")
+def watch(debounce, verbose):
+    """Start live file watcher — auto-updates graph + FAISS on every save.
+
+    \b
+    Monitors code files in the current directory for changes and automatically
+    runs incremental graph + FAISS rebuilds. MCP servers auto-reload via mtime
+    checks, so IDE agents always see the freshest context.
+
+    \b
+    Examples:
+      gkt watch                   # Start with default 2s debounce
+      gkt watch --debounce 1000   # Faster updates (1s debounce)
+      gkt watch --verbose         # Show each file change event
+    """
+    local_script = Path.cwd() / ".agent" / "skills" / "code-graph-index" / "scripts" / "watcher.py"
+    global_script = Path(__file__).resolve().parent / ".agent" / "skills" / "code-graph-index" / "scripts" / "watcher.py"
+    script = local_script if local_script.exists() else global_script
+    if not script.exists():
+        click.echo("❌ code-graph-index skill not found. Run 'gkt init' first.")
+        return
+
+    args = ["--project-root", str(Path.cwd()), "--debounce", str(debounce)]
+    if verbose:
+        args.append("--verbose")
+    run_python_script(script, args)
+
 @main.group()
 def skills():
     """Manage skills — list, enable, disable, search."""

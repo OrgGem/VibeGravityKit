@@ -36,6 +36,9 @@ dependencies = [
     "pyyaml>=6.0",
 ]
 
+[project.optional-dependencies]
+watch = ["watchdog>=3.0"]
+
 [project.urls]
 Homepage = "https://github.com/OrgGem/VibeGravityKit"
 Repository = "https://github.com/OrgGem/VibeGravityKit"

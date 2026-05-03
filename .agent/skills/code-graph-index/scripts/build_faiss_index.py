@@ -195,14 +195,16 @@ def build_index(project_root: Path, output_dir: Path, dim: int = 384) -> tuple[i
     nodes = graph_data.get("nodes", [])
 
     # Check if incremental is possible
-    dirty_ids = set(graph_data.get("metadata", {}).get("dirty_nodes", []))
+    # dirty_nodes can be: None (--rebuild / full build), [] (no changes), or [ids...] (incremental)
+    raw_dirty = graph_data.get("metadata", {}).get("dirty_nodes")
     existing_meta_path = output_dir / "metadata.json"
     existing_index_path = output_dir / "code.index"
 
-    if (dirty_ids is not None
-            and len(dirty_ids) >= 0
+    if (raw_dirty is not None  # None means full rebuild was requested
+            and isinstance(raw_dirty, list)
             and existing_meta_path.exists()
             and existing_index_path.exists()):
+        dirty_ids = set(raw_dirty)
         try:
             result = _incremental_build(project_root, output_dir, graph_data, dirty_ids)
             if result is not None:

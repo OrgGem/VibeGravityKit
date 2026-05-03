@@ -33,6 +33,7 @@ _METADATA: dict | None = None
 _DIM: int = 384
 _SERVER_INDEX_DIR = ".code-graph-index/faiss-index"
 _EMBEDDER = None
+_INDEX_MTIME: float = 0
 
 
 def _get_embedder():
@@ -67,9 +68,8 @@ def _get_embedder():
 
 
 def _ensure_loaded(index_dir: Path) -> None:
-    global _INDEX, _METADATA, _DIM
-    if _INDEX is not None and _METADATA is not None:
-        return
+    """Load FAISS index with mtime-based cache invalidation for hot-reload (Phase B4)."""
+    global _INDEX, _METADATA, _DIM, _INDEX_MTIME
 
     index_path = index_dir / "code.index"
     metadata_path = index_dir / "metadata.json"
@@ -78,12 +78,20 @@ def _ensure_loaded(index_dir: Path) -> None:
             f"Missing index files in {index_dir}. Run build_faiss_index.py first."
         )
 
+    current_mtime = index_path.stat().st_mtime
+    if _INDEX is not None and _METADATA is not None and abs(current_mtime - _INDEX_MTIME) < 1e-6:
+        return
+
     if faiss is None:
         raise RuntimeError("faiss-cpu is required. Install with: pip install faiss-cpu")
 
     _INDEX = faiss.read_index(str(index_path))
     _METADATA = json.loads(metadata_path.read_text(encoding="utf-8"))
     _DIM = int(_METADATA.get("dimension", 384))
+    _INDEX_MTIME = current_mtime
+    # Reset embedder so it re-reads strategy from new metadata
+    global _EMBEDDER
+    _EMBEDDER = None
 
 
 def search_code_chunks(query: str, top_k: int = 8) -> dict:

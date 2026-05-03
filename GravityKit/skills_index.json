@@ -373,7 +373,7 @@
     "path": "skills/code-graph-index/SKILL.md",
     "category": "data-ai",
     "name": "code-graph-index",
-    "description": "Build a hybrid code knowledge base — symbolic graph (functions, classes, imports, call edges) plus a FAISS semantic vector index — and auto-wire MCP servers into Antigravity, Kiro, and Claude Code so any AI agent can search, traverse, and reason about the codebase locally without re-reading whole files.",
+    "description": "Build a hybrid code knowledge base — symbolic graph (functions, classes, imports, call edges)\nplus a FAISS semantic vector index — and auto-wire MCP servers into Antigravity, Kiro, and\nClaude Code so any AI agent can search, traverse, and reason about the codebase locally\nwithout re-reading whole files. Supports fine-grained incremental updates (AST node-level\nhash caching), live watch mode, and data lineage with byte-level source traceability.",
     "risk": "safe",
     "source": "VibeGravityKit"
   },
@@ -1598,6 +1598,15 @@
     "category": "data-ai",
     "name": "skill-developer",
     "description": "Create and manage Claude Code skills following Anthropic best practices. Use when creating new skills, modifying skill-rules.json, understanding trigger patterns, working with hooks, debugging skill activation, or implementing progressive disclosure. Covers skill structure, YAML frontmatter, trigger types (keywords, intent patterns, file paths, content patterns), enforcement levels (block, suggest, warn), hook mechanisms (UserPromptSubmit, PreToolUse), session tracking, and the 500-line rule.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "skill-router",
+    "path": "skills/skill-router/SKILL.md",
+    "category": "general",
+    "name": "skill-router",
+    "description": "MCP server that intelligently routes agent requests to the correct skills and workflows. Install all skills without group separation — the router guides which skill to use.",
     "risk": "unknown",
     "source": "community"
   },

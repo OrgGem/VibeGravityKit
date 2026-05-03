@@ -9,13 +9,25 @@ Manages the `.agent/brain/` directory — your project's persistent memory. It s
 
 ## Usage
 
-This skill provides an **MCP Server** that exposes tools directly to the agent. You do not need to run CLI commands anymore. Simply call these tools when managing project context:
+### Add a Decision
+```bash
+python .agent/skills/brain-manager/scripts/brain.py add-decision "Use PostgreSQL over MongoDB for relational data needs"
+```
 
-1. `get_brain_context()`: Reads the current project stack, decisions, and conventions.
-2. `add_architecture_decision(decision, rationale, category)`: Logs a new decision.
-3. `update_project_context(key_path, value)`: Updates project metadata (e.g., `project.description` or `architecture.database`).
-4. `save_workflow_checkpoint(workflow_name, phase, content)`: Saves a complex workflow session so you can resume later.
-5. `load_workflow_checkpoint(workflow_name)`: Loads the latest session artifact to resume work.
+### Show Project Context
+```bash
+python .agent/skills/brain-manager/scripts/brain.py show
+```
+
+### Export Brain (for sharing/backup)
+```bash
+python .agent/skills/brain-manager/scripts/brain.py export --output brain_backup.json
+```
+
+### Import Brain (from another project or backup)
+```bash
+python .agent/skills/brain-manager/scripts/brain.py import --input brain_backup.json
+```
 
 ## Files
 
@@ -102,20 +114,3 @@ At session start, before running any phase:
 ### Update SESSIONS.md index
 
 After creating or completing a session, update the Active Sessions table in `brain/workflow_sessions/SESSIONS.md`.
-
-## IDE Configuration
-
-This MCP Server is automatically configured by `gkt mcp`. If you need to manually register it:
-
-```json
-{
-  "mcpServers": {
-    "brain-manager": {
-      "command": "python",
-      "args": [
-        ".agent/skills/brain-manager/scripts/brain_mcp_server.py"
-      ]
-    }
-  }
-}
-```

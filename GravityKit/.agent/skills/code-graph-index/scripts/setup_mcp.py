@@ -2,10 +2,11 @@
 """
 setup_mcp.py — One-shot installer for the code-graph-index skill.
 
-Does three things:
-  1. Build the structural graph         (build_graph.py)
-  2. Build the FAISS semantic index     (build_faiss_index.py)
+Does four things:
+  1. Build the structural graph         (build_graph.py)  — with fine-grained incremental
+  2. Build the FAISS semantic index     (build_faiss_index.py) — auto-detects dirty_nodes
   3. Write MCP config for each target IDE so the servers auto-load
+  4. Print hints for watch mode and next steps
 
 Targets:
   --ides antigravity   → ./.mcp.json                 (also picked up by Claude Code project scope)
@@ -23,7 +24,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import shutil
 import subprocess
 import sys
@@ -40,23 +40,14 @@ if sys.platform == "win32":
 SCRIPT_DIR = Path(__file__).resolve().parent
 SKILL_DIR = SCRIPT_DIR.parent
 
-# Server entries — script AND data paths are absolute to avoid CWD issues
-SERVER_NAMES = ("code-graph", "faiss-code-index", "document-reader", "brain-manager")
-UTF8_ENV = {"PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1"}
+# Server entries (relative paths so the config travels with the repo)
+SERVER_NAMES = ("code-graph", "faiss-code-index", "document-reader", "skill-router")
 
-# Servers that are project-specific (contain data paths tied to a project).
-# These go into the project-local .mcp.json, NOT the global config.
-_PROJECT_LOCAL_SERVERS = {"code-graph", "faiss-code-index"}
-
-# Servers that are universal (no project-specific data paths).
-# These go into the global config and work across all projects.
-_GLOBAL_SERVERS = {"document-reader", "brain-manager"}
-
-GITIGNORE_LINES = (".code-graph-index/", ".code-review-graph/")
+GITIGNORE_LINE = ".code-graph-index/\n"
 
 # Where each IDE picks up MCP config
 IDE_CONFIG_PATHS = {
-    "antigravity": Path.home() / ".gemini" / "antigravity" / "mcp_config.json",
+    "antigravity": Path(".mcp.json"),
     "claude": Path(".claude") / "mcp_servers.json",
     "kiro": Path(".kiro") / "settings" / "mcp.json",
     "cursor": Path(".cursor") / "mcp.json",
@@ -78,30 +69,23 @@ def _python_cmd() -> str:
     return sys.executable or ("python" if shutil.which("python") else "python3")
 
 
-def build_server_entries(
-    project_root: Path,
-    include_graph: bool = True,
-    include_faiss: bool = True,
-) -> dict:
-    """Return the MCP server entries pinned to absolute script AND data paths.
+def build_server_entries(include_graph: bool = True, include_faiss: bool = True) -> dict:
+    """Return the two MCP server entries pinned to absolute script paths.
 
-    Both script paths and data paths are absolute so the IDE can launch
-    the servers regardless of its CWD.  Previously, data paths like
-    `.code-graph-index/graph.json` were relative, which caused
-    FileNotFoundError when the server process started in a directory
-    other than the project root.
+    Absolute paths are used so the IDE can launch the servers regardless of
+    its CWD; the *data* paths (`graph.json`, `faiss-index/`) stay relative
+    to the project root.
     """
     py = _python_cmd()
-    pr = project_root.resolve()
     entries = {
         "code-graph": {
             "command": py,
             "args": [
                 str((SCRIPT_DIR / "graph_mcp_server.py").resolve()),
                 "--graph",
-                str(pr / ".code-graph-index" / "graph.json"),
+                ".code-graph-index/graph.json",
             ],
-            "env": dict(UTF8_ENV),
+            "env": {},
             "disabled": False,
         },
     }
@@ -111,9 +95,9 @@ def build_server_entries(
             "args": [
                 str((SCRIPT_DIR / "faiss_mcp_server.py").resolve()),
                 "--index-dir",
-                str(pr / ".code-graph-index" / "faiss-index"),
+                ".code-graph-index/faiss-index",
             ],
-            "env": dict(UTF8_ENV),
+            "env": {},
             "disabled": False,
         }
     
@@ -122,16 +106,16 @@ def build_server_entries(
         "args": [
             str((SKILL_DIR.parent / "document-reader" / "scripts" / "reader_mcp_server.py").resolve()),
         ],
-        "env": dict(UTF8_ENV),
+        "env": {},
         "disabled": False,
     }
-
-    entries["brain-manager"] = {
+    
+    entries["skill-router"] = {
         "command": py,
         "args": [
-            str((SKILL_DIR.parent / "brain-manager" / "scripts" / "brain_mcp_server.py").resolve()),
+            str((SKILL_DIR.parent / "skill-router" / "scripts" / "skill_router_mcp.py").resolve()),
         ],
-        "env": dict(UTF8_ENV),
+        "env": {},
         "disabled": False,
     }
 
@@ -158,23 +142,6 @@ def merge_config(existing: dict, new_servers: dict) -> dict:
 
 
 def write_ide_config(project_root: Path, ide: str, new_servers: dict) -> Path:
-    """Write MCP config for an IDE.
-
-    For Antigravity, the config is split into two files:
-      - Global config (~/.gemini/antigravity/mcp_config.json):
-        Only universal servers (document-reader, brain-manager).
-      - Project-local config (<project>/.mcp.json):
-        Project-specific servers (code-graph, faiss-code-index).
-
-    This prevents `gkt mcp` from overwriting project-specific paths
-    when run from different projects.  Antigravity reads BOTH files,
-    merging them at runtime.
-
-    For all other IDEs, all servers go into the single project-local config.
-    """
-    if ide == "antigravity":
-        return _write_antigravity_config(project_root, new_servers)
-
     target = project_root / IDE_CONFIG_PATHS[ide]
     target.parent.mkdir(parents=True, exist_ok=True)
 
@@ -190,71 +157,6 @@ def write_ide_config(project_root: Path, ide: str, new_servers: dict) -> Path:
     merged = merge_config(existing, new_servers)
     target.write_text(json.dumps(merged, indent=2, ensure_ascii=False), encoding="utf-8")
     return target
-
-
-def _write_antigravity_config(project_root: Path, new_servers: dict) -> Path:
-    """Split Antigravity MCP config into global + project-local.
-
-    Global (~/.gemini/antigravity/mcp_config.json):
-      Universal servers that work across all projects.
-    Project-local (<project>/.mcp.json):
-      Servers with project-specific data paths (code-graph, faiss-code-index).
-    """
-    # 1. Write global config: only universal servers
-    global_servers = {k: v for k, v in new_servers.items() if k in _GLOBAL_SERVERS}
-    global_target = IDE_CONFIG_PATHS["antigravity"]  # absolute path
-    global_target.parent.mkdir(parents=True, exist_ok=True)
-
-    global_existing: dict = {}
-    if global_target.exists():
-        try:
-            global_existing = json.loads(global_target.read_text(encoding="utf-8-sig"))
-        except json.JSONDecodeError:
-            global_target.with_suffix(global_target.suffix + ".bak").write_bytes(
-                global_target.read_bytes()
-            )
-            global_existing = {}
-
-    # Clean stale project-specific entries from global config
-    global_merged = dict(global_existing) if global_existing else {}
-    global_mcp = dict(global_merged.get("mcpServers", {}))
-    # Remove any project-local servers that may have leaked into global config
-    for name in _PROJECT_LOCAL_SERVERS:
-        global_mcp.pop(name, None)
-    global_mcp.update(global_servers)
-    global_merged["mcpServers"] = global_mcp
-    global_target.write_text(
-        json.dumps(global_merged, indent=2, ensure_ascii=False), encoding="utf-8"
-    )
-    print(f"   ✅ antigravity (global) → {global_target}")
-
-    # 2. Write project-local .mcp.json: project-specific servers
-    local_servers = {k: v for k, v in new_servers.items() if k in _PROJECT_LOCAL_SERVERS}
-    local_target = project_root / ".mcp.json"
-
-    local_existing: dict = {}
-    if local_target.exists():
-        try:
-            local_existing = json.loads(local_target.read_text(encoding="utf-8-sig"))
-        except json.JSONDecodeError:
-            local_target.with_suffix(local_target.suffix + ".bak").write_bytes(
-                local_target.read_bytes()
-            )
-            local_existing = {}
-
-    local_merged = dict(local_existing) if local_existing else {}
-    local_mcp = dict(local_merged.get("mcpServers", {}))
-    # Clean stale project-local server entries
-    for name in _PROJECT_LOCAL_SERVERS:
-        if name not in local_servers:
-            local_mcp.pop(name, None)
-    local_mcp.update(local_servers)
-    local_merged["mcpServers"] = local_mcp
-    local_target.write_text(
-        json.dumps(local_merged, indent=2, ensure_ascii=False), encoding="utf-8"
-    )
-
-    return local_target
 
 
 def detect_ides(project_root: Path) -> list[str]:
@@ -274,87 +176,21 @@ def detect_ides(project_root: Path) -> list[str]:
 
 def ensure_gitignore(project_root: Path) -> None:
     gi = project_root / ".gitignore"
-    lines = list(GITIGNORE_LINES)
+    line = GITIGNORE_LINE
     if gi.exists():
         text = gi.read_text(encoding="utf-8", errors="ignore")
-        missing = [line for line in lines if line not in text.splitlines()]
-        if not missing:
+        if line.strip() in text:
             return
-        gi.write_text(text.rstrip() + "\n" + "\n".join(missing) + "\n", encoding="utf-8")
+        gi.write_text(text.rstrip() + "\n" + line, encoding="utf-8")
     else:
-        gi.write_text("\n".join(lines) + "\n", encoding="utf-8")
-
-
-def _posix_path(path: Path) -> str:
-    return str(path.resolve()).replace("\\", "/")
-
-
-def _setup_hook_command(project_root: Path, *, skip_faiss: bool = False) -> str:
-    args = [
-        "python",
-        "-X",
-        "utf8",
-        f'"{_posix_path(SCRIPT_DIR / "setup_mcp.py")}"',
-        "--project-root",
-        f'"{_posix_path(project_root)}"',
-        "--all",
-        "--incremental",
-    ]
-    if skip_faiss:
-        args.append("--skip-faiss")
-    return " ".join(args)
-
-
-def migrate_legacy_claude_hooks(project_root: Path) -> int:
-    """Replace old code-review-graph Claude hooks with code-graph-index hooks.
-
-    The migration is intentionally narrow: it only touches command hooks whose
-    command string still invokes the retired `code-review-graph` CLI.
-    """
-    settings_path = project_root / ".claude" / "settings.json"
-    if not settings_path.exists():
-        return 0
-
-    try:
-        settings = json.loads(settings_path.read_text(encoding="utf-8-sig"))
-    except json.JSONDecodeError:
-        settings_path.with_suffix(settings_path.suffix + ".bak").write_bytes(settings_path.read_bytes())
-        return 0
-
-    changed = 0
-
-    def visit(value):
-        nonlocal changed
-        if isinstance(value, dict):
-            command = value.get("command")
-            if isinstance(command, str) and "code-review-graph" in command:
-                if "status" in command:
-                    value["command"] = _setup_hook_command(project_root, skip_faiss=True)
-                    value["timeout"] = max(int(value.get("timeout", 0) or 0), 60)
-                    changed += 1
-                elif "update" in command or "serve" in command:
-                    value["command"] = _setup_hook_command(project_root)
-                    value["timeout"] = max(int(value.get("timeout", 0) or 0), 120)
-                    changed += 1
-            for child in value.values():
-                visit(child)
-        elif isinstance(value, list):
-            for child in value:
-                visit(child)
-
-    visit(settings)
-    if changed:
-        settings_path.write_text(json.dumps(settings, indent=2, ensure_ascii=False), encoding="utf-8")
-    return changed
+        gi.write_text(line, encoding="utf-8")
 
 
 def run_step(label: str, cmd: list[str], cwd: Path) -> bool:
     print(f"\n▶ {label}")
     print(f"   {' '.join(cmd)}")
-    env = os.environ.copy()
-    env.update(UTF8_ENV)
     try:
-        subprocess.run(cmd, check=True, cwd=cwd, env=env)
+        subprocess.run(cmd, check=True, cwd=cwd)
         return True
     except subprocess.CalledProcessError as exc:
         print(f"   ❌ {label} failed (exit {exc.returncode})")
@@ -412,21 +248,24 @@ def main() -> None:
     print(f"   target IDEs : {', '.join(ides)}")
 
     py = _python_cmd()
-    graph_ok = False
-    faiss_ok = False
+    graph_ok = True
+    faiss_ok = True
 
     # 0. Check and install dependencies
     missing_deps = []
-    if not args.skip_faiss:
-        try:
-            import faiss
-        except ImportError:
-            missing_deps.append("faiss-cpu")
-        try:
-            import onnxruntime
-        except ImportError:
-            missing_deps.append("onnxruntime")
-    
+    try:
+        import numpy
+    except ImportError:
+        missing_deps.append("numpy")
+    try:
+        import faiss
+    except ImportError:
+        missing_deps.append("faiss-cpu")
+    try:
+        import onnxruntime
+    except ImportError:
+        missing_deps.append("onnxruntime")
+
     # Document reader dependencies
     try:
         import pypdf
@@ -440,14 +279,12 @@ def main() -> None:
         import openpyxl
     except ImportError:
         missing_deps.append("openpyxl")
-        
+
     if missing_deps:
         print(f"\n▶ Auto-installing missing dependencies: {', '.join(missing_deps)}")
         cmd = [py, "-m", "pip", "install"] + missing_deps
-        env = os.environ.copy()
-        env.update(UTF8_ENV)
         try:
-            subprocess.run(cmd, check=True, capture_output=True, text=True, env=env)
+            subprocess.run(cmd, check=True, capture_output=True, text=True)
             print("   ✅ Dependencies installed successfully")
         except subprocess.CalledProcessError as e:
             print(f"   ⚠️  Dependency installation failed. Please install manually:")
@@ -455,13 +292,30 @@ def main() -> None:
             print(f"   Error details: {e.stderr.strip()}")
 
     # 1. Structural graph
+    incremental_mode = args.incremental and not args.rebuild
     if not args.skip_graph:
         cmd = [py, str(SCRIPT_DIR / "build_graph.py"), "--path", str(project_root)]
-        if args.incremental and not args.rebuild:
+        if incremental_mode:
             cmd.append("--incremental")
-        graph_ok = run_step("Building structural graph", cmd, project_root)
+        label = "Building structural graph (incremental)" if incremental_mode else "Building structural graph"
+        graph_ok = run_step(label, cmd, project_root)
 
-    # 1.5. Download ONNX model (if requested)
+    # 1.5. If --rebuild, clear dirty_nodes from graph so FAISS does full rebuild
+    if args.rebuild and not args.skip_graph:
+        graph_path = project_root / ".code-graph-index" / "graph.json"
+        if graph_path.exists():
+            try:
+                g = json.loads(graph_path.read_text(encoding="utf-8"))
+                if "dirty_nodes" in g.get("metadata", {}):
+                    g["metadata"]["dirty_nodes"] = None  # signal full rebuild
+                    g["metadata"].pop("incremental_stats", None)
+                    graph_path.write_text(
+                        json.dumps(g, ensure_ascii=False, indent=2), encoding="utf-8"
+                    )
+            except Exception:
+                pass  # non-fatal
+
+    # 2. Download ONNX model (if requested)
     if args.ensure_model:
         print("\n▶ Ensuring ONNX embedding model")
         try:
@@ -475,15 +329,18 @@ def main() -> None:
             print(f"   ⚠️  Model download failed: {exc}")
             print("   ↳ Will fall back to hash embedding for FAISS index")
 
-    # 2. FAISS index
+    # 3. FAISS index (auto-detects dirty_nodes for incremental re-embedding)
     if not args.skip_faiss:
         cmd = [py, str(SCRIPT_DIR / "build_faiss_index.py"),
                "--project-root", str(project_root)]
-        faiss_ok = run_step("Building FAISS index", cmd, project_root)
+        label = "Building FAISS index"
+        if incremental_mode:
+            label += " (incremental — only dirty nodes will be re-embedded)"
+        faiss_ok = run_step(label, cmd, project_root)
         if not faiss_ok:
             print("   ↳ FAISS step skipped — install with: pip install faiss-cpu numpy")
 
-    # 3. Write IDE configs
+    # 4. Write IDE configs
     print("\n▶ Writing MCP configs")
     graph_exists = (project_root / ".code-graph-index" / "graph.json").exists()
     faiss_exists = (
@@ -492,7 +349,7 @@ def main() -> None:
     )
     include_graph = graph_ok or graph_exists
     include_faiss = faiss_ok or faiss_exists
-    new_servers = build_server_entries(project_root, include_graph=include_graph, include_faiss=include_faiss)
+    new_servers = build_server_entries(include_graph=include_graph, include_faiss=include_faiss)
     if not new_servers:
         print("   ❌ No MCP servers were registered because no usable index artifacts exist.")
         sys.exit(1)
@@ -502,30 +359,44 @@ def main() -> None:
     for ide in ides:
         try:
             target = write_ide_config(project_root, ide, new_servers)
-            if ide != "antigravity":
-                # Antigravity already prints its own status in _write_antigravity_config
-                try:
-                    rel_target = target.relative_to(project_root)
-                except ValueError:
-                    rel_target = target
-                print(f"   ✅ {ide:<12} → {rel_target}")
+            print(f"   ✅ {ide:<12} → {target.relative_to(project_root)}")
             written.append(ide)
         except Exception as exc:
             print(f"   ❌ {ide}: {exc}")
 
-    # 4. .gitignore hygiene
+    # 5. .gitignore hygiene
     ensure_gitignore(project_root)
-    migrated_hooks = migrate_legacy_claude_hooks(project_root)
-    if migrated_hooks:
-        print(f"   ✅ migrated {migrated_hooks} legacy Claude hook(s)")
+
+    # 6. Print incremental stats if available
+    graph_path = project_root / ".code-graph-index" / "graph.json"
+    if graph_path.exists():
+        try:
+            g = json.loads(graph_path.read_text(encoding="utf-8"))
+            stats = g.get("metadata", {}).get("incremental_stats")
+            dirty = g.get("metadata", {}).get("dirty_nodes", [])
+            if stats and incremental_mode:
+                print(f"\n📊 Incremental stats:")
+                print(f"   Files changed : {stats.get('files_changed', 0)}")
+                print(f"   Nodes kept    : {stats.get('nodes_kept', 0)}")
+                print(f"   Nodes updated : {stats.get('nodes_updated', 0)}")
+                print(f"   Nodes added   : {stats.get('nodes_added', 0)}")
+                print(f"   Nodes deleted : {stats.get('nodes_deleted', 0)}")
+                print(f"   Dirty nodes   : {len(dirty) if dirty else 0}")
+        except Exception:
+            pass
 
     print("\n✨ Done.")
     print(f"   Servers registered: {', '.join(new_servers)}")
+    print(f"   MCP tools: list_graph_stats, search_symbols, get_neighbors,")
+    print(f"              find_callers, outline, get_lineage, blast_radius,")
+    print(f"              search_code_chunks")
     print(f"   Reload your IDE to pick up MCP changes.")
     if "kiro" in written:
         print("   Kiro: open the MCP panel and click 'Reload servers'.")
     if "claude" in written or "antigravity" in written:
         print("   Claude Code / Antigravity: restart the agent or run `/mcp` to verify.")
+    print(f"\n💡 Tip: Run 'gkt watch' to auto-sync the index on every file save.")
+    print(f"   Next incremental update: 'gkt graph --incremental'")
 
 
 if __name__ == "__main__":

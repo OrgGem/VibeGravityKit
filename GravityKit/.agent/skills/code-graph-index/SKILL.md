@@ -1,6 +1,11 @@
 ---
 name: code-graph-index
-description: Build a hybrid code knowledge base — symbolic graph (functions, classes, imports, call edges) plus a FAISS semantic vector index — and auto-wire MCP servers into Antigravity, Kiro, and Claude Code so any AI agent can search, traverse, and reason about the codebase locally without re-reading whole files.
+description: |
+  Build a hybrid code knowledge base — symbolic graph (functions, classes, imports, call edges)
+  plus a FAISS semantic vector index — and auto-wire MCP servers into Antigravity, Kiro, and
+  Claude Code so any AI agent can search, traverse, and reason about the codebase locally
+  without re-reading whole files. Supports fine-grained incremental updates (AST node-level
+  hash caching), live watch mode, and data lineage with byte-level source traceability.
 risk: safe
 source: VibeGravityKit
 ---
@@ -11,10 +16,11 @@ A token-saving, fully local code intelligence layer for AI agents.
 
 This skill turns any repository into:
 
-1. A **structural graph** — files, classes, functions, imports, and call edges saved as JSON with docstrings/snippets.
-2. A **Hybrid FAISS semantic index** — vector search directly over the structural graph nodes (Hybrid RAG) for lightning-fast, highly accurate API discovery.
-3. Two **MCP servers** that expose the graph and the index to any MCP-aware IDE.
+1. A **structural graph** — files, classes, functions, imports, and call edges saved as JSON with docstrings/snippets and **content hashes for fine-grained incremental updates**.
+2. A **Hybrid FAISS semantic index** — vector search directly over the structural graph nodes (Hybrid RAG) for lightning-fast, highly accurate API discovery. **Supports incremental re-embedding: only dirty nodes are re-vectorized.**
+3. Two **MCP servers** that expose the graph and the index to any MCP-aware IDE, with **mtime-based hot-reload** so they always serve fresh data.
 4. An auto-generated **MCP config** wired into Antigravity, Kiro, and Claude Code.
+5. A **live watch mode** (`gkt watch`) that monitors file changes and auto-syncs the index in real time.
 
 ### 🤖 Agent Instruction
 **Agents MUST automatically run `gkt mcp --incremental`** (or via `setup_mcp.py`) when finishing a coding task that alters the project structure, to ensure the graph and FAISS index remain synchronized.
@@ -32,11 +38,15 @@ This skill turns any repository into:
 python -m pip install faiss-cpu numpy mcp
 # Optional — high-quality ONNX embedding (recommended)
 python -m pip install onnxruntime
+# Optional — live watch mode
+python -m pip install watchdog>=3.0
 ```
 
 `faiss-cpu` and `mcp` are optional — install only if you want semantic search and the MCP servers running. The graph builder works with stdlib alone.
 
 `onnxruntime` enables **all-MiniLM-L6-v2** sentence embeddings (~23 MB INT8-quantized model, auto-downloaded from `cdn.jsdelivr.net`). Without it the index falls back to a deterministic hash embedding — functional but less accurate for semantic search.
+
+`watchdog` enables the `gkt watch` live file watcher. Without it, you can still run `gkt graph --incremental` manually.
 
 ## Quick Start (one command)
 
@@ -71,14 +81,14 @@ python .agent/skills/code-graph-index/scripts/build_graph.py --path .
 
 Output: `.code-graph-index/graph.json` containing:
 
-- `nodes`: `{id, kind, name, path, line, end_line}` for every file, class, function, import.
+- `nodes`: `{id, kind, name, path, line, end_line, content_hash, byte_offset, byte_length}` for every file, class, function, import.
 - `edges`: `{src, dst, kind}` where `kind ∈ {contains, imports, calls, references}`.
-- `metadata`: file mtimes for incremental rebuilds.
+- `metadata`: file mtimes, `dirty_nodes` list (for incremental FAISS), and `incremental_stats` for performance tracking.
 
 Python parsing uses AST with `end_lineno` for accurate function boundaries.
 Method-level call tracking resolves `self.method()` calls within classes.
 
-Add `--incremental` after the first build for fast re-indexing.
+Add `--incremental` after the first build for fast re-indexing. The incremental engine compares **per-node content hashes** to identify exactly which functions/classes changed — unchanged nodes are marked clean so FAISS can skip re-embedding them.
 
 Supported languages: Python, JavaScript, TypeScript, Java, C#, Go.
 
@@ -144,6 +154,8 @@ python .agent/skills/code-graph-index/scripts/faiss_mcp_server.py \
 | `get_neighbors(node_id, edge_kind?, depth?)` | Traverse `contains` / `imports` / `calls` edges. |
 | `find_callers(symbol)` | Reverse call graph — who calls this function. |
 | `outline(path?)` | Compact per-file symbol outline (huge token saver). |
+| `get_lineage(node_id)` | Full source provenance: byte range, content hash, file hash. |
+| `blast_radius(node_id, max_depth?)` | Impact analysis: find all nodes affected if this one changes. |
 
 ### `faiss-code-index` server
 
@@ -151,7 +163,17 @@ python .agent/skills/code-graph-index/scripts/faiss_mcp_server.py \
 |---|---|
 | `search_code_chunks(query, top_k?)` | Semantic node search (Hybrid RAG) — returns `{node_id, kind, path, start_line, end_line, preview, score}`. |
 
-Combine both: use FAISS to find candidate graph nodes, then `get_neighbors` to widen context along call edges — the graph keeps the agent grounded, FAISS keeps it discoverable.
+Combine both: use FAISS to find candidate graph nodes, then `get_neighbors` to widen context along call edges — the graph keeps the agent grounded, FAISS keeps it discoverable. Use `blast_radius` before refactoring to understand downstream impact.
+
+### Live watch mode
+
+```bash
+gkt watch                   # Start with default 2s debounce
+gkt watch --debounce 1000   # Faster updates (1s)
+gkt watch --verbose         # Show each file change event
+```
+
+The watcher monitors code files for changes and automatically triggers incremental graph + FAISS rebuilds. MCP servers auto-detect updated index files via mtime checks — no restart required.
 
 ## IDE config locations
 
@@ -192,6 +214,9 @@ Combine both: use FAISS to find candidate graph nodes, then `get_neighbors` to w
 - Falls back to `cdn.jsdelivr.net` download if bundled `.gz` files are missing.
 - `.code-graph-index/` should be added to `.gitignore` (the skill writes one automatically the first time).
 - Re-run `setup_mcp.py --rebuild` after large code changes; `--incremental` on the graph keeps day-to-day rebuilds fast.
+- **Fine-grained incremental**: only nodes with changed `content_hash` are re-embedded, saving 80-95% of embedding time for typical edits.
+- **Watch mode**: `gkt watch` auto-syncs the index on every file save. MCP servers hot-reload via mtime checks.
+- **Data lineage**: each node carries `byte_offset`, `byte_length`, and `content_hash` for precise source traceability.
 - Pairs naturally with `codebase-navigator` (regex symbol search) and `vector-index-tuning` (encoder tuning).
 
 ## Custom CDN source

@@ -4,10 +4,12 @@ build_graph.py — Build a structural code graph (nodes + edges) for a project.
 
 Output: .code-graph-index/graph.json with shape:
     {
-      "nodes":    [{id, kind, name, path, line, end_line?, signature?}],
+      "nodes":    [{id, kind, name, path, line, end_line?, signature?,
+                    content_hash, byte_offset?, byte_length?}],
       "edges":    [{src, dst, kind}],            # kind ∈ contains|imports|calls|references
       "files":    {path: {mtime, language, hash}},
-      "metadata": {generated_at, root, languages, counts}
+      "metadata": {generated_at, root, languages, counts, dirty_nodes?,
+                   incremental_stats?}
     }
 
 Stdlib only. Uses Python AST for high-fidelity Python parsing and regex for
@@ -21,8 +23,17 @@ import hashlib
 import json
 import os
 import re
+import sys
 import time
 from pathlib import Path
+
+# Make Windows consoles tolerate emoji we print below.
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 DEFAULT_OUTPUT = ".code-graph-index/graph.json"
 
@@ -91,11 +102,27 @@ class GraphBuilder:
         self.edges: list[dict] = []
         self.files: dict[str, dict] = {}
         self._node_index: dict[str, int] = {}
+        self._source_cache: dict[str, str] = {}  # rel_path -> source text
 
     def _node_id(self, path: str, name: str | None = None, line: int | None = None) -> str:
         if name is None:
             return path
         return f"{path}::{name}@{line or 0}"
+
+    @staticmethod
+    def _compute_content_hash(source_lines: list[str], line: int, end_line: int) -> str:
+        """Compute SHA-256 hash of the actual source text between line and end_line."""
+        source_slice = "\n".join(source_lines[line - 1:end_line])
+        return _hash(source_slice)
+
+    @staticmethod
+    def _compute_byte_info(source: str, line: int, end_line: int) -> tuple[int, int]:
+        """Compute byte_offset and byte_length for a node within its source file."""
+        lines_with_ends = source.splitlines(keepends=True)
+        byte_offset = sum(len(l.encode("utf-8")) for l in lines_with_ends[:line - 1])
+        source_slice = "\n".join(source.splitlines()[line - 1:end_line])
+        byte_length = len(source_slice.encode("utf-8"))
+        return byte_offset, byte_length
 
     def _add_node(self, **kwargs) -> str:
         nid = kwargs["id"]
@@ -152,8 +179,20 @@ class GraphBuilder:
                     args = "(" + ", ".join(a.arg for a in node.args.args) + ")"
                 signature = f"{kind} {name}{args}"
                 node_id = self.gb._node_id(self.path, name, line)
-                self.gb._add_node(id=node_id, kind=kind, name=name, path=self.path,
-                                  line=line, end_line=end_line, signature=signature, docstring=docstring)
+
+                # Phase A: content_hash from actual source slice
+                content_hash = GraphBuilder._compute_content_hash(self.lines, line, end_line)
+                # Phase D: byte-level lineage
+                byte_offset, byte_length = GraphBuilder._compute_byte_info(
+                    self.source, line, end_line
+                )
+
+                self.gb._add_node(
+                    id=node_id, kind=kind, name=name, path=self.path,
+                    line=line, end_line=end_line, signature=signature,
+                    docstring=docstring, content_hash=content_hash,
+                    byte_offset=byte_offset, byte_length=byte_length,
+                )
                 parent = self.scope_stack[-1] if self.scope_stack else self.file_id
                 self.gb._add_edge(parent, node_id, "contains")
                 self.scope_stack.append(node_id)
@@ -260,11 +299,20 @@ class GraphBuilder:
                 end_line = total_lines
             
             docstring = "\n".join(lines[line_num-1:min(end_line, line_num+4)])
-            
+
+            # Phase A: content_hash from actual source slice
+            content_hash = self._compute_content_hash(lines, line_num, end_line)
+            # Phase D: byte-level lineage
+            byte_offset, byte_length = self._compute_byte_info(source, line_num, end_line)
+
             node_id = self._node_id(rel_path, name, line_num)
-            self._add_node(id=node_id, kind=kind, name=name,
-                           path=rel_path, line=line_num, end_line=end_line,
-                           signature=sig, docstring=docstring)
+            self._add_node(
+                id=node_id, kind=kind, name=name,
+                path=rel_path, line=line_num, end_line=end_line,
+                signature=sig, docstring=docstring,
+                content_hash=content_hash,
+                byte_offset=byte_offset, byte_length=byte_length,
+            )
             self._add_edge(file_id, node_id, "contains")
 
     # ---------- Driver ----------
@@ -283,11 +331,13 @@ class GraphBuilder:
         except OSError:
             return
 
+        file_hash = _hash(source)
         self.files[rel] = {
             "mtime": path.stat().st_mtime,
             "language": lang,
-            "hash": _hash(source),
+            "hash": file_hash,
         }
+        self._source_cache[rel] = source
 
         if lang == "python":
             self._parse_python(rel, source)
@@ -319,12 +369,23 @@ class GraphBuilder:
 
 
 def incremental_update(existing: dict, root: Path) -> dict:
-    """Re-parse only files whose mtime/hash changed; drop deleted files."""
+    """Re-parse only files whose mtime changed; diff nodes by content_hash.
+
+    Returns the updated graph with a ``dirty_nodes`` list in metadata that
+    downstream consumers (e.g. build_faiss_index) can use to selectively
+    re-embed only the nodes whose source actually changed.
+    """
+    old_nodes_by_id: dict[str, dict] = {n["id"]: n for n in existing.get("nodes", [])}
+
     builder = GraphBuilder(root)
     builder.nodes = list(existing.get("nodes", []))
     builder.edges = list(existing.get("edges", []))
     builder.files = dict(existing.get("files", {}))
     builder._node_index = {n["id"]: i for i, n in enumerate(builder.nodes)}
+
+    dirty_nodes: list[str] = []
+    stats = {"files_changed": 0, "nodes_kept": 0, "nodes_updated": 0,
+             "nodes_added": 0, "nodes_deleted": 0}
 
     seen: set[str] = set()
     for root_dir, dirs, filenames in os.walk(root):
@@ -339,6 +400,12 @@ def incremental_update(existing: dict, root: Path) -> dict:
             prev = builder.files.get(rel)
             if prev and abs(prev["mtime"] - mtime) < 1e-6:
                 continue
+
+            stats["files_changed"] += 1
+
+            # Snapshot old nodes for this file (keyed by id)
+            old_file_nodes = {n["id"]: n for n in builder.nodes if n.get("path") == rel}
+
             # Drop existing nodes/edges for this file then re-parse.
             builder.nodes = [n for n in builder.nodes if n.get("path") != rel]
             builder.edges = [e for e in builder.edges
@@ -346,15 +413,44 @@ def incremental_update(existing: dict, root: Path) -> dict:
             builder._node_index = {n["id"]: i for i, n in enumerate(builder.nodes)}
             builder.parse_file(path)
 
+            # Diff: compare new nodes vs old nodes by content_hash
+            new_file_nodes = {n["id"]: n for n in builder.nodes if n.get("path") == rel}
+            for nid, new_node in new_file_nodes.items():
+                if new_node.get("kind") == "file":
+                    continue
+                old_node = old_file_nodes.get(nid)
+                if old_node is None:
+                    # Brand new node
+                    dirty_nodes.append(nid)
+                    stats["nodes_added"] += 1
+                elif old_node.get("content_hash") != new_node.get("content_hash"):
+                    # Content actually changed
+                    dirty_nodes.append(nid)
+                    stats["nodes_updated"] += 1
+                else:
+                    # Same content_hash — node is unchanged
+                    stats["nodes_kept"] += 1
+
+            # Detect deleted nodes (were in old, not in new)
+            for nid in old_file_nodes:
+                if nid not in new_file_nodes and old_file_nodes[nid].get("kind") != "file":
+                    dirty_nodes.append(nid)  # mark for FAISS removal
+                    stats["nodes_deleted"] += 1
+
     # Drop deleted files
     deleted = set(builder.files) - seen
     for rel in deleted:
+        # Mark all nodes from deleted files as dirty
+        for n in builder.nodes:
+            if n.get("path") == rel and n.get("kind") != "file":
+                dirty_nodes.append(n["id"])
+                stats["nodes_deleted"] += 1
         builder.files.pop(rel, None)
         builder.nodes = [n for n in builder.nodes if n.get("path") != rel]
         builder.edges = [e for e in builder.edges
                          if not (e["src"] == rel or e["src"].startswith(f"{rel}::"))]
 
-    languages = sorted({f["language"] for f in builder.files.values()})
+    languages = sorted({f["language"] for f in builder.files.values()}) if builder.files else []
     return {
         "nodes": builder.nodes,
         "edges": builder.edges,
@@ -368,6 +464,8 @@ def incremental_update(existing: dict, root: Path) -> dict:
                 "nodes": len(builder.nodes),
                 "edges": len(builder.edges),
             },
+            "dirty_nodes": dirty_nodes,
+            "incremental_stats": stats,
         },
     }
 
@@ -388,6 +486,14 @@ def main() -> None:
     if args.incremental and output.exists():
         existing = json.loads(output.read_text(encoding="utf-8"))
         graph = incremental_update(existing, root)
+        stats = graph["metadata"].get("incremental_stats", {})
+        dirty = graph["metadata"].get("dirty_nodes", [])
+        print(f"Incremental: {stats.get('files_changed', 0)} file(s) changed, "
+              f"{stats.get('nodes_kept', 0)} kept, "
+              f"{stats.get('nodes_updated', 0)} updated, "
+              f"{stats.get('nodes_added', 0)} added, "
+              f"{stats.get('nodes_deleted', 0)} deleted, "
+              f"{len(dirty)} dirty node(s)")
     else:
         graph = GraphBuilder(root).build()
 

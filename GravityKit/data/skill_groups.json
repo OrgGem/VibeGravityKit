@@ -1,6 +1,6 @@
 {
   "_default": {
-    "description": "Default base skills — auto-merged into every group (memory, lifecycle, cross-platform, quality)",
+    "description": "Default base skills \u2014 auto-merged into every group (memory, lifecycle, cross-platform, quality)",
     "skills": [
       "brain-manager",
       "journal-manager",
@@ -16,7 +16,8 @@
       "codebase-navigator",
       "code-graph-index",
       "error-handling-patterns",
-      "document-reader"
+      "document-reader",
+      "skill-router"
     ]
   },
   "general-dev": {
@@ -659,7 +660,7 @@
     ]
   },
   "uipath": {
-    "description": "UiPath RPA — XAML generation, REFramework, coded workflows (C#), Orchestrator/deploy, AI agents, uip CLI, lint validation",
+    "description": "UiPath RPA \u2014 XAML generation, REFramework, coded workflows (C#), Orchestrator/deploy, AI agents, uip CLI, lint validation",
     "skills": [
       "uipath-core",
       "uipath-rpa-workflows",

@@ -3,37 +3,64 @@
     "code-graph": {
       "command": "C:\\Users\\gem\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
       "args": [
-        "C:\\Users\\gem\\Documents\\GitHub\\VibeGravityKit\\.agent\\skills\\code-graph-index\\scripts\\graph_mcp_server.py",
+        "C:\\Users\\gem\\Documents\\GitHub\\VibeGravityKit\\GravityKit\\.agent\\skills\\code-graph-index\\scripts\\graph_mcp_server.py",
         "--graph",
-        ".code-graph-index/graph.json"
+        "C:\\Users\\gem\\Documents\\GitHub\\VibeGravityKit\\.code-graph-index\\graph.json"
       ],
-      "env": {},
-      "disabled": false
+      "env": {
+        "PYTHONIOENCODING": "utf-8",
+        "PYTHONUTF8": "1"
+      },
+      "disabled": false,
+      "cwd": "C:\\Users\\gem\\Documents\\GitHub\\VibeGravityKit"
     },
     "faiss-code-index": {
       "command": "C:\\Users\\gem\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
       "args": [
-        "C:\\Users\\gem\\Documents\\GitHub\\VibeGravityKit\\.agent\\skills\\code-graph-index\\scripts\\faiss_mcp_server.py",
+        "C:\\Users\\gem\\Documents\\GitHub\\VibeGravityKit\\GravityKit\\.agent\\skills\\code-graph-index\\scripts\\faiss_mcp_server.py",
         "--index-dir",
-        ".code-graph-index/faiss-index"
+        "C:\\Users\\gem\\Documents\\GitHub\\VibeGravityKit\\.code-graph-index\\faiss-index"
       ],
-      "env": {},
-      "disabled": false
-    },
-    "document-reader": {
-      "command": "C:\\Users\\gem\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
-      "args": [
-        "C:\\Users\\gem\\Documents\\GitHub\\VibeGravityKit\\.agent\\skills\\document-reader\\scripts\\reader_mcp_server.py"
-      ],
-      "env": {},
-      "disabled": false
+      "env": {
+        "PYTHONIOENCODING": "utf-8",
+        "PYTHONUTF8": "1"
+      },
+      "disabled": false,
+      "cwd": "C:\\Users\\gem\\Documents\\GitHub\\VibeGravityKit"
     },
     "skill-router": {
       "command": "C:\\Users\\gem\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
       "args": [
-        "C:\\Users\\gem\\Documents\\GitHub\\VibeGravityKit\\.agent\\skills\\skill-router\\scripts\\skill_router_mcp.py"
+        "C:\\Users\\gem\\Documents\\GitHub\\VibeGravityKit\\GravityKit\\.agent\\skills\\skill-router\\scripts\\skill_router_mcp.py"
       ],
-      "env": {},
+      "env": {
+        "PYTHONIOENCODING": "utf-8",
+        "PYTHONUTF8": "1"
+      },
+      "disabled": false,
+      "cwd": "C:\\Users\\gem\\Documents\\GitHub\\VibeGravityKit"
+    },
+    "brain-manager": {
+      "command": "C:\\Users\\gem\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+      "args": [
+        "C:\\Users\\gem\\Documents\\GitHub\\VibeGravityKit\\GravityKit\\.agent\\skills\\brain-manager\\scripts\\brain_mcp_server.py"
+      ],
+      "env": {
+        "PYTHONIOENCODING": "utf-8",
+        "PYTHONUTF8": "1"
+      },
+      "disabled": false,
+      "cwd": "C:\\Users\\gem\\Documents\\GitHub\\VibeGravityKit"
+    },
+    "document-reader": {
+      "command": "C:\\Users\\gem\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+      "args": [
+        "C:\\Users\\gem\\Documents\\GitHub\\VibeGravityKit\\GravityKit\\.agent\\skills\\document-reader\\scripts\\reader_mcp_server.py"
+      ],
+      "env": {
+        "PYTHONIOENCODING": "utf-8",
+        "PYTHONUTF8": "1"
+      },
       "disabled": false
     }
   }

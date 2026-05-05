@@ -59,9 +59,15 @@ This will:
 1. Build the structural graph → `.code-graph-index/graph.json`
 2. Build the FAISS index → `.code-graph-index/faiss-index/{code.index, metadata.json}`
 3. Write MCP config for every IDE present in the working dir:
-   - `.mcp.json` (Antigravity, Claude Code, generic MCP clients)
-   - `.kiro/settings/mcp.json` (Kiro IDE)
-   - `.claude/mcp_servers.json` (Claude Code project-scoped fallback)
+   - `~/.gemini/antigravity/mcp_config.json` — universal servers shared across all projects (`document-reader`)
+   - `.mcp.json` — project-scoped servers (`code-graph`, `faiss-code-index`, `brain-manager`, `skill-router`); read by both Antigravity AND Claude Code
+   - `.kiro/settings/mcp.json` — Kiro IDE
+   - `.cursor/mcp.json` / `.windsurf/mcp.json` — Cursor / Windsurf
+   - `~/.codex/config.toml` (universal) + `.codex/config.toml` (project) — Codex CLI (TOML format)
+
+> **Why split?** Project-local servers carry per-project data paths (FAISS index, brain dir, graph). If they live in the global Antigravity config, the path of one project leaks into every other workspace, causing wrong-project lookups and timeouts. The split keeps universal tooling global and per-project tooling local.
+
+> **`.claude/mcp_servers.json` is no longer written** — current Claude Code reads `.mcp.json` at the project root. Older copies of that file are deleted automatically on the next `setup_mcp.py` run.
 
 To use ONNX embeddings (recommended for best search quality):
 
@@ -177,14 +183,25 @@ The watcher monitors code files for changes and automatically triggers increment
 
 ## IDE config locations
 
-| IDE | File | How it picks up |
-|---|---|---|
-| Antigravity / Claude Code (project) | `.mcp.json` | Auto-loaded from repo root. |
-| Claude Code (alt) | `.claude/mcp_servers.json` | Project-scoped fallback. |
-| Kiro | `.kiro/settings/mcp.json` | Kiro reads on workspace open; `disabled: false` enables. |
-| Cursor / Windsurf | Append to existing MCP config if present. | |
+| IDE | File | Format | Scope | Servers |
+|---|---|---|---|---|
+| Antigravity (global) | `~/.gemini/antigravity/mcp_config.json` | JSON | User-wide | `document-reader` |
+| Antigravity / Claude Code (project) | `.mcp.json` | JSON | Project | `code-graph`, `faiss-code-index`, `brain-manager`, `skill-router` |
+| Kiro | `.kiro/settings/mcp.json` | JSON | Project | All servers (`disabled: false` enables) |
+| Cursor | `.cursor/mcp.json` | JSON | Project | All servers |
+| Windsurf | `.windsurf/mcp.json` | JSON | Project | All servers |
+| Codex CLI (global) | `~/.codex/config.toml` | TOML | User-wide | `document-reader` |
+| Codex CLI (project) | `.codex/config.toml` | TOML | Project | `code-graph`, `faiss-code-index`, `brain-manager`, `skill-router` |
 
-`setup_mcp.py` writes only the entries it owns and merges with any pre-existing servers — it never overwrites unrelated keys.
+**Reconciliation rules** in `setup_mcp.py`:
+
+- Owned entries (the 5 servers above) are merged in / refreshed on every run.
+- Owned entries that don't belong in a given file are **removed** (e.g. `code-graph` is purged from the global Antigravity / Codex config — fixes leaks from older versions where every project overwrote global with its own paths).
+- Legacy server names (`code-review-graph`) are scrubbed from any file we touch.
+- Third-party MCP servers in the same file are left **untouched**.
+- For Codex (TOML), top-level scalars (`model`, `model_reasoning_effort`) and unrelated tables (`[windows]`, `[projects.*]`) are preserved; only `[mcp_servers.*]` sub-sections are reconciled. Reading TOML requires Python 3.11+ (`tomllib`); on older interpreters the existing config is backed up to `.bak` before rewrite.
+
+> **Codex trust note**: Codex only loads `./.codex/config.toml` for projects flagged as trusted. After running `gkt mcp`, run `codex` once in the project directory and accept the trust prompt, or add the project path under `[projects]` in `~/.codex/config.toml` with `trust_level = "trusted"`.
 
 ## Output layout
 
@@ -203,8 +220,13 @@ The watcher monitors code files for changes and automatically triggers increment
 │       ├── code.index              ← FAISS index
 │       └── metadata.json           ← chunk metadata + embedding strategy
 ├── .mcp.json                       ← Antigravity / Claude Code project config
-├── .kiro/settings/mcp.json         ← Kiro IDE config (only if .kiro/ exists)
-└── .claude/mcp_servers.json        ← Claude Code project fallback
+└── .kiro/settings/mcp.json         ← Kiro IDE config (only if .kiro/ exists)
+```
+
+User-level (Antigravity only):
+
+```
+~/.gemini/antigravity/mcp_config.json   ← universal servers (document-reader)
 ```
 
 ## Notes

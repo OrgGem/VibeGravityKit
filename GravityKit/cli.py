@@ -21,7 +21,27 @@ if sys.platform == "win32":
 SOURCE_ROOT = Path(__file__).resolve().parent
 
 # IDE names that are valid targets for init
-IDE_NAMES = {"antigravity", "cursor", "windsurf", "cline", "kilocode", "copilot", "kiro", "all"}
+IDE_NAMES = {"antigravity", "cursor", "windsurf", "cline", "kilocode", "copilot", "kiro", "codex", "all"}
+
+# Map a `gkt init` target to the IDE names understood by setup_mcp.py.
+# Cline / Kilocode / Copilot don't have native MCP config files; they ride on
+# the .agent/.mcp.json that `gkt init` auto-installs alongside their adapter,
+# so they map to the antigravity MCP entry.
+INIT_TO_MCP_IDES = {
+    "antigravity": ["antigravity"],
+    "kiro": ["kiro"],
+    "cursor": ["cursor"],
+    "windsurf": ["windsurf"],
+    "cline": ["antigravity"],
+    "kilocode": ["antigravity"],
+    "copilot": ["antigravity"],
+    "codex": ["codex"],
+    # `all` is expanded by reading the install targets actually used.
+}
+
+# Where init records its scope so `gkt mcp` can install MCP only for the
+# IDE/CLI the user actually opted into.
+INIT_STATE_FILE = Path(".gkt") / "state.json"
 
 
 # Sample prompts for common workflow types (used in post-init display)
@@ -325,6 +345,47 @@ def install_kiro(package_dir, group_config=None, skill_groups=None):
     return copied_skills
 
 
+def _write_init_state(targets, group_name):
+    """Record which IDEs/CLIs were init'd. Read by `gkt mcp` to scope the
+    MCP install. Adapter-only targets (cline, kilocode, copilot) are mapped to
+    `antigravity` because they ride on the .agent/.mcp.json that init drops in.
+    """
+    mcp_ides: list[str] = []
+    for t in targets:
+        for m in INIT_TO_MCP_IDES.get(t, []):
+            if m not in mcp_ides:
+                mcp_ides.append(m)
+    if not mcp_ides:
+        return None
+    state = {
+        "init_targets": list(targets),
+        "group": group_name,
+        "mcp_ides": mcp_ides,
+    }
+    state_path = Path.cwd() / INIT_STATE_FILE
+    try:
+        state_path.parent.mkdir(parents=True, exist_ok=True)
+        state_path.write_text(
+            json.dumps(state, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+        return state_path
+    except OSError as exc:
+        click.echo(f"  ⚠️  Could not write {INIT_STATE_FILE}: {exc}")
+        return None
+
+
+def _read_init_state():
+    """Return the parsed `.gkt/state.json` or {} if absent / unreadable."""
+    state_path = Path.cwd() / INIT_STATE_FILE
+    if not state_path.exists():
+        return {}
+    try:
+        return json.loads(state_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
 @click.group()
 def main():
     """GravityKit CLI - Manage your AI Agent Team."""
@@ -413,6 +474,14 @@ def init(target, group):
             "target": Path.cwd() / ".kiro",
             "label": ".kiro/ (Kiro IDE - skills, hooks, steering, specs)",
         },
+        "codex": {
+            # Codex CLI uses MCP only — no skill files to copy. We still list
+            # it here so `gkt init codex` (and `gkt init all`) can register it
+            # for the state file that `gkt mcp` consumes.
+            "source": None,
+            "target": None,
+            "label": "Codex CLI (MCP-only — registered for `gkt mcp`)",
+        },
     }
     
     # Determine which IDEs to install
@@ -438,15 +507,24 @@ def init(target, group):
         click.echo(f"🚀 Installing GravityKit (all skills)...")
     
     installed = 0
+    registered_targets: list[str] = []  # IDE names actually processed (for state file)
     for target_ide in targets:
         config = ide_config[target_ide]
         source_dir = config["source"]
         target_dir = config["target"]
-        
+
+        # Codex (and any future MCP-only target) has no skill files to copy.
+        # Just record it as registered so `gkt mcp` knows to wire it up.
+        if source_dir is None:
+            click.echo(f"  ✅ {config['label']}")
+            installed += 1
+            registered_targets.append(target_ide)
+            continue
+
         if not source_dir.exists():
             click.echo(f"  ⚠️  Skipped {target_ide}: source not found")
             continue
-        
+
         try:
             if target_ide == "kiro":
                 # Special install for Kiro: maps .agent/ to .kiro/ structure
@@ -466,6 +544,7 @@ def init(target, group):
                 shutil.copytree(source_dir, target_dir)
                 click.echo(f"  ✅ {config['label']}")
             installed += 1
+            registered_targets.append(target_ide)
         except Exception as e:
             click.echo(f"  ❌ {target_ide}: {str(e)}")
     
@@ -487,6 +566,16 @@ def init(target, group):
                     installed += 1
                 except Exception as e:
                     click.echo(f"  ⚠️  .agent/ not installed: {str(e)}")
+
+    # Persist what was init'd so `gkt mcp` only configures these IDEs.
+    if registered_targets:
+        state_path = _write_init_state(registered_targets, group_name)
+        if state_path is not None:
+            try:
+                rel = state_path.relative_to(Path.cwd())
+            except ValueError:
+                rel = state_path
+            click.echo(f"  📝 Recorded init scope → {rel}")
 
     click.echo(f"\n✨ Done! Installed for {installed} IDE(s).")
     if group_name:
@@ -708,12 +797,43 @@ def graph(ctx):
 @main.command(context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
 @click.pass_context
 def mcp(ctx):
-    """Setup Semantic Code Graph & MCP (alias for graph)."""
-    if "--all" not in ctx.args:
-        ctx.args.append("--all")
-    if "--ensure-model" not in ctx.args:
-        ctx.args.append("--ensure-model")
-    ctx.forward(graph)
+    """Setup Semantic Code Graph & MCP for the IDEs registered by `gkt init`.
+
+    \b
+    Behaviour:
+      - Reads .gkt/state.json (written by `gkt init`) and configures MCP only
+        for those IDEs/CLIs.
+      - If state file is missing, falls back to --all and prints a hint.
+      - You can override either way by passing --ides, --auto, or --all
+        explicitly to this command.
+    """
+    args_to_pass = list(ctx.args)
+    user_specified_scope = any(
+        a == "--all" or a == "--auto" or a == "--ides" or a.startswith("--ides=")
+        for a in args_to_pass
+    )
+    if not user_specified_scope:
+        state = _read_init_state()
+        mcp_ides = state.get("mcp_ides") or []
+        if mcp_ides:
+            args_to_pass.extend(["--ides", ",".join(mcp_ides)])
+            click.echo(f"📌 Using IDE scope from {INIT_STATE_FILE}: {', '.join(mcp_ides)}")
+        else:
+            args_to_pass.append("--all")
+            click.echo(
+                f"ℹ️  No {INIT_STATE_FILE} found — falling back to --all.\n"
+                f"    Tip: run `gkt init <ide>` first so this command only configures the IDEs you actually use."
+            )
+    if "--ensure-model" not in args_to_pass:
+        args_to_pass.append("--ensure-model")
+
+    local_script = Path.cwd() / ".agent" / "skills" / "code-graph-index" / "scripts" / "setup_mcp.py"
+    global_script = Path(__file__).resolve().parent / ".agent" / "skills" / "code-graph-index" / "scripts" / "setup_mcp.py"
+    script = local_script if local_script.exists() else global_script
+    if not script.exists():
+        click.echo("❌ code-graph-index skill not found. Run 'gkt init' first.")
+        return
+    run_python_script(script, args_to_pass)
 
 @main.command()
 @click.option("--debounce", default=2000, help="Debounce interval in ms (default: 2000)")

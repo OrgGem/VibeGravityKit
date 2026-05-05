@@ -1,0 +1,20 @@
+{
+  "init_targets": [
+    "antigravity",
+    "cursor",
+    "windsurf",
+    "cline",
+    "kilocode",
+    "copilot",
+    "kiro",
+    "codex"
+  ],
+  "group": null,
+  "mcp_ides": [
+    "antigravity",
+    "cursor",
+    "windsurf",
+    "kiro",
+    "codex"
+  ]
+}

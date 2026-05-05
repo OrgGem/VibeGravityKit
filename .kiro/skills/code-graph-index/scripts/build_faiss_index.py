@@ -12,6 +12,10 @@ Embedding strategy (auto-selected):
     1. ONNX: all-MiniLM-L6-v2 quantized via shared embedder.py (requires onnxruntime)
     2. Hash: deterministic token-hashing — zero deps, zero network.
     Override: set GKT_MODEL_CDN to control ONNX model CDN source.
+
+Incremental mode:
+    When the graph contains a `dirty_nodes` list in metadata, only those nodes
+    are re-embedded. Existing vectors for unchanged nodes are preserved.
 """
 from __future__ import annotations
 
@@ -22,6 +26,14 @@ import os
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+
+# Make Windows consoles tolerate emoji we print below.
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 try:
     import faiss
@@ -52,54 +64,12 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class Chunk:
+    node_id: str
     path: str
     start_line: int
     end_line: int
     text: str
-
-
-def iter_files(project_root: Path) -> list[Path]:
-    files: list[Path] = []
-    for root, dirs, filenames in os.walk(project_root):
-        dirs[:] = [d for d in dirs if d not in IGNORE_DIRS]
-        root_path = Path(root)
-        for filename in filenames:
-            path = root_path / filename
-            if path.suffix.lower() in DEFAULT_EXTENSIONS:
-                files.append(path)
-    return files
-
-
-def split_chunks(path: Path, content: str, max_chars: int = 1500, overlap: int = 200) -> list[Chunk]:
-    lines = content.splitlines()
-    chunks: list[Chunk] = []
-    i = 0
-
-    while i < len(lines):
-        start = i
-        size = 0
-        while i < len(lines):
-            line_len = len(lines[i]) + 1
-            if size + line_len > max_chars and i > start:
-                break
-            size += line_len
-            i += 1
-
-        text = "\n".join(lines[start:i]).strip()
-        if text:
-            chunks.append(Chunk(path=str(path), start_line=start + 1, end_line=i, text=text))
-
-        if i >= len(lines):
-            break
-
-        chars_back = 0
-        j = i - 1
-        while j >= 0 and chars_back < overlap:
-            chars_back += len(lines[j]) + 1
-            j -= 1
-        i = max(j + 1, start + 1)
-
-    return chunks
+    kind: str
 
 def _get_embedder(project_root: Path, auto_download: bool = True):
     """Get the shared embedder — ONNX if available, else hash."""
@@ -112,39 +82,41 @@ def _get_embedder(project_root: Path, auto_download: bool = True):
     return get_embedder(model_dir=model_dir, auto_download=auto_download)
 
 
-def build_index(project_root: Path, output_dir: Path, dim: int = 384) -> tuple[int, int]:
-    if faiss is None or np is None:
-        raise RuntimeError("Missing deps. Install with: pip install faiss-cpu numpy")
-
-    # Get the best available embedder
-    embedder = _get_embedder(project_root)
-    dim = embedder.dim
-    strategy = type(embedder).__name__  # 'OnnxEmbedder' or 'HashEmbedder'
-    print(f"   Embedding strategy: {strategy} (dim={dim})")
-
-    files = iter_files(project_root)
+def _chunks_from_graph(graph_data: dict) -> list[Chunk]:
+    """Extract embeddable chunks from graph nodes."""
     all_chunks: list[Chunk] = []
-
-    for path in files:
-        try:
-            text = path.read_text(encoding="utf-8")
-        except UnicodeDecodeError:
-            logger.warning("UTF-8 decode failed for %s; retrying with errors='ignore'", path)
-            text = path.read_text(encoding="utf-8", errors="ignore")
-        except OSError:
+    for node in graph_data.get("nodes", []):
+        if node.get("kind") == "file":
             continue
-        all_chunks.extend(split_chunks(path, text))
+        node_id = node.get("id", "")
+        path = node.get("path", "")
+        line = node.get("line", 0)
+        end_line = node.get("end_line", line)
+        kind = node.get("kind", "")
+        name = node.get("name", "")
+        signature = node.get("signature", name)
+        docstring = node.get("docstring", "")
 
-    if not all_chunks:
-        raise RuntimeError("No chunks found. Check project root and supported extensions.")
+        text = f"{kind} {signature}\n{docstring}".strip()
+        if not text:
+            continue
 
-    index = faiss.IndexFlatIP(dim)
-    batch_size = 256  # Smaller batch size for better thread distribution
-    
+        all_chunks.append(Chunk(
+            node_id=node_id,
+            path=path,
+            start_line=line,
+            end_line=end_line,
+            text=text,
+            kind=kind,
+        ))
+    return all_chunks
+
+
+def _embed_chunks(all_chunks: list[Chunk], embedder) -> "numpy.ndarray":
+    """Embed a list of chunks using multi-threaded batching. Returns (N, dim) array."""
     import concurrent.futures
-    import os
-    
-    # Use max 50% of CPU cores to avoid overloading
+
+    batch_size = 256
     max_workers = max(1, (os.cpu_count() or 2) // 2)
     print(f"   Using {max_workers} threads for embedding (limit 50% CPU)")
 
@@ -155,7 +127,14 @@ def build_index(project_root: Path, output_dir: Path, dim: int = 384) -> tuple[i
 
     results = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = {executor.submit(process_batch, start): start for start in range(0, len(all_chunks), batch_size)}
+        futures = {
+            executor.submit(process_batch, start): start
+            for start in range(0, len(all_chunks), batch_size)
+        }
+        total_batches = len(futures)
+        completed = 0
+
+        print("   [", end="", flush=True)
         for future in concurrent.futures.as_completed(futures):
             start_idx = futures[future]
             try:
@@ -163,10 +142,22 @@ def build_index(project_root: Path, output_dir: Path, dim: int = 384) -> tuple[i
             except Exception as e:
                 logger.error("Batch starting at %d failed: %s", start_idx, e)
 
-    # Sort results by start_idx to maintain the exact chunk order for FAISS
+            completed += 1
+            if completed % max(1, total_batches // 20) == 0:
+                print("█", end="", flush=True)
+            elif completed == total_batches:
+                print("█", end="", flush=True)
+        print(f"] 100% ({total_batches} batches)\n", flush=True)
+
     results.sort(key=lambda x: x[0])
-    for _, vectors in results:
-        index.add(vectors)
+    return np.vstack([vecs for _, vecs in results])
+
+
+def _write_index(output_dir: Path, all_chunks: list[Chunk], vectors, dim: int,
+                 strategy: str, node_count: int) -> None:
+    """Write FAISS index + metadata to disk."""
+    index = faiss.IndexFlatIP(dim)
+    index.add(vectors)
 
     output_dir.mkdir(parents=True, exist_ok=True)
     faiss.write_index(index, str(output_dir / "code.index"))
@@ -174,6 +165,8 @@ def build_index(project_root: Path, output_dir: Path, dim: int = 384) -> tuple[i
     metadata = [
         {
             "id": i,
+            "node_id": chunk.node_id,
+            "kind": chunk.kind,
             "path": chunk.path,
             "start_line": chunk.start_line,
             "end_line": chunk.end_line,
@@ -186,7 +179,7 @@ def build_index(project_root: Path, output_dir: Path, dim: int = 384) -> tuple[i
             {
                 "dimension": dim,
                 "strategy": strategy,
-                "file_count": len(files),
+                "node_count": node_count,
                 "chunk_count": len(all_chunks),
                 "chunks": metadata,
             },
@@ -196,7 +189,144 @@ def build_index(project_root: Path, output_dir: Path, dim: int = 384) -> tuple[i
         encoding="utf-8",
     )
 
-    return len(files), len(all_chunks)
+
+def build_index(project_root: Path, output_dir: Path, dim: int = 384) -> tuple[int, int]:
+    """Full build: embed all graph nodes from scratch."""
+    if faiss is None or np is None:
+        raise RuntimeError("Missing deps. Install with: pip install faiss-cpu numpy")
+
+    graph_path = output_dir.parent / "graph.json"
+    if not graph_path.exists():
+        raise RuntimeError(f"Missing graph.json at {graph_path}. Run build_graph.py first.")
+
+    graph_data = json.loads(graph_path.read_text(encoding="utf-8"))
+    nodes = graph_data.get("nodes", [])
+
+    # Check if incremental is possible
+    # dirty_nodes can be: None (--rebuild / full build), [] (no changes), or [ids...] (incremental)
+    raw_dirty = graph_data.get("metadata", {}).get("dirty_nodes")
+    existing_meta_path = output_dir / "metadata.json"
+    existing_index_path = output_dir / "code.index"
+
+    if (raw_dirty is not None  # None means full rebuild was requested
+            and isinstance(raw_dirty, list)
+            and existing_meta_path.exists()
+            and existing_index_path.exists()):
+        dirty_ids = set(raw_dirty)
+        try:
+            result = _incremental_build(project_root, output_dir, graph_data, dirty_ids)
+            if result is not None:
+                return result
+        except Exception as exc:
+            logger.warning("Incremental FAISS build failed, falling back to full: %s", exc)
+            print(f"   ⚠️  Incremental failed ({exc}), doing full rebuild")
+
+    # Full rebuild
+    embedder = _get_embedder(project_root)
+    dim = embedder.dim
+    strategy = type(embedder).__name__
+    print(f"   Embedding strategy: {strategy} (dim={dim})")
+
+    all_chunks = _chunks_from_graph(graph_data)
+    if not all_chunks:
+        raise RuntimeError("No chunks found from structural graph.")
+
+    vectors = _embed_chunks(all_chunks, embedder)
+    _write_index(output_dir, all_chunks, vectors, dim, strategy, len(nodes))
+
+    return len(nodes), len(all_chunks)
+
+
+def _incremental_build(
+    project_root: Path,
+    output_dir: Path,
+    graph_data: dict,
+    dirty_ids: set[str],
+) -> tuple[int, int] | None:
+    """Selectively re-embed only dirty nodes, keeping existing vectors for the rest.
+
+    Returns (node_count, chunk_count) on success, or None to signal fallback.
+    """
+    if not dirty_ids:
+        print("   ✅ No dirty nodes — FAISS index is up to date.")
+        nodes = graph_data.get("nodes", [])
+        existing_meta = json.loads((output_dir / "metadata.json").read_text(encoding="utf-8"))
+        return len(nodes), existing_meta.get("chunk_count", 0)
+
+    # Load existing FAISS index + metadata
+    existing_index = faiss.read_index(str(output_dir / "code.index"))
+    existing_meta = json.loads((output_dir / "metadata.json").read_text(encoding="utf-8"))
+    existing_chunks_meta = existing_meta.get("chunks", [])
+    old_dim = int(existing_meta.get("dimension", 384))
+
+    # Map old chunk positions by node_id
+    old_chunk_positions: dict[str, int] = {}
+    for chunk_meta in existing_chunks_meta:
+        old_chunk_positions[chunk_meta["node_id"]] = chunk_meta["id"]
+
+    # Extract all current chunks from the updated graph
+    all_chunks = _chunks_from_graph(graph_data)
+    if not all_chunks:
+        return None  # fall back to full build
+
+    # Get embedder
+    embedder = _get_embedder(project_root)
+    dim = embedder.dim
+    strategy = type(embedder).__name__
+
+    if dim != old_dim:
+        print(f"   ⚠️  Dimension mismatch (old={old_dim}, new={dim}), full rebuild needed")
+        return None
+
+    # Split chunks into clean (reuse old vector) vs dirty (need re-embed)
+    clean_chunks: list[tuple[Chunk, int]] = []  # (chunk, old_faiss_position)
+    dirty_chunks: list[Chunk] = []
+
+    for chunk in all_chunks:
+        if chunk.node_id in dirty_ids:
+            dirty_chunks.append(chunk)
+        elif chunk.node_id in old_chunk_positions:
+            clean_chunks.append((chunk, old_chunk_positions[chunk.node_id]))
+        else:
+            # New node not in dirty list (shouldn't happen, but be safe)
+            dirty_chunks.append(chunk)
+
+    n_total = len(all_chunks)
+    n_dirty = len(dirty_chunks)
+    n_clean = len(clean_chunks)
+    print(f"   Incremental FAISS: {n_dirty} dirty, {n_clean} cached, {n_total} total")
+    print(f"   Embedding strategy: {strategy} (dim={dim})")
+
+    # Reconstruct clean vectors from old index, embed only dirty ones
+    vectors = np.empty((n_total, dim), dtype=np.float32)
+    dirty_indices: list[int] = []
+    for i, chunk in enumerate(all_chunks):
+        if chunk.node_id in dirty_ids or chunk.node_id not in old_chunk_positions:
+            dirty_indices.append(i)
+        else:
+            old_pos = old_chunk_positions[chunk.node_id]
+            if old_pos < existing_index.ntotal:
+                try:
+                    vec = np.zeros(dim, dtype=np.float32)
+                    existing_index.reconstruct(int(old_pos), vec)
+                    vectors[i] = vec
+                except Exception:
+                    dirty_indices.append(i)
+            else:
+                dirty_indices.append(i)
+
+    # Embed only dirty chunks
+    if dirty_indices:
+        dirty_texts = [all_chunks[i].text for i in dirty_indices]
+        dirty_vecs = embedder.embed_batch(dirty_texts)
+        for j, idx in enumerate(dirty_indices):
+            vectors[idx] = dirty_vecs[j]
+        print(f"   ✅ Re-embedded {len(dirty_indices)} chunk(s)")
+
+    nodes = graph_data.get("nodes", [])
+    _write_index(output_dir, all_chunks, vectors, dim, strategy, len(nodes))
+
+    return len(nodes), len(all_chunks)
 
 
 def main() -> None:

@@ -32,9 +32,14 @@ MANIFEST
 .DS_Store
 Thumbs.db
 
-# Root .agent — ignore brain & skills, track workflows only
-# Leading "/" scopes to root; GravityKit/.agent/ is fully tracked
-/.agent/brain/
-/.agent/skills/
+# Ignore AI and IDE dot-folders at root
+# Leading "/" scopes to root; GravityKit/.agent/ is fully tracked and unaffected
+/.agent/
+/.codex/
+/.kiro/
+/.cursor/
+/.windsurf/
+/.claude/
+/.kilocode/
+/.code-graph-index/
 UiPathSkillCollection/
-.code-graph-index/

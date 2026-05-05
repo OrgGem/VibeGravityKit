@@ -8,6 +8,8 @@ Tools:
     get_neighbors(node_id, edge_kind=None, depth=1)     → adjacent nodes
     find_callers(symbol)                                → reverse call graph
     outline(path=None)                                  → compact per-file symbol view
+    get_lineage(node_id)                                → full source provenance (Phase D)
+    blast_radius(node_id, max_depth=3)                  → impact analysis (Phase D)
 """
 from __future__ import annotations
 
@@ -23,16 +25,20 @@ except ImportError:
 mcp = FastMCP("code-graph") if FastMCP is not None else None
 _GRAPH: dict | None = None
 _GRAPH_PATH: str = ".code-graph-index/graph.json"
+_GRAPH_MTIME: float = 0
 
 
 def _load() -> dict:
-    global _GRAPH
-    if _GRAPH is not None:
-        return _GRAPH
+    """Load graph with mtime-based cache invalidation for hot-reload (Phase B4)."""
+    global _GRAPH, _GRAPH_MTIME
     p = Path(_GRAPH_PATH)
     if not p.exists():
         raise FileNotFoundError(f"Graph file not found: {p}. Run build_graph.py first.")
+    current_mtime = p.stat().st_mtime
+    if _GRAPH is not None and abs(current_mtime - _GRAPH_MTIME) < 1e-6:
+        return _GRAPH
     _GRAPH = json.loads(p.read_text(encoding="utf-8"))
+    _GRAPH_MTIME = current_mtime
     return _GRAPH
 
 
@@ -149,12 +155,113 @@ def outline(path: str | None = None) -> dict:
     return {"file_count": len(by_file), "files": by_file}
 
 
+def get_lineage(node_id: str) -> dict:
+    """Return full source provenance for a node: file, byte range, content hash."""
+    g = _load()
+    nodes_by_id = {n["id"]: n for n in g.get("nodes", [])}
+    node = nodes_by_id.get(node_id)
+    if not node:
+        return {"error": f"Node not found: {node_id}"}
+
+    file_info = g.get("files", {}).get(node.get("path", ""), {})
+    return {
+        "node_id": node_id,
+        "kind": node.get("kind"),
+        "name": node.get("name"),
+        "path": node.get("path"),
+        "line": node.get("line"),
+        "end_line": node.get("end_line"),
+        "byte_offset": node.get("byte_offset"),
+        "byte_length": node.get("byte_length"),
+        "content_hash": node.get("content_hash"),
+        "source_file_hash": file_info.get("hash"),
+    }
+
+
+def blast_radius(node_id: str, max_depth: int = 3) -> dict:
+    """Find all nodes affected if this node changes (reverse call/import graph).
+
+    Traces: callers → their callers (up to max_depth hops) + importers.
+    Useful for impact analysis before refactoring.
+    """
+    g = _load()
+    nodes_by_id = {n["id"]: n for n in g.get("nodes", [])}
+    edges = g.get("edges", [])
+
+    if node_id not in nodes_by_id:
+        return {"error": f"Node not found: {node_id}"}
+
+    # Build reverse edge map (dst -> list of src)
+    reverse_map: dict[str, list[tuple[str, str]]] = {}  # dst -> [(src, edge_kind)]
+    for e in edges:
+        if e["kind"] in ("calls", "imports", "references"):
+            reverse_map.setdefault(e["dst"], []).append((e["src"], e["kind"]))
+
+    # Also handle name-based matching for unresolved call edges
+    target_node = nodes_by_id[node_id]
+    target_name = target_node.get("name", "")
+
+    # BFS from node_id along reverse edges
+    visited: dict[str, int] = {node_id: 0}  # node_id -> distance
+    frontier = {node_id}
+    affected: list[dict] = []
+
+    for depth in range(1, max_depth + 1):
+        next_frontier: set[str] = set()
+        for nid in frontier:
+            # Direct reverse edges
+            for src, edge_kind in reverse_map.get(nid, []):
+                if src not in visited:
+                    visited[src] = depth
+                    next_frontier.add(src)
+                    src_node = nodes_by_id.get(src)
+                    if src_node:
+                        affected.append({
+                            "node_id": src,
+                            "kind": src_node.get("kind"),
+                            "name": src_node.get("name"),
+                            "path": src_node.get("path"),
+                            "line": src_node.get("line"),
+                            "distance": depth,
+                            "via_edge": edge_kind,
+                        })
+            # Name-based matching (for unresolved edges like "calls" -> "func_name")
+            if nid == node_id:
+                for src, edge_kind in reverse_map.get(target_name, []):
+                    if src not in visited:
+                        visited[src] = depth
+                        next_frontier.add(src)
+                        src_node = nodes_by_id.get(src)
+                        if src_node:
+                            affected.append({
+                                "node_id": src,
+                                "kind": src_node.get("kind"),
+                                "name": src_node.get("name"),
+                                "path": src_node.get("path"),
+                                "line": src_node.get("line"),
+                                "distance": depth,
+                                "via_edge": edge_kind,
+                            })
+        frontier = next_frontier
+        if not frontier:
+            break
+
+    return {
+        "node_id": node_id,
+        "max_depth": max_depth,
+        "affected_count": len(affected),
+        "affected": affected,
+    }
+
+
 if mcp is not None:
     mcp.tool()(list_graph_stats)
     mcp.tool()(search_symbols)
     mcp.tool()(get_neighbors)
     mcp.tool()(find_callers)
     mcp.tool()(outline)
+    mcp.tool()(get_lineage)
+    mcp.tool()(blast_radius)
 
 
 def main() -> None:

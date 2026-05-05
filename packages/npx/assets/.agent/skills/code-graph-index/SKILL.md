@@ -48,7 +48,22 @@ python -m pip install watchdog>=3.0
 
 `watchdog` enables the `gkt watch` live file watcher. Without it, you can still run `gkt graph --incremental` manually.
 
-## Quick Start (one command)
+## Quick Start
+
+The standard flow uses the `gkt` CLI, which records your IDE selection in
+`.gkt/state.json` so MCP setup only configures what you actually use:
+
+```bash
+gkt init kiro     # or: antigravity, cursor, windsurf, cline, kilocode, copilot, codex, all
+gkt mcp           # auto-scoped to the IDE you init'd
+```
+
+Behind the scenes `gkt mcp` reads `.gkt/state.json` (written by `gkt init`)
+and passes the matching `--ides` flag to `setup_mcp.py`. If the state file is
+missing it falls back to `--all` and prints a tip. You can always override
+with `gkt mcp --all`, `gkt mcp --auto`, or `gkt mcp --ides kiro,codex`.
+
+Direct script invocation (when you want full control):
 
 ```bash
 python .agent/skills/code-graph-index/scripts/setup_mcp.py --all

@@ -1,56 +1,65 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to GravityKit are documented here.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format follows Keep a Changelog, and the project uses Semantic Versioning.
+
+## [Unreleased]
+
+### Changed
+
+- Rewrote the root `README.md` into a system usage guide focused on installation, skill flow, agent/workflow behavior, brain continuity, MCP usage, CLI reference, and common operating scenarios.
+- Simplified `CHANGELOG.md` so it records release history only, avoiding duplicated usage documentation already covered by the README.
+
+## [3.12.7] - 2026-05-09
+
+### Changed
+
+- Current package version recorded in `GravityKit/VERSION`.
 
 ## [3.9.1] - 2026-04-17
 
 ### Changed
 
-- **UX Improvements**: Upgraded `gkt init` CLI command to provide a richer help menu with specific IDE/Group use-cases.
-- **Workflow Suggestions**: Added a smart post-init suggestion engine that highlights the exact workflow commands to get started when setting up an empty IDE.
+- Improved `gkt init` help output with clearer IDE and group use cases.
+- Added post-init workflow suggestions so users can see relevant `/wf-*` commands immediately after setup.
 
 ## [3.9.0] - 2026-04-16
 
 ### Added
 
-- **Document Generation** — Fully migrated the PPT Master workflow into `wf-gen-doc.md` along with its complete skill set under `gen-doc-ppt-master`. Allows AI to generate multi-format Markdown to PPTX with full design capability.
-- Registered `gen-doc` as a new first-class skill group in `skill_groups.json` natively reachable by Kiro IDE.
-- Added Auto-Dependency Resolution rule so `gen-doc` automates system dependency installation on step 0 or when missing modules are encountered.
+- Added the `gen-doc` skill group for AI-assisted Markdown/source-material to PPTX generation.
+- Added `/wf-gen-doc` as the workflow entry point for document generation.
+- Added dependency-resolution guidance for the document generation pipeline.
 
 ## [3.8.1] - 2026-04-05
 
 ### Added
 
-- **UiPath Project Orchestration** — New `wf-uipath-project.md` workflow to serve as the master entry point for UiPath automation architecture and implementation.
-- **System Architecture Docs** — Initial release of `ARCHITECTURE.md` documenting the core components and communication patterns of GravityKit.
-- **New IDE Adapter Refinements** — Enhanced Copilot leader instructions and Kiro steering configurations for better agent coordination.
+- Added `/wf-uipath-project` as the end-to-end UiPath RPA project workflow.
+- Added `ARCHITECTURE.md` with a high-level explanation of GravityKit components and install flow.
+- Refined Copilot and Kiro adapter instructions for better agent coordination.
 
 ### Changed
 
-- Updated `uipath` group in `skill_groups.json` to include the new project workflow.
-- Regenerated `skills_index.json` to include updated skill definitions and the new project workflow.
+- Updated the `uipath` group to include the new project workflow.
+- Regenerated skill indexes for the updated workflow set.
 
 ## [3.8.0] - 2026-04-05
 
 ### Added
 
-- **UiPath RPA Suite** — 4 new professional workflows for UiPath automation:
-    - `wf-uipath-analyst` — Business process analysis and PDD generation.
-    - `wf-uipath-developer` — XAML generation, REFramework, and coded workflows (C#).
-    - `wf-uipath-reviewer` — Quality gate and best practice audits for UiPath projects.
-    - `wf-uipath-deploy` — Orchestrator deployment and CI/CD integration.
-- **New Core Skills** — Expanded skill library across multiple domains:
-    - `uipath-core`, `uipath-rpa-workflows`, `uipath-coded-workflows`, `uipath-platform`, `uipath-agents`, `uipath-shared`.
-    - `nextjs-developer`, `observability-framework`, `owasp-security-practices`, `react-pro`, `vue-nuxt-developer`, `web-search`.
-- **UiPath Skill Collection** — Comprehensive resource library for RPA developers.
+- Added the UiPath RPA suite:
+  - `/wf-uipath-analyst`
+  - `/wf-uipath-developer`
+  - `/wf-uipath-reviewer`
+  - `/wf-uipath-deploy`
+- Added UiPath skills for XAML generation, REFramework, coded workflows, Orchestrator, AI agents, and shared UiPath guidance.
+- Added additional development, observability, frontend, security, and web-search skills.
 
 ### Changed
 
-- Updated `skills_index.json` to include 199 unique skills.
-- Synchronized NPX assets to include the new `uipath` group and workflows.
+- Updated skill indexes and NPX assets for the UiPath group.
 
 ## [3.7.1] - 2026-04-04
 
@@ -62,69 +71,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Post-init Workflow Guide** — After `gkt init <group>`, displays a formatted table of all installed workflows with descriptions and sample prompts to help new users get started immediately.
-- Sample prompt database for all 41 workflows (used in post-init display)
+- Added post-init workflow guide showing installed workflows, descriptions, and sample prompts.
+- Added sample prompt metadata for workflow display.
 
 ### Changed
 
-- **Workflow `wf-` Prefix** — All 41 workflow files renamed with `wf-` prefix (e.g., `leader.md` → `wf-leader.md`) to enable easy filtering in IDE command menus. Type `/wf-` to filter only workflows.
-- Updated all cross-references (`@[/xxx]` → `@[/wf-xxx]`) across 7 workflow files, 12 IDE adapter files, and 1 skill file
-- Updated `skill_groups.json` — all 21 groups now reference `wf-` prefixed workflow names
-- Updated CLI and NPX init output hints to use `wf-` prefixed names
-- Bumped NPX package version to 3.7.0
+- Standardized workflow filenames and slash commands with the `wf-` prefix.
+- Updated workflow references across group definitions, adapter files, and CLI/NPX hints.
+- Bumped NPX package version to `3.7.0`.
 
 ## [3.6.0] - 2026-03-30
 
 ### Added
 
-- **Gravity Requirement Analysis** (`gravity-requirement-analysis`) — Toggleable BMAD-inspired requirement analysis with auto-complexity detection, targeted elicitation, structured plan creation, and task tracking. Configurable via `project_context.json` to save tokens when not needed.
-- **Gravity Adversarial Review** (`gravity-adversarial-review`) — Dual-mode quality review combining cynical adversarial analysis (10+ issue categories) with exhaustive edge-case path enumeration. Adapted from BMAD's review skills.
-- **Gravity Implementation Readiness** (`gravity-implementation-readiness`) — Pre-implementation gate that validates requirement completeness, plan coverage, dependency order, and architecture decisions before coding begins.
-- Requirement analysis templates: `requirement.md`, `plan.md`, `complexity-matrix.md`
-- `requirement_analysis` toggle config in `project_context.json` with `enabled`, `auto_detect`, `complexity_threshold` settings
-- New Requirement Analysis Phase and Quality Gate Phase in session lifecycle
-- Added `user-story-generator`, `task-estimator`, `strategic-planning-advisor`, `architecture` to `general-dev` group
-- Added `competitor-analyzer`, `market-trend-analyst`, `product-manager-toolkit`, `pricing-strategy`, `app-store-optimization` to `research` group
-- Added `planner`, `qa-engineer`, `code-reviewer` workflows to `nocobase-dev` group
-- Added `solution-architect` workflow to `general-dev` group
-- Added `planner`, `meta-thinker` workflows to `research` group
+- Added `gravity-requirement-analysis` for structured requirement analysis, complexity detection, planning, and task tracking.
+- Added `gravity-adversarial-review` for quality review and edge-case analysis.
+- Added `gravity-implementation-readiness` as a pre-implementation gate for complex work.
+- Added requirement analysis templates and lifecycle support.
+- Expanded `general-dev`, `research`, and `nocobase-dev` with additional planning, analysis, architecture, and QA skills/workflows.
 
 ### Changed
 
-- Updated `lifecycle.md` with Requirement Analysis Phase (toggleable) and Quality Gate Phase
-- Updated `default_skills.md` with documentation for 3 new gravity skills and toggle guide
-- Updated skill counts: `general-dev` (27→34), `research` (18→25), `nocobase-dev` (24→30)
+- Updated lifecycle guidance with requirement analysis and quality gate phases.
+- Updated default skill documentation with the new Gravity planning/review skills.
 
 ## [3.1.0] - 2026-02-18
 
 ### Added
 
-- n8n Automator workflow for building n8n workflows with Code nodes and 70+ SaaS connectors
-- NocoBase Plugin Expert workflow for full-stack plugin development
-- NocoBase Plugin Build workflow for compiling and packaging plugins
-- Translator workflow for multi-language translation and i18n
-- Image Creator workflow for AI image generation and visual content
-- Doc Writer workflow for professional technical documentation
-- Research Analyst workflow for deep research with file I/O and image generation
-- Deep Researcher workflow for comprehensive research and report writing
-- Prompt Engineer workflow for creating optimized prompts
-- Release Manager workflow for changelog generation and version management
-- 886 skills across 17 categories (Azure, AI/LLM, Security, DevOps, Frontend, etc.)
-- `pyproject.toml` for modern PEP 517/518 packaging (installable via `pip install gk`)
-- GitHub Actions workflow for automated PyPI publishing
+- Added workflows for n8n, NocoBase, translation, image generation, documentation, research, prompt engineering, and release management.
+- Added a broad skill library across AI/LLM, security, DevOps, frontend, backend, docs, and automation categories.
+- Migrated packaging to modern `pyproject.toml`.
+- Added GitHub Actions publishing workflow.
 
 ### Changed
 
-- Modernized package structure from `setup.py` to `pyproject.toml`
-- Updated `.gitignore` with proper Python packaging ignores
+- Modernized package structure from `setup.py` to `pyproject.toml`.
+- Updated `.gitignore` for Python packaging outputs.
 
 ## [3.0.0] - 2025-12-01
 
 ### Added
 
-- Initial public release
-- 29 agent workflows (leader, quickstart, planner, architect, designer, etc.)
-- Multi-IDE support: Antigravity, Cursor, Windsurf, Cline
-- CLI commands: `gk init`, `gk list`, `gk doctor`, `gk update`, `gk version`
-- Skills management: `gk skills list/search/enable/disable/count`
-- Brain and journal management commands
+- Initial public release.
+- Added the first workflow set for planning, architecture, design, development, QA, security, docs, and release operations.
+- Added multi-IDE support for Antigravity, Cursor, Windsurf, and Cline.
+- Added core CLI commands for init, listing, doctor, update, version, skill management, brain, and journal operations.

@@ -1,497 +1,504 @@
-# 🌌 Anti-Gravity Kit
+# GravityKit
 
-> **The AI-Native Software House in a Box.**  
-> _Build enterprise-grade software with a team of 209+ packaged AI Skills organized into 22 focused groups — each powered by 18 specialist agents, 47 workflows, and a persistent brain that remembers decisions across sessions._
+GravityKit là bộ công cụ CLI để cài đặt skills, agents, workflows và bộ nhớ dự án vào một repository đang làm việc. Mục tiêu của hệ thống là biến AI IDE thành một nhóm chuyên gia có vai trò rõ ràng: biết đọc ngữ cảnh dự án, chọn workflow phù hợp, tải đúng skill khi cần, lưu quyết định qua nhiều phiên làm việc và dùng MCP để tìm kiếm code/tài liệu hiệu quả.
 
----
+Phiên bản hiện tại: `3.12.7`
 
-## ⚡ Quick Start
+## Nội Dung
 
-Get started with GravityKit in 3 easy steps:
+- [Cai Dat Nhanh](#cai-dat-nhanh)
+- [GravityKit Hoat Dong Nhu The Nao](#gravitykit-hoat-dong-nhu-the-nao)
+- [Cau Truc Duoc Cai Vao Project](#cau-truc-duoc-cai-vao-project)
+- [Skill Groups](#skill-groups)
+- [Agents Va Workflows](#agents-va-workflows)
+- [Brain Va Session Continuity](#brain-va-session-continuity)
+- [MCP Va Code Graph](#mcp-va-code-graph)
+- [CLI Reference](#cli-reference)
+- [Huong Dan Su Dung Theo Tinh Huong](#huong-dan-su-dung-theo-tinh-huong)
+- [Phat Trien Va Dong Gop](#phat-trien-va-dong-gop)
+- [Phat Hanh](#phat-hanh)
 
-### 1. Install GravityKit
-Install the CLI tool globally or in your virtual environment:
+## Cai Dat Nhanh
+
+GravityKit có hai cách dùng chính:
+
 ```bash
 pip install gkt
-cd /path/to/your-project
 ```
 
-### 2. Initialize Skills & Agents
-Choose your AI IDE to scaffold the required agent files and skill sets.
+Hoặc dùng qua Node.js:
 
-| Goal | Antigravity Command | Kiro Command |
-|------|---------------------|--------------|
-| **Init all skills** | `gkt init antigravity` | `gkt init kiro` |
-| **Init specific group** | `gkt init antigravity --group general-dev` | `gkt init kiro --group general-dev` |
-| **Where files go** | `.agent/` folder | `.kiro/` folder |
+```bash
+npx gkt-node init
+```
 
-> **Tip:** You can replace `general-dev` with other groups like `uipath`, `ai-agent`, or `seo-marketing`.
+Yêu cầu khuyến nghị:
 
-### 3. Enable Semantic Code Graph & MCP Servers
-Wiring up the Model Context Protocol (MCP) gives your agents native ability to search code via FAISS, read office documents, and access the Brain Manager.
+| Thanh phan | Yeu cau |
+| --- | --- |
+| Python | 3.9+ |
+| Node.js | 16+ nếu dùng NPX hoặc các workflow JS |
+| Git | Khuyến nghị để quản lý thay đổi và release |
+| npm | Khuyến nghị cho NPX CLI và dự án frontend |
 
-| Goal | Command (Both IDEs) |
-|------|---------------------|
-| **Generate & Wire MCP** | `gkt mcp` |
+Khởi tạo trong thư mục dự án:
 
-*(Note: `gkt mcp` automatically detects your initialized IDEs and configures them all at once).*
+```bash
+cd /path/to/your-project
+gkt init antigravity --group general-dev
+gkt mcp
+```
 
-> **Requirements:** Python 3.9+
-> **Supported IDEs:** `antigravity`, `kiro`, `cursor`, `windsurf`, `cline`, `kilocode`, `copilot`, `claude` (Claude Code)
+Sau khi init, mở AI IDE và gọi workflow trong chat, ví dụ:
 
-**For development / contributing:**
+```text
+/wf-planner Analyze requirements and create a PRD for the customer portal.
+/wf-architect Design the database schema and API for this booking system.
+/wf-code-reviewer Review my latest changes for security and maintainability.
+```
+
+## GravityKit Hoat Dong Nhu The Nao
+
+GravityKit có bốn lớp chính:
+
+| Lop | Chuc nang |
+| --- | --- |
+| Skill | Tài liệu năng lực chuyên môn. Mỗi skill là một thư mục có `SKILL.md`, có thể kèm `references/`, `scripts/`, `assets/`, `evals/`. |
+| Agent | Vai trò chuyên gia như planner, architect, frontend-dev, security-engineer. Agent quyết định cách tiếp cận và skill cần dùng. |
+| Workflow | Quy trình theo pha, gọi bằng slash command dạng `/wf-*`. Workflow hướng dẫn AI làm việc từng bước. |
+| Brain | Bộ nhớ dự án: context, quyết định kiến trúc, lifecycle, manifest skill, checkpoint workflow. |
+
+Luồng dùng phổ biến:
+
+```text
+User request
+  -> Workflow /wf-*
+  -> Agent role
+  -> Brain: load context, decisions, session checkpoints
+  -> Skills: load only SKILL.md relevant to task
+  -> MCP: search code graph, semantic index, document files
+  -> Work output
+  -> Brain: save checkpoint, decisions, journal notes
+```
+
+Nguyên tắc quan trọng: workflow định nghĩa "làm theo quy trình nào", agent định nghĩa "ai chịu trách nhiệm", skill định nghĩa "kiến thức và công cụ cần dùng", brain giữ "những gì hệ thống cần nhớ".
+
+## Cau Truc Duoc Cai Vao Project
+
+Với Antigravity/Claude-style agent layout:
+
+```text
+.agent/
+  agents/                 # 18 specialist agents
+  workflows/              # 51 workflow files, prefix wf-*
+  skills/                 # selected skills plus default skills
+  brain/
+    agent_index.json
+    default_skills.md
+    lifecycle.md
+    platform_notes.md
+    project_context.json
+    skills_manifest.json
+    workflow_sessions/
+```
+
+Với Kiro:
+
+```text
+.kiro/
+  skills/
+  steering/
+  hooks/
+  specs/                  # workflow files
+  agents/
+  brain/
+```
+
+Với IDE adapter khác:
+
+| Target | Lenh | Thu muc duoc tao |
+| --- | --- | --- |
+| Antigravity | `gkt init antigravity` | `.agent/` |
+| Kiro | `gkt init kiro` | `.kiro/` |
+| Cursor | `gkt init cursor` | `.cursor/rules/` và `.agent/` nếu cần |
+| Windsurf | `gkt init windsurf` | `.windsurf/rules/` và `.agent/` nếu cần |
+| Cline | `gkt init cline` | `.clinerules/` và `.agent/` nếu cần |
+| Kilo Code | `gkt init kilocode` | `.kilocode/rules/` và `.agent/` nếu cần |
+| GitHub Copilot | `gkt init copilot` | `.github/instructions/` và `.agent/` nếu cần |
+| Codex CLI | `gkt init codex` | không copy skill; ghi scope để `gkt mcp` cấu hình MCP |
+| Tat ca | `gkt init` hoặc `gkt init all` | cài tất cả target Python CLI hỗ trợ |
+
+Lưu ý: NPX CLI hiện hỗ trợ các adapter chính trong package `gkt-node`; Python CLI là nguồn tham chiếu đầy đủ nhất.
+
+## Skill Groups
+
+Skill group giúp cài đúng bộ năng lực cho dự án thay vì copy toàn bộ thư viện. Mỗi group được tự động merge thêm nhóm `_default`.
+
+Default skills hiện có 16 skill nền:
+
+- Memory/context: `brain-manager`, `journal-manager`, `context-manager`, `codebase-navigator`, `code-graph-index`, `document-reader`, `skill-router`
+- Planning/quality: `concise-planning`, `writing-plans`, `clean-code`, `debugger`, `error-handling-patterns`
+- Version control: `git-manager`, `commit`
+- Cross-platform: `powershell-windows`, `bash-linux`
+
+Xem danh sách group từ CLI:
+
+```bash
+gkt groups
+```
+
+Cài theo group:
+
+```bash
+gkt init general-dev
+gkt init antigravity --group uipath
+gkt init kiro --group gen-doc
+gkt init all --group nocobase-dev
+```
+
+Các group hiện có:
+
+| Group | Huong su dung |
+| --- | --- |
+| `general-dev` | Backend, frontend, full-stack, planning, QA, review. |
+| `n8n-dev` | Xây dựng automation và workflow n8n. |
+| `nocobase-dev` | Phát triển, build, review plugin NocoBase. |
+| `general-doc` | README, API docs, RFC, ADR, wiki, onboarding docs. |
+| `research` | Deep research, phân tích thị trường, research report. |
+| `cloud-deploy` | Docker, CI/CD, Kubernetes, cloud deployment. |
+| `security-audit` | Threat modeling, SAST, vulnerability review. |
+| `security-pentest` | Pentest có kiểm soát, offensive security workflow. |
+| `seo-marketing` | SEO audit, content strategy, schema markup, CRO. |
+| `ai-agent` | LLM app, RAG, multi-agent, MCP, evaluation. |
+| `saas-crm` | HubSpot, Salesforce, Pipedrive, Stripe, Shopify. |
+| `saas-comms` | Slack, Discord, WhatsApp, Gmail, email automation. |
+| `saas-project` | Jira, Asana, Trello, ClickUp, Monday, Notion, Airtable, GitHub. |
+| `saas-marketing` | Twitter/X, LinkedIn, Instagram, Google Calendar/Drive/Sheets. |
+| `startup-biz` | Market sizing, pricing, GTM, finance, business plan. |
+| `api-graphql` | REST, GraphQL, OpenAPI, FastAPI, integration. |
+| `claude-code` | Claude Code skills, prompt engineering, custom MCP. |
+| `context-data-rag` | Context engineering, RAG, embeddings, data pipelines. |
+| `database` | SQL/NoSQL, Postgres, migrations, CQRS, event sourcing. |
+| `observability-report` | Monitoring, tracing, Grafana, Prometheus, SLO, incidents. |
+| `uipath` | UiPath RPA, XAML, REFramework, Orchestrator, coded workflows. |
+| `gen-doc` | Generate PPTX từ Markdown/source material bằng pipeline thiết kế. |
+| `finance` | Valuation, market data, sentiment, quant research, VC analysis, finance reports. |
+
+## Agents Va Workflows
+
+GravityKit có 18 agent chuyên trách:
+
+| Agent | Vai tro |
+| --- | --- |
+| `leader` | Điều phối nhiều workflow và specialist agent. |
+| `quickstart` | Tạo nhanh MVP/prototype với ít vòng hỏi lại. |
+| `planner` | Yêu cầu, PRD, task breakdown, acceptance criteria. |
+| `architect` | Kiến trúc hệ thống, API, database, trade-off. |
+| `designer` | UX/UI, design system, visual direction. |
+| `frontend-dev` | React/Vue/Tailwind, component, state, layout. |
+| `backend-dev` | API, database, auth, business logic. |
+| `mobile-dev` | React Native/Expo, iOS/Android. |
+| `devops` | Docker, CI/CD, cloud, Kubernetes. |
+| `qa-engineer` | Test plan, automated test, regression, performance. |
+| `code-reviewer` | Review chất lượng code, maintainability, risks. |
+| `security-engineer` | Security audit, threat modeling, incident response. |
+| `tech-writer` | Docs, ADR, RFC, API reference, tutorial. |
+| `researcher` | Research, market intelligence, competitor analysis. |
+| `meta-thinker` | Brainstorm, product direction, reframing. |
+| `knowledge-guide` | Onboarding codebase, handoff, knowledge capture. |
+| `release-manager` | Version bump, changelog, release notes, tags. |
+| `seo-specialist` | SEO, schema, Core Web Vitals, sitemap. |
+
+Workflow được gọi bằng prefix `/wf-`. Gõ `/wf-` trong AI chat để lọc danh sách.
+
+Các workflow nền tảng:
+
+| Workflow | Khi nao dung |
+| --- | --- |
+| `/wf-leader` | Muốn điều phối từ ý tưởng đến production qua nhiều vai trò. |
+| `/wf-quickstart` | Muốn build nhanh prototype/MVP. |
+| `/wf-planner` | Cần làm rõ yêu cầu, PRD, scope, task list. |
+| `/wf-architect` | Cần thiết kế kiến trúc, database, API. |
+| `/wf-fullstack-coder` | Cần một workflow build end-to-end full-stack. |
+| `/wf-quality-guardian` | Cần review tổng hợp code, test, security. |
+| `/wf-release-manager` | Cần chuẩn bị version, changelog, release notes. |
+
+Workflow chuyên biệt tiêu biểu:
+
+| Workflow | Chuc nang |
+| --- | --- |
+| `/wf-n8n-automator` | Thiết kế automation n8n và SaaS connector. |
+| `/wf-nocobase-plugin-expert` | Phân tích và phát triển plugin NocoBase. |
+| `/wf-nocobase-plugin-build` | Build, package, deploy plugin NocoBase. |
+| `/wf-ai-agent-builder` | Thiết kế LLM app, RAG, tool calling, memory. |
+| `/wf-api-graphql-dev` | Thiết kế và implement API/GraphQL. |
+| `/wf-context-data-eng` | Context engineering, RAG, data pipeline. |
+| `/wf-database-eng` | Database design, migration, optimization. |
+| `/wf-observability-eng` | Monitoring, tracing, dashboard, incident workflow. |
+| `/wf-uipath-project` | UiPath end-to-end: analysis, plan, XAML, validation, handoff. |
+| `/wf-gen-doc` | Tạo presentation PPTX từ tài liệu nguồn. |
+| `/wf-finance-investment-analyst` | Phân tích đầu tư, valuation, thesis, report. |
+| `/wf-finance-quant-researcher` | Quant research, data, signal, backtest-oriented analysis. |
+| `/wf-finance-vc-analyst` | Phân tích startup/VC, market, traction, financials. |
+| `/wf-finance-market-monitor` | Theo dõi thị trường, tin tức, sentiment, signal. |
+
+## Brain Va Session Continuity
+
+Brain là phần giúp agent không bắt đầu từ số 0 ở mỗi phiên.
+
+| File | Chuc nang |
+| --- | --- |
+| `brain/project_context.json` | Metadata, tech stack, conventions, decisions, sprint state. |
+| `brain/lifecycle.md` | Quy trình session: init, analysis, planning, work, quality gate, checkpoint, handoff. |
+| `brain/default_skills.md` | Hướng dẫn dùng default skills trong mọi group. |
+| `brain/skills_manifest.json` | Index nhẹ để agent tìm skill rồi lazy-load `SKILL.md` cần thiết. |
+| `brain/agent_index.json` | Registry vai trò agent và protocol handoff. |
+| `brain/platform_notes.md` | Lưu ý Windows/Linux/macOS. |
+| `brain/workflow_sessions/` | Checkpoint workflow để resume sau khi context/chat bị ngắt. |
+
+Luồng checkpoint:
+
+```text
+Start workflow
+  -> đọc project_context.json
+  -> kiểm tra workflow_sessions/*-latest.md
+  -> resume hoặc start fresh
+  -> kết thúc mỗi phase thì ghi checkpoint
+  -> handoff ghi summary, open questions, next steps
+```
+
+Dùng CLI để quản trị brain và journal:
+
+```bash
+gkt brain --help
+gkt journal --help
+```
+
+## MCP Va Code Graph
+
+`gkt mcp` cấu hình MCP theo scope đã ghi bởi `gkt init`. Nếu không có `.gkt/state.json`, lệnh sẽ fallback sang `--all`.
+
+```bash
+gkt init cursor --group general-dev
+gkt mcp
+```
+
+Các MCP/công cụ chính:
+
+| Thanh phan | Chuc nang |
+| --- | --- |
+| Code Graph | Index cấu trúc code bằng Tree-sitter: symbols, imports, callers, dependencies. |
+| FAISS Code Index | Semantic search cục bộ trên codebase. |
+| Document Reader | Đọc PDF, DOCX, XLSX và nhiều định dạng tài liệu khác. |
+| Brain Manager | Cho agent đọc/ghi project context, decisions, checkpoints. |
+
+Lệnh liên quan:
+
+```bash
+gkt mcp
+gkt graph --incremental
+gkt watch
+```
+
+`gkt watch` chạy watcher để cập nhật graph và FAISS khi file thay đổi.
+
+## CLI Reference
+
+| Lenh | Chuc nang |
+| --- | --- |
+| `gkt init [target]` | Cài GravityKit cho IDE hoặc group. Mặc định là `all`. |
+| `gkt init [target] --group <name>` | Cài một skill group cho target cụ thể. |
+| `gkt groups` | Liệt kê skill groups, số skill, workflow, mô tả. |
+| `gkt list` | Liệt kê workflow/agent command có sẵn. |
+| `gkt doctor` | Kiểm tra Python, Node.js, Git, npm và `.agent/`. |
+| `gkt update` | Cập nhật GravityKit từ GitHub hoặc pip. |
+| `gkt version` | In version hiện tại. |
+| `gkt brain ...` | Gọi script brain-manager. |
+| `gkt journal ...` | Gọi script journal-manager. |
+| `gkt graph ...` | Build code graph/FAISS và cấu hình MCP theo tham số. |
+| `gkt mcp ...` | Cấu hình MCP theo scope init, tự thêm `--ensure-model`. |
+| `gkt watch` | Watch file thay đổi và rebuild index incremental. |
+| `gkt skills list [--all]` | Liệt kê skills đang active. |
+| `gkt skills search <query>` | Tìm skill theo keyword. |
+| `gkt skills enable <name>` | Enable skill đã disable. |
+| `gkt skills disable <name>` | Disable skill. |
+| `gkt skills count` | Đếm skills. |
+| `gkt validate [--strict]` | Validate `SKILL.md`. |
+| `gkt generate-index` | Regenerate `skills_index.json`. |
+
+Alias:
+
+```bash
+gravitykit version
+```
+
+NPX:
+
+```bash
+npx gkt-node init antigravity --group general-dev
+npx gkt-node groups
+npx gkt-node mcp
+```
+
+## Huong Dan Su Dung Theo Tinh Huong
+
+### Tao project phan mem moi
+
+```bash
+gkt init antigravity --group general-dev
+gkt mcp
+```
+
+Trong AI chat:
+
+```text
+/wf-planner Turn this idea into a scoped PRD and implementation plan.
+/wf-architect Design the system architecture and database schema.
+/wf-fullstack-coder Implement the first vertical slice.
+/wf-quality-guardian Review the result before release.
+```
+
+### Lam viec voi codebase lon
+
+```bash
+gkt init cursor --group general-dev
+gkt mcp
+gkt watch
+```
+
+Trong AI chat:
+
+```text
+/wf-knowledge-guide Explain the authentication and billing modules.
+/wf-code-reviewer Review the current diff and identify regression risks.
+```
+
+### Viet tai lieu ky thuat
+
+```bash
+gkt init antigravity --group general-doc
+```
+
+Trong AI chat:
+
+```text
+/wf-doc-writer Rewrite the README and API guide for the SDK.
+/wf-tech-writer Create ADRs for the database and deployment decisions.
+```
+
+### Tao presentation PPTX
+
+```bash
+gkt init kiro --group gen-doc
+gkt mcp
+```
+
+Trong AI chat:
+
+```text
+/wf-gen-doc Generate an investor deck from these notes and source files.
+```
+
+### UiPath RPA
+
+```bash
+gkt init antigravity --group uipath
+```
+
+Trong AI chat:
+
+```text
+/wf-uipath-project Build an invoice processing automation from Outlook to ERP.
+```
+
+Luồng `/wf-uipath-project` bao gồm:
+
+1. Business analysis và chọn kiến trúc.
+2. Plan workflow tree, argument map, config keys.
+3. Scaffold project, inspect UI, generate XAML, validate loop.
+4. Final validation và handoff.
+
+### Finance Research
+
+```bash
+gkt init antigravity --group finance
+gkt mcp
+```
+
+Trong AI chat:
+
+```text
+/wf-finance-market-monitor Monitor market events and summarize material signals.
+/wf-finance-investment-analyst Build an investment memo for this public company.
+/wf-finance-vc-analyst Analyze this startup from a VC perspective.
+```
+
+## Phat Trien Va Dong Gop
+
+Cài local editable:
 
 ```bash
 git clone https://github.com/OrgGem/VibeGravityKit.git
 cd VibeGravityKit
 pip install -e .
+gkt version
 ```
 
----
-
-## 🔌 Core Features & MCP Integration ⭐ **New**
-
-GravityKit ships with powerful **Model Context Protocol (MCP)** servers out of the box. Running `gkt mcp` will automatically index your codebase and wire up these servers to your IDE:
-
-1. **Code Graph (`code-graph`)**: Builds a structural graph of your codebase using Tree-sitter. AI agents can traverse function calls, imports, and classes without reading entire files.
-2. **Semantic Search (`faiss-code-index`)**: Generates an embedded vector index using FAISS. AI agents can perform deep semantic searches across your code.
-3. **Document Reader (`document-reader`)**: Allows AI agents to natively read `.pdf`, `.docx`, and `.xlsx` files without you having to copy-paste the contents.
-4. **Brain Manager (`brain-manager`)**: Grants agents direct read/write access to project architecture decisions, conventions, and checkpoints.
-
----
-
-## 📦 Skill Groups
-
-Install only the skills your project needs:
+Validate skills:
 
 ```bash
-gkt groups   # List all available groups
+gkt validate
+gkt validate --strict
 ```
 
-| Group                  | Skills | +Default | Description                                     |
-| ---------------------- | ------ | -------- | ----------------------------------------------- |
-| `general-dev`          | 39     | +9       | Backend, Frontend, Full-stack development       |
-| `n8n-dev`              | 18     | +11      | n8n workflow automations                        |
-| `nocobase-dev`         | 32     | +12      | NocoBase plugin development                     |
-| `general-doc`          | 20     | +11      | Technical docs, RFC, ADR, wiki                  |
-| `research`             | 18     | +12      | Deep research, market analysis                  |
-| `cloud-deploy`         | 26     | +12      | Cloud, DevOps, CI/CD, Kubernetes                |
-| `security-audit`       | 14     | +13      | Threat modeling, SAST, vulnerability analysis   |
-| `security-pentest`     | 14     | +13      | Offensive security, red team, exploitation      |
-| `seo-marketing`        | 28     | +13      | SEO, CRO, content marketing                     |
-| `ai-agent`             | 29     | +13      | LLM apps, RAG, multi-agent                      |
-| `saas-crm`             | 8      | +13      | HubSpot, Salesforce, Stripe connectors          |
-| `saas-comms`           | 6      | +13      | Slack, Discord, WhatsApp, Gmail connectors      |
-| `saas-project`         | 8      | +13      | Jira, Asana, Trello, Notion connectors          |
-| `saas-marketing`       | 6      | +13      | Twitter, LinkedIn, Google Suite connectors      |
-| `startup-biz`          | 26     | +13      | Market analysis, financial modeling             |
-| `api-graphql`          | 24     | +12      | API design, GraphQL, REST, OpenAPI, FastAPI     |
-| `claude-code`          | 23     | +11      | Claude Code skills, prompt engineering, MCP     |
-| `context-data-rag`     | 29     | +12      | Context engineering, RAG, data pipelines        |
-| `database`             | 26     | +11      | SQL/NoSQL, Postgres, migrations, CQRS           |
-| `observability-report` | 22     | +13      | Monitoring, Grafana, Prometheus, SLO, incidents |
-| `uipath`               | 6      | +13      | UiPath RPA — XAML generation, REFramework, Orchestrator, coded workflows, AI agents |
-| `gen-doc` ⭐ **New**    | 1      | +14      | Document Generation — PPTX pipeline             |
-
-> **+Default**: Each group automatically includes 14 base skills for memory management, lifecycle, error handling, code graph indexing, and cross-platform compatibility.
-
-**Usage:**
+Regenerate index:
 
 ```bash
-gkt init general-dev                    # Install group (default: Antigravity IDE)
-gkt init antigravity --group uipath     # UiPath skills for Claude Code
-gkt init kiro --group uipath            # UiPath skills for Kiro IDE
-gkt init antigravity                    # Install ALL skills
+gkt generate-index
 ```
 
----
-
-## 🛠️ CLI Commands
-
-| Command                            | Description                                            |
-| ---------------------------------- | ------------------------------------------------------ |
-| `gkt init [target]`                | Install skills for an IDE or a skill group             |
-| `gkt init [target] --group <name>` | Install a specific skill group for an IDE              |
-| `gkt groups`                       | List all available skill groups                        |
-| `gkt list`                         | List all available AI agents and their roles           |
-| `gkt doctor`                       | Check environment health (Python, Node, Git, npm)      |
-| `gkt update`                       | Update GravityKit to the latest version                |
-| `gkt version`                      | Show current version                                   |
-| `gkt brain`                        | Manage project brain — context, decisions, conventions |
-| `gkt journal`                      | Knowledge journal — capture lessons, bugs, insights    |
-| `gkt mcp`                          | Wire MCP servers (Code Graph, FAISS, Document Reader) into IDEs |
-| `gkt skills list [--all]`          | List active skills (or all including disabled)         |
-| `gkt skills search <query>`        | Search skills by keyword                               |
-| `gkt skills enable <name>`         | Enable a disabled skill                                |
-| `gkt skills disable <name>`        | Disable a skill                                        |
-| `gkt skills count`                 | Show total skill count                                 |
-| `gkt validate [--strict]`          | Validate all SKILL.md files                            |
-| `gkt generate-index`               | Regenerate `skills_index.json`                         |
-
-> **Alias:** `gravitykit` works the same as `gkt`.
-
----
-
-## 🌐 Multi-IDE Support
-
-GravityKit installs into **7 AI IDEs** from a single CLI command:
-
-| IDE                | Command                | Creates                                                           |
-| ------------------ | ---------------------- | ----------------------------------------------------------------- |
-| **Antigravity**    | `gkt init antigravity` | `.agent/` — agents, workflows, skills, brain                      |
-| **Kiro**           | `gkt init kiro`        | `.kiro/` — skills, steering (always-loaded), hooks, specs, agents, brain |
-| **Cursor**         | `gkt init cursor`      | `.cursor/rules/*.mdc`                                             |
-| **Windsurf**       | `gkt init windsurf`    | `.windsurf/rules/*.md`                                            |
-| **Cline**          | `gkt init cline`       | `.clinerules/*.md`                                                |
-| **Kilo Code**      | `gkt init kilocode`    | `.kilocode/rules/*.md`                                            |
-| **GitHub Copilot** | `gkt init copilot`     | `.github/instructions/*.instructions.md`                          |
-| **All**            | `gkt init`             | All of the above                                                  |
-
-### IDE-specific features
-
-**Kiro** receives the full agent toolkit:
-- `.kiro/steering/brain.md` — always-loaded; instructs Kiro to load brain context and check in-progress workflow sessions at every session start
-- `.kiro/steering/product.md`, `structure.md`, `tech.md` — project context templates
-- `.kiro/brain/` — full brain directory including `workflow_sessions/` for session continuity
-- `.kiro/specs/` — workflow files for Kiro spec execution
-- `.kiro/agents/` — 18 specialist agent definitions
-
-**GitHub Copilot** receives per-role instruction files (`.github/instructions/*.instructions.md`) covering all 14 specialist roles. Each role file includes a **Session Init** block that loads brain context before starting work.
-
----
-
-## 🤖 Agent Team (18 Specialists)
-
-GravityKit ships 18 specialist agents as native sub-agent definitions (`.agent/agents/*.md`), compatible with Claude Code's sub-agent format:
-
-| Agent               | Role                                                         |
-| ------------------- | ------------------------------------------------------------ |
-| `leader`            | Orchestrates the full team; delegates to specialists via sub-agents |
-| `quickstart`        | Fully automated project build — no approvals needed          |
-| `planner`           | Requirements analysis, PRD, task breakdown                   |
-| `architect`         | System design, database schema, API spec, diagrams           |
-| `designer`          | UI/UX design system, wireframes, design tokens               |
-| `frontend-dev`      | React/Vue/Tailwind — components, layouts, state              |
-| `backend-dev`       | Node/Python/Go — APIs, DB queries, auth                      |
-| `mobile-dev`        | React Native/Expo — iOS and Android                          |
-| `devops`            | Docker, CI/CD, Kubernetes, cloud deployment                  |
-| `qa-engineer`       | Test cases, API tests, performance, automation               |
-| `code-reviewer`     | Code quality, design patterns, security, performance         |
-| `security-engineer` | Threat modeling, SAST, pen-test, incident response           |
-| `tech-writer`       | Docs, API references, ADR, RFC, tutorials                    |
-| `researcher`        | Market analysis, web search, competitive intelligence        |
-| `meta-thinker`      | Creative advisor, brainstorming, vision expansion            |
-| `knowledge-guide`   | Codebase onboarding, session handoffs, knowledge transfer    |
-| `release-manager`   | Version bumps, changelog, git tagging, release notes         |
-| `seo-specialist`    | Meta tags, schema markup, Core Web Vitals, sitemap           |
-
-Agents are installed to `.agent/agents/` (antigravity) or `.kiro/agents/` (kiro) during `gkt init`.
-
----
-
-## 🚀 How It Works
-
-### Mode 1: `/wf-leader` — Smart Delegation
-
-```
-You → Leader → Agents → Report per phase → You approve → Next phase
-```
-
-| Phase                       | Agent(s)                                                              | Mode        |
-| --------------------------- | --------------------------------------------------------------------- | ----------- |
-| 📋 Planning                 | `@[/wf-planner]`                                                      | Sequential  |
-| 🏗️ Architecture + 🎨 Design | `@[/wf-architect]` + `@[/wf-designer]`                                | ⚡ PARALLEL |
-| 💻 Development              | `@[/wf-frontend-dev]` + `@[/wf-backend-dev]`                          | ⚡ PARALLEL |
-| 🧪 QA & Fix                 | `@[/wf-qa-engineer]`                                                  | Sequential  |
-| 🚀 Launch                   | `@[/wf-devops]` + `@[/wf-security-engineer]` + `@[/wf-seo-specialist]` + `@[/wf-tech-writer]` | ⚡ PARALLEL |
-
-### Mode 2: `/wf-quickstart` — Full Autopilot
-
-One command, complete project. No approvals needed. Best for MVPs and prototypes.
-
-> 💡 **Tip:** After `gkt init <group>`, a workflow guide is displayed showing all available workflows with descriptions and sample prompts.
-
----
-
-## 🔄 Workflows (46)
-
-> **Naming convention:** All workflows use the `wf-` prefix. Type `/wf-` in your AI chat to filter only workflows.
-
-### General Development
-
-| Workflow                     | Description                                              |
-| ---------------------------- | -------------------------------------------------------- |
-| `/wf-leader`                 | Orchestrates the entire team from concept to production  |
-| `/wf-quickstart`             | Fully automated project build from idea to production    |
-| `/wf-planner`                | Analyzes requirements, writes PRD, breaks down tasks     |
-| `/wf-meta-thinker`           | Creative advisor, brainstorming, vision development      |
-| `/wf-architect`              | Systems design, database, API                            |
-| `/wf-solution-architect`     | Strategic technical planning, trade-off analysis         |
-| `/wf-designer`               | UI/UX design system and assets                           |
-| `/wf-frontend-dev`           | Component, layout, state management (React/Vue/Tailwind) |
-| `/wf-backend-dev`            | API implementation, DB queries (Node/Python/Go)          |
-| `/wf-fullstack-coder`        | Architecture, backend, frontend, testing in one workflow |
-| `/wf-mobile-dev`             | iOS/Android (React Native/Expo)                          |
-| `/wf-devops`                 | Docker, CI/CD, cloud deployment                          |
-| `/wf-cloud-deployer`         | AWS deployment, CI/CD, Docker, Kubernetes, serverless    |
-| `/wf-qa-engineer`            | Test case, API, SQL, automation, performance             |
-| `/wf-quality-guardian`       | Code review, testing, security audit in one pass         |
-| `/wf-code-reviewer`          | Automated code quality review                            |
-| `/wf-security-engineer`      | Security workflow (Audit/Pen-Test/Incident)              |
-| `/wf-security-auditor`       | Penetration testing, vulnerability assessment            |
-| `/wf-release-manager`        | Changelog generation, version bumping                    |
-| `/wf-tech-writer`            | Documentation & API refs                                 |
-| `/wf-doc-writer`             | Professional technical documentation, reports, RFC, ADR  |
-| `/wf-knowledge-guide`        | Code explainer, note taker, handoff specialist           |
-
-### Specialized
-
-| Workflow                     | Description                                              |
-| ---------------------------- | -------------------------------------------------------- |
-| `/wf-n8n-automator`          | n8n workflow builder with 70+ SaaS connectors            |
-| `/wf-nocobase-plugin-expert` | NocoBase plugin development (Server, Client, DB, API)    |
-| `/wf-nocobase-plugin-build`  | Build NocoBase plugins                                   |
-| `/wf-seo-specialist`         | SEO audit, meta tags, schema markup, Core Web Vitals     |
-| `/wf-seo-marketer`           | SEO optimization, content strategy, CRO                  |
-| `/wf-ai-agent-builder`       | Build LLM apps, RAG systems, multi-agent architectures   |
-| `/wf-saas-connector`         | Automate 20+ SaaS platforms via API integrations         |
-| `/wf-startup-advisor`        | Market analysis, financial modeling, GTM planning        |
-| `/wf-researcher`             | Market analysis, web search, trend discovery             |
-| `/wf-research-analyst`       | Deep research, analysis, file I/O, translation           |
-| `/wf-deep-researcher`        | Comprehensive research and professional reports          |
-| `/wf-prompt-engineer`        | Create optimized prompts for any AI model                |
-| `/wf-image-creator`          | AI image generation, design assets, diagrams             |
-| `/wf-translator`             | Multi-language translation and i18n management           |
-| `/wf-api-graphql-dev`        | API & GraphQL development workflow                       |
-| `/wf-claude-code-dev`        | Claude Code skills, prompt engineering, MCP              |
-| `/wf-context-data-eng`       | Context engineering, RAG, data pipelines                 |
-| `/wf-database-eng`           | Database design, optimization, migrations, CQRS          |
-| `/wf-observability-eng`      | Monitoring, tracing, Grafana, Prometheus, SLO            |
-| `/wf-gen-doc` ⭐ **New**       | Document Generator — orchestrates the PPTX generation pipeline |
-
-### UiPath RPA ⭐ New
-
-| Workflow                | Description                                                                      |
-| ----------------------- | -------------------------------------------------------------------------------- |
-| `/wf-uipath-project` ⭐ | **All-in-one**: business analysis → brainstorm → plan → XAML implementation      |
-| `/wf-uipath-analyst`    | Business analysis, process decomposition, architecture selection                 |
-| `/wf-uipath-developer`  | XAML generation, REFramework wiring, UI inspection, validate-and-fix loop        |
-| `/wf-uipath-reviewer`   | Code review for XAML quality, rule compliance, security, naming conventions      |
-| `/wf-uipath-deploy`     | Package, publish to Orchestrator, schedule, monitor                              |
-
----
-
-## 🤖 UiPath RPA Group
-
-The `uipath` skill group provides end-to-end RPA project automation using UiPath Studio. Use `gkt init antigravity --group uipath` or `gkt init kiro --group uipath`.
-
-### Skills included
-
-| Skill                    | Description                                                                 |
-| ------------------------ | --------------------------------------------------------------------------- |
-| `uipath-core`            | XAML generation scripts, scaffold, validate, lint, decomposition rules      |
-| `uipath-rpa-workflows`   | REFramework patterns, Dispatcher+Performer, Simple Sequence templates       |
-| `uipath-shared`          | CLI reference, UI Automation prerequisites, selectors, debugging guide      |
-| `uipath-platform`        | Orchestrator queues, assets, processes, folder management                   |
-| `uipath-coded-workflows` | C# coded workflows, unit testing, OOP patterns in UiPath Studio             |
-| `uipath-agents`          | UiPath AI agents with LLM reasoning and dynamic decision making             |
-
-### `/wf-uipath-project` — All-in-One Workflow
-
-The flagship UiPath workflow covers the full project lifecycle in one command:
-
-```
-Phase 0: Session Resume Check
-    ↓ (loads brain/workflow_sessions/ if previous session exists)
-Phase 1: Business Analysis & Brainstorm
-    → 10 elicitation questions
-    → Key Business Points: value, complexity, constraints
-    → Architecture selection: REFramework / Simple Sequence / Dispatcher+Performer
-    ↓ [Checkpoint saved to brain]
-Phase 2: Plan & Task Breakdown
-    → Workflow tree decomposition
-    → Argument map (In/Out per workflow)
-    → Config.xlsx keys
-    → Dev Sequence A→E
-    ↓ [Checkpoint saved to brain]
-Phase 3: Implement XAML
-    → Scaffold project (scaffold_project.py)
-    → UI Inspection — MANDATORY before any generation
-    → Generate workflows (generate_workflow.py) + validate loop
-    → Wire Main.xaml / Process.xaml
-    ↓ [Checkpoint saved to brain per sub-phase]
-Phase 4: Final Validation & Handoff
-    → XAML quality checklist
-    → Handoff document
-    ↓ [Session marked complete in brain]
-```
-
----
-
-## 📝 Gen-Doc Group ⭐ New
-
-The `gen-doc` skill group provides an automated pipeline for generating AI-designed PPTX presentations. Use `gkt init antigravity --group gen-doc` or `gkt init kiro --group gen-doc`.
-
-### Skills included
-
-| Skill                    | Description                                                                 |
-| ------------------------ | --------------------------------------------------------------------------- |
-| `gen-doc-ppt-master`     | Core document presentation skill: SVG templating and PPTX export            |
-
-### `/wf-gen-doc` — Document Generator Workflow
-
-The document generator workflow takes you from requirements to a fully editable artifact:
-
-```text
-Phase 0: Environment Validation
-    ↓ Auto-installs required environment dependencies
-Phase 1: Source Material Assimilation
-    → Import and convert PDF/DOCX/URL/TEXT into Markdown
-Phase 2: Template Selection & Strategy
-    → Determine layouts, styling, and compile a design blueprint
-Phase 3: Visual & Content Execution
-    → Generate AI imagery and bind content into vector pages
-Phase 4: Finalize & Export
-    → Post-process SVG layers and export directly to native PPTX
-```
-
----
-
-## 📂 Project Structure
-
-```
-.agent/
-├── agents/              # 18 specialist agent definitions (Claude Code native format)
-│   ├── leader.md
-│   ├── architect.md
-│   └── ... (16 more)
-├── workflows/           # 47 workflows (wf-* prefix)
-│   ├── wf-leader.md
-│   ├── wf-uipath-project.md
-│   └── ...
-├── skills/              # 209+ packaged skills across 22 groups + 14 default
-│   ├── uipath-core/
-│   ├── brain-manager/
-│   └── ...
-└── brain/               # Persistent project memory
-    ├── default_skills.md          # Default skill reference & integration guide
-    ├── skills_manifest.json       # Lightweight index of all skills (lazy-loading)
-    ├── lifecycle.md               # Session phases: init → plan → work → checkpoint → handoff
-    ├── platform_notes.md          # Cross-platform compatibility (Windows/Linux/macOS)
-    ├── project_context.json       # Project metadata, architecture, decisions, conventions
-    ├── agent_index.json           # Agent role registry
-    └── workflow_sessions/         # Cross-session workflow continuity ⭐ New
-        ├── SESSIONS.md            # Active session index + checkpoint format spec
-        ├── wf-uipath-project-latest.md   # Latest session state (always current)
-        └── wf-{name}-{date}.md           # Per-run dated artifacts
-```
-
----
-
-## 🧠 Brain System
-
-Every installation includes the **Brain** — persistent memory that agents read at session start and write to at each checkpoint.
-
-### Core brain files
-
-| Brain File               | Purpose                                                     |
-| ------------------------ | ----------------------------------------------------------- |
-| `default_skills.md`      | 14 default skills, usage guide, workflow wiring             |
-| `skills_manifest.json`   | Lightweight index of all packaged skills for lazy-loading   |
-| `lifecycle.md`           | Session lifecycle: init, plan, work, checkpoint, handoff    |
-| `platform_notes.md`      | Cross-platform guide: paths, shells, encoding, permissions  |
-| `project_context.json`   | Project metadata template (tech stack, conventions, sprint) |
-| `agent_index.json`       | Agent role definitions and handoff protocol                 |
-
-### Workflow Session Continuity ⭐ New
-
-`brain/workflow_sessions/` stores structured session artifacts — similar to how Claude Code compacts conversations. When a workflow saves a checkpoint, a new session can **resume exactly where the previous one left off**.
-
-**How it works:**
-
-1. **First run**: workflow creates `{wf-name}-{date}.md` + `{wf-name}-latest.md`
-2. **Each phase end**: agent appends phase summary (decisions, outputs, open questions)
-3. **New session**: `lifecycle.md` init phase checks `workflow_sessions/` automatically:
-   ```
-   📋 Found session: InvoiceAutomation — paused at Phase 2
-   Resume from that point, or restart from Phase 0? (resume/restart)
-   ```
-4. **Resume**: skips completed phases (✅), continues from in-progress phase (🔄)
-
-**Session artifact format:**
-```markdown
----
-workflow: wf-uipath-project
-project: InvoiceAutomation
-session_date: 2024-01-15
-last_phase: "Phase 2 — Plan"
-status: in_progress
----
-
-## Phase 1 — Business Analysis ✅
-**Architecture selected:** REFramework Performer — 200+ invoices/day, needs per-item retry
-**Apps:** Outlook (email), SAP (ERP entry)
-
-## Phase 2 — Plan ✅
-**Workflow tree:** 8 workflows across Outlook/ and SAP/ folders
-**Next steps:** Start Phase A scaffold
-```
-
-**IDE support:**
-
-| IDE                | Session file location              | How it's loaded                              |
-| ------------------ | ---------------------------------- | -------------------------------------------- |
-| **Antigravity**    | `.agent/brain/workflow_sessions/`  | `lifecycle.md` Init Phase instruction        |
-| **Kiro**           | `.kiro/brain/workflow_sessions/`   | `steering/brain.md` (always-loaded steering) |
-| **GitHub Copilot** | `.agent/brain/workflow_sessions/`  | `leader.instructions.md` Session Init block  |
-
-### 14 Default Skills (Always Installed)
-
-| Category           | Skills                                                                               |
-| ------------------ | ------------------------------------------------------------------------------------ |
-| Memory & Context   | `brain-manager`, `journal-manager`, `context-manager`, `codebase-navigator`, `code-graph-index` |
-| Planning & Quality | `concise-planning`, `writing-plans`, `clean-code`, `debugger`, `error-handling-patterns` |
-| Version Control    | `git-manager`, `commit`                                                              |
-| Cross-Platform     | `powershell-windows`, `bash-linux`                                                   |
-
----
-
-## 🧰 Token Optimization
-
-| Tool                   | What it does                                    | Savings     |
-| ---------------------- | ----------------------------------------------- | ----------- |
-| **Skills Manifest**    | Lightweight index — load full SKILL.md on demand | ~50% tokens |
-| **Context Manager**    | Minifies code before AI sees it                 | ~50% tokens |
-| **Context Router**     | Queries only relevant data from 34+ sources     | ~70% tokens |
-| **Diff Applier**       | Applies surgical patches instead of rewriting   | ~90% tokens |
-
----
-
-## 🚢 Publishing to PyPI
-
-This package is published as `gkt` on [PyPI](https://pypi.org/project/gkt/). Publishing is automated via GitHub Actions.
-
-### Auto-Publish on Tag Push
-
-1. Update the version in `GravityKit/VERSION`
-2. Commit and push changes
-3. Create and push a version tag:
+Build NPX assets:
 
 ```bash
-git tag v3.8.0
-git push origin v3.8.0
+cd packages/npx
+npm install
+npm run build
 ```
 
-The GitHub Actions workflow (`.github/workflows/publish.yml`) will:
+Thêm skill mới:
 
-- Build the package (`python -m build`)
-- Check with Twine (`twine check dist/*`)
-- Publish to PyPI via OIDC trusted publishing
+1. Tạo `GravityKit/.agent/skills/<skill-name>/SKILL.md`.
+2. Thêm `references/`, `scripts/`, `assets/` nếu skill cần tài liệu hoặc tool phụ.
+3. Gắn skill vào group phù hợp trong `GravityKit/data/skill_groups.json`.
+4. Chạy `gkt validate` và `gkt generate-index`.
+5. Nếu phát hành NPX, đồng bộ assets trong `packages/npx/assets/`.
 
-> **Note:** OIDC trusted publishing is configured. No API token needed if the PyPI project is linked to this GitHub repo.
+Thêm workflow mới:
 
----
+1. Tạo `GravityKit/.agent/workflows/wf-<name>.md`.
+2. Dùng frontmatter có `description: "..."`.
+3. Gắn workflow vào group phù hợp trong `GravityKit/data/skill_groups.json`.
+4. Kiểm tra init theo group để đảm bảo workflow xuất hiện trong post-init guide.
 
-## 📄 License
+## Phat Hanh
+
+Package Python được publish trên PyPI với tên `gkt`.
+
+Quy trình release:
+
+```bash
+# 1. Cap nhat version
+notepad GravityKit/VERSION
+
+# 2. Cap nhat CHANGELOG.md
+
+# 3. Commit va tag
+git tag v3.12.8
+git push origin v3.12.8
+```
+
+GitHub Actions sẽ build package, kiểm tra bằng Twine và publish qua PyPI trusted publishing nếu project đã cấu hình OIDC.
+
+## License
 
 MIT

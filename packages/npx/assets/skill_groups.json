@@ -721,9 +721,15 @@
       "startup-analysis",
       "generative-ui",
       "data-storytelling",
-      "kpi-dashboard-design"
+      "kpi-dashboard-design",
+      "bank-metrics-analyzer",
+      "bank-valuation-models"
     ],
     "workflows": [
+      "wf-finance-investment-analyst",
+      "wf-finance-quant-researcher",
+      "wf-finance-vc-analyst",
+      "wf-finance-market-monitor",
       "wf-research-analyst",
       "wf-deep-researcher",
       "wf-researcher",

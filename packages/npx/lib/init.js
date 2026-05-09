@@ -399,8 +399,46 @@ function installKiro(sourceRoot, cwd, groupConfig, useBundled, defaultSkills = [
     copyDir(hooksSrc, hooksDst);
   }
 
-  // 4. Create specs/
-  fs.mkdirSync(path.join(kiroDir, 'specs'), { recursive: true });
+  // 4. Copy workflows -> .kiro/specs/
+  const specsDir = path.join(kiroDir, 'specs');
+  fs.mkdirSync(specsDir, { recursive: true });
+  const workflowsSrc = path.join(agentDir, 'workflows');
+  
+  if (fs.existsSync(workflowsSrc)) {
+    if (groupConfig) {
+      for (const wfName of (groupConfig.workflows || [])) {
+        const src = path.join(workflowsSrc, `${wfName}.md`);
+        const dst = path.join(specsDir, `${wfName}.md`);
+        if (fs.existsSync(src) && !fs.existsSync(dst)) {
+          fs.copyFileSync(src, dst);
+        }
+      }
+    } else {
+      for (const entry of fs.readdirSync(workflowsSrc, { withFileTypes: true })) {
+        if (entry.isFile() && entry.name.endsWith('.md')) {
+          const src = path.join(workflowsSrc, entry.name);
+          const dst = path.join(specsDir, entry.name);
+          if (!fs.existsSync(dst)) {
+            fs.copyFileSync(src, dst);
+          }
+        }
+      }
+    }
+  }
+
+  // 5. Copy agents -> .kiro/agents/
+  const agentsSrc = path.join(agentDir, 'agents');
+  const agentsDst = path.join(kiroDir, 'agents');
+  if (fs.existsSync(agentsSrc) && !fs.existsSync(agentsDst)) {
+    copyDir(agentsSrc, agentsDst);
+  }
+
+  // 6. Copy brain/ -> .kiro/brain/
+  const brainSrc = path.join(agentDir, 'brain');
+  const brainDst = path.join(kiroDir, 'brain');
+  if (fs.existsSync(brainSrc) && !fs.existsSync(brainDst)) {
+    copyDir(brainSrc, brainDst);
+  }
 
   return copiedSkills;
 }

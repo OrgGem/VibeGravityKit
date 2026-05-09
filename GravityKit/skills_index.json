@@ -45,6 +45,87 @@
     "source": "community"
   },
   {
+    "id": "alphaear-deepear-lite",
+    "path": "skills/alphaear-deepear-lite/SKILL.md",
+    "category": "data-ai",
+    "name": "alphaear-deepear-lite",
+    "description": "Fetch the latest financial signals and transmission-chain analyses from DeepEar Lite. Use when the user needs immediate insights into financial market trends, stock performance factors, and reasoning from the DeepEar Lite dashboard.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "alphaear-logic-visualizer",
+    "path": "skills/alphaear-logic-visualizer/SKILL.md",
+    "category": "data-ai",
+    "name": "alphaear-logic-visualizer",
+    "description": "Create visualize finance logic diagrams (e.g., Draw.io XML) to explain complex finance transmission chains or finance logic flows.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "alphaear-news",
+    "path": "skills/alphaear-news/SKILL.md",
+    "category": "data-ai",
+    "name": "alphaear-news",
+    "description": "Fetch hot finance news, unified trends, and prediction financial market data. Use when the user needs real-time financial news, trend reports from multiple finance sources (Weibo, Zhihu, WallstreetCN, etc.), or Polymarket finance market prediction data.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "alphaear-predictor",
+    "path": "skills/alphaear-predictor/SKILL.md",
+    "category": "business",
+    "name": "alphaear-predictor",
+    "description": "Market prediction skill using Kronos. Use when user needs finance market time-series forecasting or news-aware finance market adjustments.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "alphaear-reporter",
+    "path": "skills/alphaear-reporter/SKILL.md",
+    "category": "general",
+    "name": "alphaear-reporter",
+    "description": "Plan, write, and edit professional financial reports; generate finance chart configurations. Use when condensing finance analysis into a structured output.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "alphaear-search",
+    "path": "skills/alphaear-search/SKILL.md",
+    "category": "data-ai",
+    "name": "alphaear-search",
+    "description": "Perform finance web searches and local context searches. Use when the user needs general finance info from the web (Jina/DDG/Baidu) or needs to retrieve finance information from a local document store (RAG).",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "alphaear-sentiment",
+    "path": "skills/alphaear-sentiment/SKILL.md",
+    "category": "data-ai",
+    "name": "alphaear-sentiment",
+    "description": "Analyze finance text sentiment using FinBERT or LLM. Use when the user needs to determine the sentiment (positive/negative/neutral) and score of financial text markets.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "alphaear-signal-tracker",
+    "path": "skills/alphaear-signal-tracker/SKILL.md",
+    "category": "infrastructure",
+    "name": "alphaear-signal-tracker",
+    "description": "Track finance investment signal evolution and update logic based on new finance market information. Use when monitoring finance signals and determining if they are strengthened, weakened, or falsified.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "alphaear-stock",
+    "path": "skills/alphaear-stock/SKILL.md",
+    "category": "general",
+    "name": "alphaear-stock",
+    "description": "Search A-Share/HK/US finance stock tickers and retrieve finance stock price history. Use when user asks about finance stock codes, recent price changes, or specific company finance stock info.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "analytics-tracking",
     "path": "skills/analytics-tracking/SKILL.md",
     "category": "data-ai",
@@ -414,6 +495,15 @@
     "source": "https://github.com/getsentry/skills/tree/main/plugins/sentry-skills/skills/commit"
   },
   {
+    "id": "company-valuation",
+    "path": "skills/company-valuation/SKILL.md",
+    "category": "data-ai",
+    "name": "company-valuation",
+    "description": "Estimate the intrinsic value of a public company using DCF, relative (peer multiple) and sum-of-parts (SOTP) methods, then triangulate to an implied share price with upside/downside versus the current market price. Use this skill whenever the user asks: \"what is AAPL worth\", \"valuation of NVDA\", \"fair value of TSLA\", \"intrinsic value\", \"DCF for MSFT\", \"build a DCF\", \"discounted cash flow\", \"WACC\", \"terminal value\", \"implied share price\", \"upside to fair value\", \"is X overvalued/undervalued\", \"relative valuation\", \"peer comparison valuation\", \"EV/EBITDA target\", \"SOTP\", \"sum of the parts\", \"how much is [company] worth\", \"price target from fundamentals\", \"value this company\", or any ticker in the context of computing intrinsic or relative valuation. Default to running ALL three methods (DCF + relative + SOTP-if-applicable) and presenting a blended implied price with a sensitivity table. Do not answer valuation questions from memory — always run the workflow.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "competitor-analyzer",
     "path": "skills/competitor-analyzer/SKILL.md",
     "category": "data-ai",
@@ -693,6 +783,15 @@
     "source": "community"
   },
   {
+    "id": "discord-reader",
+    "path": "skills/discord-reader/SKILL.md",
+    "category": "development",
+    "name": "discord-reader",
+    "description": "Read Discord for financial research using opencli (read-only). Use this skill whenever the user wants to read Discord channels, search for messages in trading servers, view guild/channel info, monitor crypto or market discussion groups, or gather financial sentiment from Discord. Triggers include: \"check my Discord\", \"search Discord for\", \"read Discord messages\", \"what's happening in the trading Discord\", \"show Discord channels\", \"list my servers\", \"Discord sentiment on BTC\", \"what are people saying in Discord about AAPL\", \"monitor crypto Discord\", any mention of Discord in context of reading financial news, market research, or trading community discussions. This skill is READ-ONLY — it does NOT support sending messages, reacting, or any write operations.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "distributed-debugging-debug-trace",
     "path": "skills/distributed-debugging-debug-trace/SKILL.md",
     "category": "general",
@@ -756,6 +855,24 @@
     "source": "community"
   },
   {
+    "id": "earnings-preview",
+    "path": "skills/earnings-preview/SKILL.md",
+    "category": "data-ai",
+    "name": "earnings-preview",
+    "description": "Generate a pre-earnings briefing for any stock using Yahoo Finance data. Use this skill whenever the user wants to prepare for an upcoming earnings report, understand what analysts expect, review a company's beat/miss track record, or get a quick overview before an earnings call. Triggers include: \"earnings preview for AAPL\", \"what to expect from TSLA earnings\", \"MSFT reports next week\", \"earnings preview\", \"pre-earnings analysis\", \"what are analysts expecting for NVDA\", \"earnings estimates for\", \"will GOOGL beat earnings\", \"earnings beat/miss history\", \"upcoming earnings\", \"before earnings\", \"earnings setup\", \"consensus estimates\", \"earnings whisper\", \"EPS expectations\", \"what's the street expecting\", \"earnings season preview\", any mention of preparing for or previewing an earnings report, or any request to understand expectations ahead of a company's earnings date. Always use this skill when the user mentions a ticker in context of upcoming earnings, even if they don't say \"preview\" explicitly.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "earnings-recap",
+    "path": "skills/earnings-recap/SKILL.md",
+    "category": "data-ai",
+    "name": "earnings-recap",
+    "description": "Generate a post-earnings analysis for any stock using Yahoo Finance data. Use when the user wants to review what happened after earnings, understand beat/miss results, see stock reaction, or get an earnings recap. Triggers: \"AAPL earnings recap\", \"how did TSLA earnings go\", \"MSFT earnings results\", \"did NVDA beat earnings\", \"post-earnings analysis\", \"earnings surprise\", \"what happened with GOOGL earnings\", \"earnings reaction\", \"stock moved after earnings\", \"EPS beat or miss\", \"revenue beat or miss\", \"quarterly results for\", \"how were earnings\", \"AMZN reported last night\", \"earnings call recap\", or any request about a company's recent earnings outcome. Use this skill when the user references a past earnings event, even if they just say \"AAPL reported\" or \"how did they do\".",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "embedding-strategies",
     "path": "skills/embedding-strategies/SKILL.md",
     "category": "data-ai",
@@ -810,6 +927,24 @@
     "source": "community"
   },
   {
+    "id": "estimate-analysis",
+    "path": "skills/estimate-analysis/SKILL.md",
+    "category": "data-ai",
+    "name": "estimate-analysis",
+    "description": "Deep-dive into analyst estimates and revision trends for any stock using Yahoo Finance data. Use when the user wants to understand analyst estimate direction, how EPS or revenue forecasts changed over time, compare estimate distributions, or analyze growth projections across periods. Triggers: \"estimate analysis for AAPL\", \"analyst estimate trends for NVDA\", \"EPS revisions for TSLA\", \"how have estimates changed for MSFT\", \"estimate revisions\", \"EPS trend\", \"revenue estimates\", \"consensus changes\", \"analyst estimates\", \"estimate distribution\", \"growth estimates for\", \"estimate momentum\", \"revision trend\", \"forward estimates\", \"next quarter estimates\", \"annual estimates\", \"estimate spread\", \"bull vs bear estimates\", \"estimate range\", or any request about tracking or comparing analyst estimates/revisions. Use this skill when the user asks about estimates beyond a simple lookup — if they want context, trends, or analysis, this is the right skill.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "etf-premium",
+    "path": "skills/etf-premium/SKILL.md",
+    "category": "data-ai",
+    "name": "etf-premium",
+    "description": "Calculate ETF premium or discount relative to Net Asset Value (NAV) using Yahoo Finance data. Use this skill whenever the user asks about an ETF's premium or discount, NAV comparison, whether an ETF is trading above or below its fair value, or wants to compare market price vs NAV. Triggers: \"ETF premium\", \"ETF discount\", \"NAV premium\", \"is SPY trading at a premium\", \"AGG premium to NAV\", \"market price vs NAV\", \"ETF mispricing\", \"BITO premium\", \"IBIT premium\", \"bond ETF discount\", \"trading above/below NAV\", \"ETF premium screener\", \"which ETFs have biggest discount\", \"compare ETF NAV\", \"ETF arbitrage\", or any request involving the gap between an ETF's market price and its underlying value. Also triggers when analyzing leveraged, inverse, international, bond, commodity, or crypto ETFs where premium/discount is a known concern.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "event-sourcing-architect",
     "path": "skills/event-sourcing-architect/SKILL.md",
     "category": "data-ai",
@@ -855,6 +990,15 @@
     "source": "community"
   },
   {
+    "id": "finance-sentiment",
+    "path": "skills/finance-sentiment/SKILL.md",
+    "category": "development",
+    "name": "finance-sentiment",
+    "description": "Fetch structured stock sentiment across Reddit, X.com, news, and Polymarket using the Adanos Finance API. Use this skill whenever the user asks how much people are talking about a stock, how hot a ticker is on social platforms, how many Polymarket bets exist for a company, whether sources are aligned, or to compare stock sentiment across multiple tickers. Triggers include: \"social sentiment on TSLA\", \"how hot is NVDA on X.com\", \"how many Reddit mentions does AAPL have\", \"compare sentiment on AMD vs NVDA\", \"how many Polymarket bets on Microsoft\", \"is Reddit aligned with X on META\", \"stock buzz\", \"bullish percentage\", and any mention of cross-source stock sentiment research. This skill is READ-ONLY and does not place trades or modify anything.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "frontend-developer",
     "path": "skills/frontend-developer/SKILL.md",
     "category": "development",
@@ -864,11 +1008,29 @@
     "source": "community"
   },
   {
+    "id": "funda-data",
+    "path": "skills/funda-data/SKILL.md",
+    "category": "security",
+    "name": "funda-data",
+    "description": "Fetch financial data from the Funda AI API (https://api.funda.ai). Covers quotes, historical prices, financials, SEC filings, transcripts, analyst estimates, options flow/greeks/GEX, supply chain graph, social sentiment, Polymarket, congressional trades, economics, ESG, news, AI-enriched news (sentiment + event timeline), AI-company recruit signals, and a Claude API proxy via Bedrock. Triggers: stock quotes, balance sheet, income statement, cash flow, analyst targets, DCF, options chain/flow, GEX, IV rank, max pain, earnings/dividend/IPO calendar, 10-K/10-Q/8-K, suppliers/customers/competitors, insider trades, 13F, Reddit/Twitter sentiment, Polymarket, treasury rates, GDP, CPI, FRED, commodity/forex/crypto, stock screener, ETF holdings, COT, ticker sentiment, OpenAI/Anthropic/xAI/Google/Mercor/SurgeAI job postings, product launch probabilities, AI threat to public stocks. Also triggers for \"funda\" or \"funda.ai\". If only a ticker is provided and Funda API can answer, use this skill.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "gen-doc-ppt-master",
     "path": "skills/gen-doc-ppt-master/SKILL.md",
     "category": "data-ai",
     "name": "gen-doc-ppt-master",
     "description": "AI-driven multi-format SVG content generation system. Converts source documents (PDF/DOCX/URL/Markdown) into high-quality SVG pages and exports to PPTX through multi-role collaboration. Use when user asks to \"create PPT\", \"make presentation\", \"生成PPT\", \"做PPT\", \"制作演示文稿\", or mentions \"gen-doc-ppt-master\".",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "generative-ui",
+    "path": "skills/generative-ui/SKILL.md",
+    "category": "data-ai",
+    "name": "generative-ui",
+    "description": "Design system and guidelines for Claude's built-in generative UI — the show_widget tool that renders interactive HTML/SVG widgets inline in claude.ai conversations. This skill provides the complete Anthropic \"Imagine\" design system so Claude produces high-quality widgets without needing to call read_me first. Use this skill whenever the user asks to visualize data, create an interactive chart, build a dashboard, render a diagram, draw a flowchart, show a mockup, create an interactive explainer, or produce any visual content beyond plain text or markdown. Triggers include: \"show me\", \"visualize\", \"draw\", \"chart\", \"dashboard\", \"diagram\", \"flowchart\", \"widget\", \"interactive\", \"mockup\", \"illustrate\", \"explain how X works\" (with visual), or any request for visual/interactive output. Also triggers when the user wants to display financial data visually, create comparison grids, or build tools with sliders, toggles, or live-updating displays.",
     "risk": "unknown",
     "source": "community"
   },
@@ -978,6 +1140,15 @@
     "name": "helm-charts-pro",
     "description": "Helm chart creation, management, and best practices for Kubernetes deployments. Use for packaging, templating, and releasing Kubernetes applications with Helm 3.",
     "risk": "safe",
+    "source": "community"
+  },
+  {
+    "id": "hormuz-strait",
+    "path": "skills/hormuz-strait/SKILL.md",
+    "category": "data-ai",
+    "name": "hormuz-strait",
+    "description": "Check the current status of the Strait of Hormuz — shipping transit data, oil price impact, stranded vessels, insurance risk levels, diplomatic developments, and global trade impact. Use this skill whenever the user asks about the Strait of Hormuz, Hormuz chokepoint, Persian Gulf shipping risk, oil transit disruption, war risk premium in the Gulf, Middle East shipping routes, tanker traffic through Hormuz, oil supply chain risk, or geopolitical risk affecting energy markets. Triggers include: \"Hormuz status\", \"Strait of Hormuz\", \"is Hormuz open\", \"shipping through the Gulf\", \"oil chokepoint\", \"Persian Gulf tanker traffic\", \"war risk premium\", \"Hormuz crisis\", \"energy supply chain risk\", \"oil transit disruption\", \"Middle East shipping\", any mention of Hormuz or Persian Gulf in context of oil, shipping, or geopolitical risk.",
+    "risk": "unknown",
     "source": "community"
   },
   {
@@ -1132,6 +1303,15 @@
     "description": "Expert in LangGraph - the production-grade framework for building stateful, multi-actor AI applications. Covers graph construction, state management, cycles and branches, persistence with checkpointers, human-in-the-loop patterns, and the ReAct agent pattern. Used in production at LinkedIn, Uber, and 400+ companies. This is LangChain's recommended approach for building agents. Use when: langgraph, langchain agent, stateful agent, agent graph, react agent.",
     "risk": "unknown",
     "source": "vibeship-spawner-skills (Apache 2.0)"
+  },
+  {
+    "id": "linkedin-reader",
+    "path": "skills/linkedin-reader/SKILL.md",
+    "category": "business",
+    "name": "linkedin-reader",
+    "description": "Read LinkedIn for financial research using opencli (read-only). Use this skill whenever the user wants to read their LinkedIn feed, search for jobs in the finance/trading industry, view professional posts about markets or earnings, or gather professional sentiment from LinkedIn. Triggers include: \"check my LinkedIn feed\", \"search LinkedIn for\", \"LinkedIn posts about\", \"what's on LinkedIn about AAPL\", \"finance jobs on LinkedIn\", \"LinkedIn market sentiment\", \"who's posting about earnings on LinkedIn\", \"LinkedIn feed\", \"professional network buzz\", \"what are analysts saying on LinkedIn\", any mention of LinkedIn in context of reading financial news, market research, job searches, or professional commentary. This skill is READ-ONLY — it does NOT support posting, liking, commenting, connecting, or any write operations.",
+    "risk": "unknown",
+    "source": "community"
   },
   {
     "id": "llm-app-patterns",
@@ -1292,6 +1472,24 @@
     "category": "security",
     "name": "openapi-spec-generation",
     "description": "Generate and maintain OpenAPI 3.1 specifications from code, design-first specs, and validation patterns. Use when creating API documentation, generating SDKs, or ensuring API contract compliance.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "opencli-reader",
+    "path": "skills/opencli-reader/SKILL.md",
+    "category": "business",
+    "name": "opencli-reader",
+    "description": "Generic read-only fallback for any source opencli covers but this repo has no dedicated reader for — Yahoo Finance, Bloomberg, Reuters, Barchart, Eastmoney, Xueqiu, Sinafinance, Reddit, HackerNews, Substack, Medium, Weibo, Bilibili, Xiaohongshu, Zhihu, arXiv, Google Scholar, Apple Podcasts, Xiaoyuzhou, Spotify, YouTube, Weixin, Amazon, and more. Triggers: \"use opencli to read\", \"grab the frontpage from hackernews\", \"read reddit r/wallstreetbets\", \"fetch Eastmoney hot stocks\", \"pull Xueqiu feed\", \"get Bloomberg markets headlines\", \"search arXiv for\", any request to read from a site where a specialized skill does not exist but opencli does. FALLBACK — prefer twitter-reader, linkedin-reader, discord-reader, telegram-reader, or yc-reader when the source matches. READ-ONLY — never invoke write operations.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "options-payoff",
+    "path": "skills/options-payoff/SKILL.md",
+    "category": "general",
+    "name": "options-payoff",
+    "description": "Generate an interactive options payoff curve chart with dynamic parameter controls. Use this skill whenever the user shares an options position screenshot, describes an options strategy, or asks to visualize how an options trade makes or loses money. Triggers include: any mention of butterfly, spread (vertical/calendar/diagonal/ratio), straddle, strangle, condor, covered call, protective put, iron condor, or any multi-leg options structure. Also triggers when a user pastes strike prices, premiums, expiry dates, or says things like \"show me the payoff\", \"draw the P&L curve\", \"what does this trade look like\", or uploads a screenshot from a broker (IBKR, TastyTrade, Robinhood, etc). Always use this skill even if the user only provides partial info — extract what you can and use defaults for the rest.",
     "risk": "unknown",
     "source": "community"
   },
@@ -1521,6 +1719,15 @@
     "source": "community"
   },
   {
+    "id": "saas-valuation-compression",
+    "path": "skills/saas-valuation-compression/SKILL.md",
+    "category": "data-ai",
+    "name": "saas-valuation-compression",
+    "description": "Analyze SaaS company valuation compression between funding rounds. Use this skill whenever the user asks about: how much a SaaS company's valuation multiple changed between rounds, why the ARR multiple compressed or expanded, comparing a company's compression to macro benchmarks, or explaining what drove valuation changes for any VC-backed software company. Trigger on phrases like \"valuation compression\", \"ARR multiple\", \"round-to-round valuation\", \"multiple change\", or when the user asks to compare a company's funding rounds. Always use this skill for any multi-round SaaS valuation analysis — do not try to answer from memory alone.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "saga-orchestration",
     "path": "skills/saga-orchestration/SKILL.md",
     "category": "architecture",
@@ -1553,6 +1760,15 @@
     "category": "business",
     "name": "seo-analyzer",
     "description": "Check SEO best practices (Meta tags, Alt text).",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "sepa-strategy",
+    "path": "skills/sepa-strategy/SKILL.md",
+    "category": "data-ai",
+    "name": "sepa-strategy",
+    "description": "Analyze stocks using Mark Minervini's SEPA (Specific Entry Point Analysis) methodology. Use this skill whenever the user mentions SEPA, Minervini, superperformance, trend template, VCP (Volatility Contraction Pattern), Stage 2 uptrend, stage analysis, pivot point breakout, or asks about growth stock screening criteria. Also triggers when the user wants to evaluate whether a stock meets swing trading entry criteria, check moving average alignment (bullish stacking: price above 50MA above 150MA above 200MA), assess breakout quality with volume confirmation, calculate position sizing based on risk percentage, or identify consolidation patterns like cup-with-handle, flat base, bull flag, or high tight flag. Use this skill even when the user simply asks \"should I buy this stock\" or \"is this a good setup\" in the context of growth/momentum trading, or when they share a stock chart and want pattern analysis.",
     "risk": "unknown",
     "source": "community"
   },
@@ -1665,6 +1881,33 @@
     "source": "community"
   },
   {
+    "id": "startup-analysis",
+    "path": "skills/startup-analysis/SKILL.md",
+    "category": "business",
+    "name": "startup-analysis",
+    "description": "Analyze a startup from three perspectives: VC investor, job applicant, and CEO/founder. Use this skill whenever the user wants to evaluate a startup, assess whether to invest in or join a startup, do due diligence, evaluate a job offer from a startup, understand a startup's competitive position, or assess company health and trajectory. Triggers: \"analyze this startup\", \"should I join [company]\", \"is [company] a good investment\", \"evaluate [company]\", \"due diligence on [company]\", \"what do you think of [startup]\", \"should I take this startup job offer\", \"how healthy is [company]\", \"startup assessment\", \"company analysis\", \"is [company] worth joining\", \"what's the outlook for [company]\", \"research [company] for me\", any mention of evaluating or assessing a startup or tech company from investment, career, or strategic perspectives — provide all three perspectives by default.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "stock-correlation",
+    "path": "skills/stock-correlation/SKILL.md",
+    "category": "data-ai",
+    "name": "stock-correlation",
+    "description": "Analyze stock correlations to find related companies and trading pairs. Use when the user asks about correlated stocks, related companies, sector peers, trading pairs, or how two or more stocks move together. Triggers: \"what correlates with NVDA\", \"find stocks related to AMD\", \"correlation between AAPL and MSFT\", \"what moves with\", \"sector peers\", \"pair trading\", \"correlated stocks\", \"when NVDA drops what else drops\", \"stocks that move together\", \"beta to\", \"relative performance\", \"supply chain partners\", \"correlation matrix\", \"co-movement\", \"related tickers\", \"sympathy plays\", \"semiconductor peers\", \"hedging pair\", \"realized correlation\", \"rolling correlation\", or any request about stocks that move in tandem or inversely. Also triggers for well-known pairs like AMD/NVDA, GOOGL/AVGO, LITE/COHR. If only one ticker is provided, infer the user wants correlated peers.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "stock-liquidity",
+    "path": "skills/stock-liquidity/SKILL.md",
+    "category": "data-ai",
+    "name": "stock-liquidity",
+    "description": "Analyze stock liquidity using bid-ask spreads, volume profiles, order book depth, market impact estimates, and turnover ratios via Yahoo Finance data. Use this skill whenever the user asks about liquidity, trading costs, bid-ask spread, market depth, volume analysis, slippage, market impact, turnover ratio, or how easy/hard it is to trade a stock without moving the price. Triggers: \"how liquid is AAPL\", \"bid-ask spread\", \"volume analysis\", \"order book depth\", \"market impact of a large order\", \"turnover ratio\", \"slippage estimate\", \"can I trade 100k shares without moving the price\", \"liquidity comparison\", \"spread analysis\", \"ADTV\", \"Amihud illiquidity\", \"dollar volume\", \"execution cost estimate\", \"liquidity score\", penny stocks, small caps, or thinly traded securities.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "strategic-planning-advisor",
     "path": "skills/strategic-planning-advisor/SKILL.md",
     "category": "data-ai",
@@ -1728,6 +1971,15 @@
     "source": "community"
   },
   {
+    "id": "telegram-reader",
+    "path": "skills/telegram-reader/SKILL.md",
+    "category": "business",
+    "name": "telegram-reader",
+    "description": "Read Telegram channels and groups for financial news and market research using tdl (read-only). Use this skill whenever the user wants to read Telegram channels, export messages from financial Telegram groups, list their Telegram chats, search for news in Telegram channels, or gather market intelligence from Telegram. Triggers include: \"check my Telegram\", \"read Telegram channel\", \"Telegram news\", \"what's new in my Telegram channels\", \"export messages from\", \"list my Telegram chats\", \"financial news on Telegram\", \"crypto Telegram\", \"market news Telegram\", any mention of Telegram in context of reading financial news, crypto signals, or market research. This skill is READ-ONLY — it does NOT support sending messages, joining channels, or any write operations.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "template-marketplace",
     "path": "skills/template-marketplace/SKILL.md",
     "category": "business",
@@ -1751,6 +2003,15 @@
     "category": "architecture",
     "name": "testing-patterns",
     "description": "Jest testing patterns, factory functions, mocking strategies, and TDD workflow. Use when writing unit tests, creating test factories, or following TDD red-green-refactor cycle.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "twitter-reader",
+    "path": "skills/twitter-reader/SKILL.md",
+    "category": "business",
+    "name": "twitter-reader",
+    "description": "Read Twitter/X for financial research using opencli (read-only). Use this skill whenever the user wants to read their Twitter feed, search for financial tweets, view bookmarks, look up user profiles, or gather market sentiment from Twitter/X. Triggers include: \"check my feed\", \"search Twitter for\", \"show my bookmarks\", \"who follows\", \"look up @user\", \"what's trending about\", \"market sentiment on Twitter\", \"what are people saying about AAPL\", \"recent tweets from @elonmusk\", \"show me @user's posts\", \"fintwit\", any mention of Twitter/X in context of reading financial news or market research. This skill is READ-ONLY — it does NOT support posting, liking, retweeting, or any write operations.",
     "risk": "unknown",
     "source": "community"
   },
@@ -1895,6 +2156,24 @@
     "category": "general",
     "name": "writing-skills",
     "description": "Use when creating, updating, or improving agent skills.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "yc-reader",
+    "path": "skills/yc-reader/SKILL.md",
+    "category": "data-ai",
+    "name": "yc-reader",
+    "description": "Look up Y Combinator companies, batches, and startup ecosystem data using the yc-oss API (read-only). Use this skill whenever the user wants to research YC-backed startups, find companies in a specific batch or industry, check which YC companies are hiring, explore top YC companies, or analyze startup trends by sector or tag. Triggers include: \"YC companies in fintech\", \"who's in the latest YC batch\", \"YC startups hiring\", \"top Y Combinator companies\", \"find YC companies tagged AI\", \"W25 batch\", \"S24 companies\", \"YC stats\", \"Y Combinator portfolio\", \"startup research\", \"which YC companies do X\", \"venture research on YC\", any mention of Y Combinator, YC batch, or YC-backed companies in the context of startup research, venture analysis, or market intelligence. This is a read-only data source — the API is a static JSON dataset updated daily.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "yfinance-data",
+    "path": "skills/yfinance-data/SKILL.md",
+    "category": "data-ai",
+    "name": "yfinance-data",
+    "description": "Fetch financial and market data using the yfinance Python library. Use this skill whenever the user asks for stock prices, historical data, financial statements, options chains, dividends, earnings, analyst recommendations, or any market data. Triggers include: any mention of stock price, ticker symbol (AAPL, MSFT, TSLA, etc.), \"get me the financials\", \"show earnings\", \"what's the price of\", \"download stock data\", \"options chain\", \"dividend history\", \"balance sheet\", \"income statement\", \"cash flow\", \"analyst targets\", \"institutional holders\", \"compare stocks\", \"screen for stocks\", or any request involving Yahoo Finance data. Always use this skill even if the user only provides a ticker — infer intent from context.",
     "risk": "unknown",
     "source": "community"
   }

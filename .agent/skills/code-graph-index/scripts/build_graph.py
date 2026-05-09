@@ -47,7 +47,14 @@ EXTENSIONS = {
     ".java": "java",
     ".cs": "csharp",
     ".go": "go",
+    ".xml": "xml",
+    ".xaml": "xaml",
+    ".json": "json",
+    ".txt": "text",
 }
+
+DOCUMENT_LANGUAGES = {"xml", "xaml", "json", "text"}
+DOCUMENT_CHUNK_LINES = 80
 
 IGNORE_DIRS = {
     ".git", ".venv", "venv", "env", "node_modules",
@@ -315,6 +322,37 @@ class GraphBuilder:
             )
             self._add_edge(file_id, node_id, "contains")
 
+    # ---------- Document-like files ----------
+
+    def _parse_document(self, rel_path: str, source: str, lang: str) -> None:
+        """Index non-code text files as line-based chunks for semantic search."""
+        file_id = self._add_node(id=rel_path, kind="file", name=os.path.basename(rel_path),
+                                 path=rel_path, line=1, language=lang)
+        lines = source.splitlines()
+        if not lines:
+            return
+
+        for chunk_index, start_idx in enumerate(range(0, len(lines), DOCUMENT_CHUNK_LINES), 1):
+            end_idx = min(start_idx + DOCUMENT_CHUNK_LINES, len(lines))
+            line = start_idx + 1
+            end_line = end_idx
+            name = f"chunk_{chunk_index}"
+            chunk_text = "\n".join(lines[start_idx:end_idx]).strip()
+            if not chunk_text:
+                continue
+
+            content_hash = self._compute_content_hash(lines, line, end_line)
+            byte_offset, byte_length = self._compute_byte_info(source, line, end_line)
+            node_id = self._node_id(rel_path, name, line)
+            self._add_node(
+                id=node_id, kind="document", name=name,
+                path=rel_path, line=line, end_line=end_line,
+                signature=f"{lang} {name}", docstring=chunk_text,
+                content_hash=content_hash,
+                byte_offset=byte_offset, byte_length=byte_length,
+            )
+            self._add_edge(file_id, node_id, "contains")
+
     # ---------- Driver ----------
 
     def parse_file(self, path: Path) -> None:
@@ -341,6 +379,8 @@ class GraphBuilder:
 
         if lang == "python":
             self._parse_python(rel, source)
+        elif lang in DOCUMENT_LANGUAGES:
+            self._parse_document(rel, source, lang)
         else:
             self._parse_regex(rel, source, lang)
 

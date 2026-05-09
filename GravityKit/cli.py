@@ -386,6 +386,90 @@ def _read_init_state():
         return {}
 
 
+def update_gitignore(cwd: Path, created_paths: list):
+    """Update .gitignore with top-level dot folders/files created by init."""
+    gitignore_path = cwd / ".gitignore"
+    top_level_dots = set()
+    
+    for p in created_paths:
+        if not p:
+            continue
+        try:
+            rel = p.relative_to(cwd)
+        except ValueError:
+            rel = p
+        parts = rel.parts
+        if parts:
+            top_level = parts[0]
+            if top_level.startswith(".") and top_level != ".github":
+                top_level_dots.add(top_level)
+                
+    # Also add .mcp.json and .gkt just in case mcp was/will be run
+    top_level_dots.add(".mcp.json")
+    top_level_dots.add(".gkt")
+    
+    if not top_level_dots:
+        return
+        
+    content = ""
+    if gitignore_path.exists():
+        try:
+            content = gitignore_path.read_text(encoding="utf-8")
+        except Exception:
+            pass
+            
+    existing_lines = {line.strip() for line in content.splitlines()}
+    
+    to_add = []
+    for item in sorted(top_level_dots):
+        if item not in existing_lines and f"{item}/" not in existing_lines:
+            to_add.append(item)
+            
+    if to_add:
+        if content and not content.endswith("\n"):
+            content += "\n"
+        content += "\n# GravityKit\n"
+        for item in to_add:
+            content += f"{item}\n"
+        try:
+            gitignore_path.write_text(content, encoding="utf-8")
+            click.echo(f"  📝 Added {len(to_add)} entries to .gitignore")
+        except Exception as e:
+            click.echo(f"  ⚠️  Could not update .gitignore: {e}")
+
+
+def setup_agent_instructions(cwd: Path):
+    """Setup agent instruction files to enforce local MCP priority."""
+    agents = ["Antigravity.md", "Codex.md", "Kiro.md"]
+    rule = (
+        "# Local MCP Priority Rule\n"
+        "CRITICAL: Always prioritize using the MCP tools and servers defined in this local project workspace. "
+        "Do NOT fallback to global or user-level MCP configurations (e.g. in the user's home or gemini directory) "
+        "if a local equivalent exists."
+    )
+    
+    added = 0
+    for agent in agents:
+        file_path = cwd / agent
+        if not file_path.exists():
+            try:
+                file_path.write_text(rule + "\n", encoding="utf-8")
+                added += 1
+            except Exception:
+                pass
+        else:
+            try:
+                content = file_path.read_text(encoding="utf-8")
+                if "Local MCP Priority Rule" not in content:
+                    file_path.write_text(content + "\n\n" + rule + "\n", encoding="utf-8")
+                    added += 1
+            except Exception:
+                pass
+                
+    if added > 0:
+        click.echo("  📝 Setup local MCP priority rules in agent markdown files")
+
+
 @click.group()
 def main():
     """GravityKit CLI - Manage your AI Agent Team."""
@@ -508,6 +592,7 @@ def init(target, group):
     
     installed = 0
     registered_targets: list[str] = []  # IDE names actually processed (for state file)
+    created_paths = []
     for target_ide in targets:
         config = ide_config[target_ide]
         source_dir = config["source"]
@@ -519,6 +604,8 @@ def init(target, group):
             click.echo(f"  ✅ {config['label']}")
             installed += 1
             registered_targets.append(target_ide)
+            if target_dir:
+                created_paths.append(target_dir)
             continue
 
         if not source_dir.exists():
@@ -545,6 +632,7 @@ def init(target, group):
                 click.echo(f"  ✅ {config['label']}")
             installed += 1
             registered_targets.append(target_ide)
+            created_paths.append(target_dir)
         except Exception as e:
             click.echo(f"  ❌ {target_ide}: {str(e)}")
     
@@ -564,6 +652,7 @@ def init(target, group):
                         shutil.copytree(agent_src, agent_target)
                     click.echo(f"  ✅ .agent/ (skills referenced by {ide_target} adapter)")
                     installed += 1
+                    created_paths.append(agent_target)
                 except Exception as e:
                     click.echo(f"  ⚠️  .agent/ not installed: {str(e)}")
 
@@ -576,6 +665,10 @@ def init(target, group):
             except ValueError:
                 rel = state_path
             click.echo(f"  📝 Recorded init scope → {rel}")
+
+    if installed > 0:
+        update_gitignore(Path.cwd(), created_paths)
+        setup_agent_instructions(Path.cwd())
 
     click.echo(f"\n✨ Done! Installed for {installed} IDE(s).")
     if group_name:

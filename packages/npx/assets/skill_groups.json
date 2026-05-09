@@ -15,7 +15,9 @@
       "clean-code",
       "codebase-navigator",
       "code-graph-index",
-      "error-handling-patterns"
+      "error-handling-patterns",
+      "document-reader",
+      "skill-router"
     ]
   },
   "general-dev": {
@@ -681,6 +683,50 @@
       "gen-doc-ppt-master"
     ],
     "workflows": [
+      "wf-gen-doc"
+    ]
+  },
+  "finance": {
+    "description": "Finance - Financial analysis, market data, valuation, earnings, sentiment, trading research, startup finance, and report generation",
+    "skills": [
+      "company-valuation",
+      "earnings-preview",
+      "earnings-recap",
+      "estimate-analysis",
+      "etf-premium",
+      "options-payoff",
+      "saas-valuation-compression",
+      "sepa-strategy",
+      "stock-correlation",
+      "stock-liquidity",
+      "yfinance-data",
+      "finance-sentiment",
+      "funda-data",
+      "hormuz-strait",
+      "alphaear-news",
+      "alphaear-stock",
+      "alphaear-sentiment",
+      "alphaear-search",
+      "alphaear-predictor",
+      "alphaear-signal-tracker",
+      "alphaear-logic-visualizer",
+      "alphaear-reporter",
+      "alphaear-deepear-lite",
+      "opencli-reader",
+      "twitter-reader",
+      "linkedin-reader",
+      "telegram-reader",
+      "discord-reader",
+      "yc-reader",
+      "startup-analysis",
+      "generative-ui",
+      "data-storytelling",
+      "kpi-dashboard-design"
+    ],
+    "workflows": [
+      "wf-research-analyst",
+      "wf-deep-researcher",
+      "wf-researcher",
       "wf-gen-doc"
     ]
   }

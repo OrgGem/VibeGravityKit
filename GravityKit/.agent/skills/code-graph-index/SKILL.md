@@ -112,6 +112,9 @@ Method-level call tracking resolves `self.method()` calls within classes.
 Add `--incremental` after the first build for fast re-indexing. The incremental engine compares **per-node content hashes** to identify exactly which functions/classes changed — unchanged nodes are marked clean so FAISS can skip re-embedding them.
 
 Supported languages: Python, JavaScript, TypeScript, Java, C#, Go.
+Document-like files (`.xml`, `.xaml`, `.json`, `.txt`) are indexed as line-based
+`document` chunks so they appear in the structural graph and are available to
+the FAISS semantic index.
 
 ### 2. Build the Hybrid FAISS semantic index
 

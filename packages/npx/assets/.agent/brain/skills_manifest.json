@@ -19,6 +19,42 @@
     "description": "Build production Apache Airflow DAGs with best practices for operators, sensors, testing, and deployment. Use when creating data pipelines, orchestrating workfl",
     "size_kb": 1.4
   },
+  "alphaear-deepear-lite": {
+    "description": "Fetch the latest financial signals and transmission-chain analyses from DeepEar Lite. Use when the user needs immediate insights into financial market trends, stock performance factors, and reasoning from the DeepEar Lit",
+    "size_kb": 3.7
+  },
+  "alphaear-logic-visualizer": {
+    "description": "Create visualize finance logic diagrams (e.g., Draw.io XML) to explain complex finance transmission chains or finance logic flows.",
+    "size_kb": 24.4
+  },
+  "alphaear-news": {
+    "description": "Fetch hot finance news, unified trends, and prediction financial market data. Use when the user needs real-time financial news, trend reports from multiple finance sources (Weibo, Zhihu, WallstreetCN, etc.), or Polymarke",
+    "size_kb": 22.1
+  },
+  "alphaear-predictor": {
+    "description": "Market prediction skill using Kronos. Use when user needs finance market time-series forecasting or news-aware finance market adjustments.",
+    "size_kb": 1553.5
+  },
+  "alphaear-reporter": {
+    "description": "Plan, write, and edit professional financial reports; generate finance chart configurations. Use when condensing finance analysis into a structured output.",
+    "size_kb": 307.7
+  },
+  "alphaear-search": {
+    "description": "Perform finance web searches and local context searches. Use when the user needs general finance info from the web (Jina/DDG/Baidu) or needs to retrieve finance information from a local document store (RAG).",
+    "size_kb": 62.5
+  },
+  "alphaear-sentiment": {
+    "description": "Analyze finance text sentiment using FinBERT or LLM. Use when the user needs to determine the sentiment (positive/negative/neutral) and score of financial text markets.",
+    "size_kb": 41.9
+  },
+  "alphaear-signal-tracker": {
+    "description": "Track finance investment signal evolution and update logic based on new finance market information. Use when monitoring finance signals and determining if they are strengthened, weakened, or falsified.",
+    "size_kb": 291.2
+  },
+  "alphaear-stock": {
+    "description": "Search A-Share/HK/US finance stock tickers and retrieve finance stock price history. Use when user asks about finance stock codes, recent price changes, or specific company finance stock info.",
+    "size_kb": 25.6
+  },
   "analytics-tracking": {
     "description": "Design, audit, and improve analytics tracking systems that produce reliable, decision-ready data. Use when the user wants to set up, fix, or evaluate analytics ",
     "size_kb": 7.8
@@ -57,7 +93,7 @@
   },
   "architecture-auditor": {
     "description": "Reviews architecture, checks standards, security, and technical debt.",
-    "size_kb": 1.0
+    "size_kb": 1
   },
   "architecture-decision-records": {
     "description": "Write and maintain Architecture Decision Records (ADRs) following best practices for technical decision documentation. Use when documenting significant technica",
@@ -81,7 +117,7 @@
   },
   "aws-serverless": {
     "description": "Specialized skill for building production-ready serverless applications on AWS. Covers Lambda functions, API Gateway, DynamoDB, SQS/SNS event-driven patterns, S",
-    "size_kb": 8.0
+    "size_kb": 8
   },
   "aws-skills": {
     "description": "AWS development with infrastructure automation and cloud architecture patterns",
@@ -145,7 +181,7 @@
   },
   "changelog-generator": {
     "description": "Automated changelog generation from git history using conventional commits. Produces structured CHANGELOG.md with version grouping, categories, and release note",
-    "size_kb": 2.0
+    "size_kb": 2
   },
   "ci-cd-setup": {
     "description": "Generate CI/CD pipelines (GitHub Actions).",
@@ -165,7 +201,7 @@
   },
   "code-graph-index": {
     "description": "Build a hybrid code knowledge base — symbolic graph (functions, classes, imports, call edges) plus a FAISS semantic vector index — and auto-wire MCP servers int",
-    "size_kb": 6.0
+    "size_kb": 6
   },
   "code-reviewer": {
     "description": "Automated code quality review with pattern-based analysis. Scans for anti-patterns, naming issues, security risks, and best practices.",
@@ -182,6 +218,10 @@
   "commit": {
     "description": "Create commit messages following Sentry conventions. Use when committing code changes, writing commit messages, or formatting git history. Follows conventional ",
     "size_kb": 4.3
+  },
+  "company-valuation": {
+    "description": "Estimate the intrinsic value of a public company using DCF, relative (peer multiple) and sum-of-parts (SOTP) methods, then triangulate to an implied share price with upside/downside versus the current market price. Use t",
+    "size_kb": 36.8
   },
   "competitor-analyzer": {
     "description": "Analyzes competitor products, finding main features, strengths/weaknesses.",
@@ -201,7 +241,7 @@
   },
   "context-driven-development": {
     "description": "Use this skill when working with Conductor's context-driven development methodology, managing project context artifacts, or understanding the relationship betwe",
-    "size_kb": 12.0
+    "size_kb": 12
   },
   "context-fundamentals": {
     "description": "Understand what context is, why it matters, and the anatomy of context in agent systems",
@@ -237,7 +277,7 @@
   },
   "data-engineering-data-pipeline": {
     "description": "You are a data pipeline architecture expert specializing in scalable, reliable, and cost-effective data pipelines for batch and streaming data processing.",
-    "size_kb": 7.0
+    "size_kb": 7
   },
   "data-quality-frameworks": {
     "description": "Implement data quality validation with Great Expectations, dbt tests, and data contracts. Use when building data quality pipelines, implementing validation rule",
@@ -248,12 +288,12 @@
     "size_kb": 10.4
   },
   "data-storytelling": {
-    "description": "Transform data into compelling narratives using visualization, context, and persuasive structure. Use when presenting analytics to stakeholders, creating data r",
-    "size_kb": 13.0
+    "description": "Transform data into compelling narratives using visualization, context, and persuasive structure. Use when presenting analytics to stakeholders, creating data reports, or building executive presentations.",
+    "size_kb": 13
   },
   "database-admin": {
     "description": "Expert database administrator specializing in modern cloud databases, automation, and reliability engineering. Masters AWS/Azure/GCP database services, Infrastr",
-    "size_kb": 10.0
+    "size_kb": 10
   },
   "database-architect": {
     "description": "Expert database architect specializing in data layer design from scratch, technology selection, schema modeling, and scalable database architectures. Masters SQ",
@@ -307,6 +347,10 @@
     "description": "Smart Patcher — Apply Diff, Lint, and Auto-Index.",
     "size_kb": 0.9
   },
+  "discord-reader": {
+    "description": "Read Discord for financial research using opencli (read-only). Use this skill whenever the user wants to read Discord channels, search for messages in trading servers, view guild/channel info, monitor crypto or market di",
+    "size_kb": 14.3
+  },
   "distributed-debugging-debug-trace": {
     "description": "You are a debugging expert specializing in setting up comprehensive debugging environments, distributed tracing, and diagnostic tools. Configure debugging workf",
     "size_kb": 1.9
@@ -330,6 +374,14 @@
   "e2e-testing-patterns": {
     "description": "Master end-to-end testing with Playwright and Cypress to build reliable test suites that catch bugs, improve confidence, and enable fast deployment. Use when im",
     "size_kb": 1.4
+  },
+  "earnings-preview": {
+    "description": "Generate a pre-earnings briefing for any stock using Yahoo Finance data. Use this skill whenever the user wants to prepare for an upcoming earnings report, understand what analysts expect, review a company's beat/miss tr",
+    "size_kb": 10.8
+  },
+  "earnings-recap": {
+    "description": "Generate a post-earnings analysis for any stock using Yahoo Finance data. Use when the user wants to review what happened after earnings, understand beat/miss results, see stock reaction, or get an earnings recap. Trigge",
+    "size_kb": 11.7
   },
   "embedding-strategies": {
     "description": "Select and optimize embedding models for semantic search and RAG applications. Use when choosing embedding models, implementing chunking strategies, or optimizi",
@@ -355,13 +407,21 @@
     "description": "Master error handling patterns across languages including exceptions, Result types, error propagation, and graceful degradation to build resilient applications.",
     "size_kb": 1.3
   },
+  "estimate-analysis": {
+    "description": "Deep-dive into analyst estimates and revision trends for any stock using Yahoo Finance data. Use when the user wants to understand analyst estimate direction, how EPS or revenue forecasts changed over time, compare estim",
+    "size_kb": 14.5
+  },
+  "etf-premium": {
+    "description": "Calculate ETF premium or discount relative to Net Asset Value (NAV) using Yahoo Finance data. Use this skill whenever the user asks about an ETF's premium or discount, NAV comparison, whether an ETF is trading above or b",
+    "size_kb": 27.1
+  },
   "event-sourcing-architect": {
     "description": "Expert in event sourcing, CQRS, and event-driven architecture patterns. Masters event store design, projection building, saga orchestration, and eventual consis",
     "size_kb": 2.3
   },
   "event-store-design": {
     "description": "Design and implement event stores for event-sourced systems. Use when building event sourcing infrastructure, choosing event store technologies, or implementing",
-    "size_kb": 16.0
+    "size_kb": 16
   },
   "fastapi-pro": {
     "description": "Build high-performance async APIs with FastAPI, SQLAlchemy 2.0, and Pydantic V2. Master microservices, WebSockets, and modern Python async patterns. Use PROACTI",
@@ -375,13 +435,25 @@
     "description": "Figma design integration for developers — extract design tokens, inspect components, use Figma REST API, and bridge Figma to code. Use when implementing designs",
     "size_kb": 2.5
   },
+  "finance-sentiment": {
+    "description": "Fetch structured stock sentiment across Reddit, X.com, news, and Polymarket using the Adanos Finance API. Use this skill whenever the user asks how much people are talking about a stock, how hot a ticker is on social pla",
+    "size_kb": 8.1
+  },
   "frontend-developer": {
     "description": "Build React components, implement responsive layouts, and handle client-side state management. Masters React 19, Next.js 15, and modern frontend architecture. O",
     "size_kb": 7.4
   },
+  "funda-data": {
+    "description": "Fetch financial data from the Funda AI API (https://api.funda.ai). Covers quotes, historical prices, financials, SEC filings, transcripts, analyst estimates, options flow/greeks/GEX, supply chain graph, social sentiment,",
+    "size_kb": 79
+  },
   "gen-doc-ppt-master": {
     "description": "AI-driven multi-format SVG content generation system. Converts source documents (PDF/DOCX/URL/Markdown) into high-quality SVG pages and exports to PPTX through ",
     "size_kb": 18.3
+  },
+  "generative-ui": {
+    "description": "Design system and guidelines for Claude's built-in generative UI — the show_widget tool that renders interactive HTML/SVG widgets inline in claude.ai conversations. This skill provides the complete Anthropic \"Imagine\" de",
+    "size_kb": 35.6
   },
   "git-advanced-workflows": {
     "description": "Master advanced Git workflows including rebasing, cherry-picking, bisect, worktrees, and reflog to maintain clean history and recover from any situation. Use wh",
@@ -431,6 +503,10 @@
     "description": "Helm chart creation, management, and best practices for Kubernetes deployments. Use for packaging, templating, and releasing Kubernetes applications with Helm 3",
     "size_kb": 3.5
   },
+  "hormuz-strait": {
+    "description": "Check the current status of the Strait of Hormuz — shipping transit data, oil price impact, stranded vessels, insurance risk levels, diplomatic developments, and global trade impact. Use this skill whenever the user asks",
+    "size_kb": 13.1
+  },
   "hubspot-automation": {
     "description": "Automate HubSpot CRM operations (contacts, companies, deals, tickets, properties) via Rube MCP using Composio integration.",
     "size_kb": 9.2
@@ -445,7 +521,7 @@
   },
   "i18n-manager": {
     "description": "Extracts hardcoded strings from your code for internationalization. Generates translation files.",
-    "size_kb": 1.0
+    "size_kb": 1
   },
   "incident-responder": {
     "description": "Expert SRE incident responder specializing in rapid problem resolution, modern observability, and comprehensive incident management. Masters incident command, b",
@@ -480,7 +556,7 @@
     "size_kb": 0.9
   },
   "kpi-dashboard-design": {
-    "description": "Design effective KPI dashboards with metrics selection, visualization best practices, and real-time monitoring patterns. Use when building business dashboards, ",
+    "description": "Design effective KPI dashboards with metrics selection, visualization best practices, and real-time monitoring patterns. Use when building business dashboards, selecting metrics, or designing data visualization layouts.",
     "size_kb": 17.8
   },
   "kubernetes-architect": {
@@ -498,6 +574,10 @@
   "langgraph": {
     "description": "Expert in LangGraph - the production-grade framework for building stateful, multi-actor AI applications. Covers graph construction, state management, cycles and",
     "size_kb": 7.5
+  },
+  "linkedin-reader": {
+    "description": "Read LinkedIn for financial research using opencli (read-only). Use this skill whenever the user wants to read their LinkedIn feed, search for jobs in the finance/trading industry, view professional posts about markets o",
+    "size_kb": 15
   },
   "llm-app-patterns": {
     "description": "Production-ready patterns for building LLM applications. Covers RAG pipelines, agent architectures, prompt IDEs, and LLMOps monitoring. Use when designing AI ap",
@@ -537,7 +617,7 @@
   },
   "nextjs-developer": {
     "description": "Full-stack Next.js development with App Router, Server Components, Server Actions, and modern patterns. Use for building Next.js applications, APIs, and optimiz",
-    "size_kb": 4.0
+    "size_kb": 4
   },
   "nodejs-backend-patterns": {
     "description": "Build production-ready Node.js backend services with Express/Fastify, implementing middleware patterns, error handling, authentication, database integration, an",
@@ -549,7 +629,7 @@
   },
   "observability-engineer": {
     "description": "Build production-ready monitoring, logging, and tracing systems. Implements comprehensive observability strategies, SLI/SLO management, and incident response wo",
-    "size_kb": 13.0
+    "size_kb": 13
   },
   "observability-framework": {
     "description": "Distributed tracing, structured logging, and metrics framework using OpenTelemetry. Use when setting up full-stack observability for microservices — traces, log",
@@ -570,6 +650,14 @@
   "openapi-spec-generation": {
     "description": "Generate and maintain OpenAPI 3.1 specifications from code, design-first specs, and validation patterns. Use when creating API documentation, generating SDKs, o",
     "size_kb": 1.2
+  },
+  "opencli-reader": {
+    "description": "Generic read-only fallback for any source opencli covers but this repo has no dedicated reader for — Yahoo Finance, Bloomberg, Reuters, Barchart, Eastmoney, Xueqiu, Sinafinance, Reddit, HackerNews, Substack, Medium, Weib",
+    "size_kb": 23.4
+  },
+  "options-payoff": {
+    "description": "Generate an interactive options payoff curve chart with dynamic parameter controls. Use this skill whenever the user shares an options position screenshot, describes an options strategy, or asks to visualize how an optio",
+    "size_kb": 14.1
   },
   "owasp-security-practices": {
     "description": "OWASP Top 10 security best practices for web applications. Use when implementing security controls, reviewing code for vulnerabilities, or ensuring OWASP compli",
@@ -671,6 +759,10 @@
     "description": "Master Rust 1.75+ with modern async patterns, advanced type system features, and production-ready systems programming. Expert in the latest Rust ecosystem inclu",
     "size_kb": 7.6
   },
+  "saas-valuation-compression": {
+    "description": "Analyze SaaS company valuation compression between funding rounds. Use this skill whenever the user asks about: how much a SaaS company's valuation multiple changed between rounds, why the ARR multiple compressed or expa",
+    "size_kb": 10
+  },
   "saga-orchestration": {
     "description": "Implement saga patterns for distributed transactions and cross-aggregate workflows. Use when coordinating multi-step business processes, handling compensating t",
     "size_kb": 16.4
@@ -687,9 +779,13 @@
     "description": "Check SEO best practices (Meta tags, Alt text).",
     "size_kb": 0.3
   },
+  "sepa-strategy": {
+    "description": "Analyze stocks using Mark Minervini's SEPA (Specific Entry Point Analysis) methodology. Use this skill whenever the user mentions SEPA, Minervini, superperformance, trend template, VCP (Volatility Contraction Pattern), S",
+    "size_kb": 41.6
+  },
   "service-mesh-observability": {
     "description": "Implement comprehensive observability for service meshes including distributed tracing, metrics, and visualization. Use when setting up mesh monitoring, debuggi",
-    "size_kb": 11.0
+    "size_kb": 11
   },
   "similarity-search-patterns": {
     "description": "Implement efficient similarity search with vector databases. Use when building semantic search, implementing nearest neighbor queries, or optimizing retrieval p",
@@ -731,6 +827,18 @@
     "description": "Master modern SQL with cloud-native databases, OLTP/OLAP optimization, and advanced query techniques. Expert in performance tuning, data modeling, and hybrid an",
     "size_kb": 7.8
   },
+  "startup-analysis": {
+    "description": "Analyze a startup from three perspectives: VC investor, job applicant, and CEO/founder. Use this skill whenever the user wants to evaluate a startup, assess whether to invest in or join a startup, do due diligence, evalu",
+    "size_kb": 31.5
+  },
+  "stock-correlation": {
+    "description": "Analyze stock correlations to find related companies and trading pairs. Use when the user asks about correlated stocks, related companies, sector peers, trading pairs, or how two or more stocks move together. Triggers: \"",
+    "size_kb": 17.3
+  },
+  "stock-liquidity": {
+    "description": "Analyze stock liquidity using bid-ask spreads, volume profiles, order book depth, market impact estimates, and turnover ratios via Yahoo Finance data. Use this skill whenever the user asks about liquidity, trading costs,",
+    "size_kb": 33.7
+  },
   "strategic-planning-advisor": {
     "description": "Advises on system architecture, scalability, and long-term maintenance strategy.",
     "size_kb": 0.6
@@ -759,6 +867,10 @@
     "description": "Suggests suitable tech stack based on project requirements using local database.",
     "size_kb": 2.2
   },
+  "telegram-reader": {
+    "description": "Read Telegram channels and groups for financial news and market research using tdl (read-only). Use this skill whenever the user wants to read Telegram channels, export messages from financial Telegram groups, list their",
+    "size_kb": 12.9
+  },
   "template-marketplace": {
     "description": "Pre-built project templates for common app types. Scaffolds complete projects instantly.",
     "size_kb": 1.7
@@ -769,7 +881,11 @@
   },
   "testing-patterns": {
     "description": "Jest testing patterns, factory functions, mocking strategies, and TDD workflow. Use when writing unit tests, creating test factories, or following TDD red-green",
-    "size_kb": 6.0
+    "size_kb": 6
+  },
+  "twitter-reader": {
+    "description": "Read Twitter/X for financial research using opencli (read-only). Use this skill whenever the user wants to read their Twitter feed, search for financial tweets, view bookmarks, look up user profiles, or gather market sen",
+    "size_kb": 21
   },
   "typescript-pro": {
     "description": "Master TypeScript with advanced types, generics, and strict type safety. Handles complex type systems, decorators, and enterprise-grade patterns. Use PROACTIVEL",
@@ -789,7 +905,7 @@
   },
   "uipath-core": {
     "description": "Generates UiPath Studio XAML workflows, project scaffolds (sequence/dispatcher/performer), and expressions via 94 deterministic Python generators (plus addition",
-    "size_kb": 19.0
+    "size_kb": 19
   },
   "uipath-platform": {
     "description": "UiPath development environment assistant — authentication, Orchestrator management (folders, assets, queues, storage buckets), solution lifecycle (pack, publish",
@@ -797,7 +913,7 @@
   },
   "uipath-rpa-workflows": {
     "description": "Generate, edit, test, and run RPA workflows (XAML files) in UiPath Studio Desktop using uip CLI and filesystem operations. TRIGGER when: RPA project detected (p",
-    "size_kb": 45.0
+    "size_kb": 45
   },
   "uipath-shared": {
     "description": "Shared UiPath reference docs — uip CLI reference, UI Automation prerequisites & configuration, debugging, selector recovery, multi-step flows, validation loop.",
@@ -825,7 +941,7 @@
   },
   "web-search": {
     "description": "Live web search via DuckDuckGo API — no API key, no pip install required. Use for searching current information, documentation, news, or any web content during ",
-    "size_kb": 3.0
+    "size_kb": 3
   },
   "writing-plans": {
     "description": "Use when you have a spec or requirements for a multi-step task, before touching code",
@@ -834,5 +950,13 @@
   "writing-skills": {
     "description": "Use when creating, updating, or improving agent skills.",
     "size_kb": 4.2
+  },
+  "yc-reader": {
+    "description": "Look up Y Combinator companies, batches, and startup ecosystem data using the yc-oss API (read-only). Use this skill whenever the user wants to research YC-backed startups, find companies in a specific batch or industry,",
+    "size_kb": 17.1
+  },
+  "yfinance-data": {
+    "description": "Fetch financial and market data using the yfinance Python library. Use this skill whenever the user asks for stock prices, historical data, financial statements, options chains, dividends, earnings, analyst recommendatio",
+    "size_kb": 14.5
   }
 }

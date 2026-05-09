@@ -12,6 +12,76 @@ const os = require('os');
 const { IDE_NAMES, IDE_CONFIG, VERSION } = require('./constants');
 const { downloadRelease } = require('./download');
 
+/**
+ * Update .gitignore with top-level dot folders/files created by init.
+ */
+function updateGitignore(cwd, createdPaths) {
+  const gitignorePath = path.join(cwd, '.gitignore');
+  const topLevelDots = new Set();
+
+  for (const p of createdPaths) {
+    const topLevel = p.split(/[/\\]/)[0];
+    if (topLevel.startsWith('.') && topLevel !== '.github') {
+      topLevelDots.add(topLevel);
+    }
+  }
+
+  // Also add .mcp.json and .gkt just in case mcp was/will be run
+  topLevelDots.add('.mcp.json');
+  topLevelDots.add('.gkt');
+
+  if (topLevelDots.size === 0) return;
+
+  let content = '';
+  if (fs.existsSync(gitignorePath)) {
+    content = fs.readFileSync(gitignorePath, 'utf8');
+  }
+
+  const existingLines = new Set(content.split(/\r?\n/).map(l => l.trim()));
+  const toAdd = Array.from(topLevelDots).filter(
+    item => !existingLines.has(item) && !existingLines.has(item + '/')
+  );
+
+  if (toAdd.length > 0) {
+    if (content && !content.endsWith('\n')) content += '\n';
+    content += '\n# GravityKit\n';
+    for (const item of toAdd) {
+      content += `${item}\n`;
+    }
+    fs.writeFileSync(gitignorePath, content, 'utf8');
+    console.log(`  📝 Added ${toAdd.length} entries to .gitignore`);
+  }
+}
+
+/**
+ * Setup agent instruction files to enforce local MCP priority.
+ */
+function setupAgentInstructions(cwd) {
+  const agents = ['Antigravity.md', 'Codex.md', 'Kiro.md'];
+  const rule = `
+# Local MCP Priority Rule
+CRITICAL: Always prioritize using the MCP tools and servers defined in this local project workspace. Do NOT fallback to global or user-level MCP configurations (e.g. in the user's home or gemini directory) if a local equivalent exists.
+`.trim();
+
+  let added = 0;
+  for (const agent of agents) {
+    const filePath = path.join(cwd, agent);
+    if (!fs.existsSync(filePath)) {
+      fs.writeFileSync(filePath, rule + '\n', 'utf8');
+      added++;
+    } else {
+      const content = fs.readFileSync(filePath, 'utf8');
+      if (!content.includes('Local MCP Priority Rule')) {
+        fs.writeFileSync(filePath, content + '\n\n' + rule + '\n', 'utf8');
+        added++;
+      }
+    }
+  }
+  if (added > 0) {
+    console.log(`  📝 Setup local MCP priority rules in agent markdown files`);
+  }
+}
+
 // Path to bundled assets (relative to this file)
 const BUNDLED_ASSETS = path.join(__dirname, '..', 'assets');
 
@@ -396,6 +466,8 @@ async function initCommand(target = 'all', group = null) {
     }
 
     let installed = 0;
+    const createdPaths = [];
+
     for (const ide of targets) {
       const config = IDE_CONFIG[ide];
       if (!config) continue;
@@ -423,9 +495,15 @@ async function initCommand(target = 'all', group = null) {
           console.log(`  ✅ ${config.label}`);
         }
         installed++;
+        createdPaths.push(config.targetRel);
       } catch (err) {
         console.log(`  ❌ ${ide}: ${err.message}`);
       }
+    }
+
+    if (installed > 0) {
+      updateGitignore(cwd, createdPaths);
+      setupAgentInstructions(cwd);
     }
 
     console.log(`\n✨ Done! Installed for ${installed} IDE(s).`);

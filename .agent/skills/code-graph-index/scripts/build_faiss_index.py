@@ -50,7 +50,7 @@ DEFAULT_EXTENSIONS = {
     ".go", ".rs", ".java", ".kt", ".swift",
     ".c", ".cc", ".cpp", ".h", ".hpp",
     ".cs", ".rb", ".php", ".scala", ".sql",
-    ".md", ".json", ".yaml", ".yml",
+    ".md", ".json", ".yaml", ".yml", ".xml", ".xaml", ".txt",
 }
 
 IGNORE_DIRS = {

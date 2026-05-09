@@ -42,6 +42,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 EXTENSIONS = {
     ".py", ".js", ".jsx", ".ts", ".tsx", ".vue",
     ".java", ".cs", ".go",
+    ".xml", ".xaml", ".json", ".txt",
 }
 
 IGNORE_DIRS = {

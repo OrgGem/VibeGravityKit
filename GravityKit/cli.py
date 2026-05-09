@@ -438,9 +438,8 @@ def update_gitignore(cwd: Path, created_paths: list):
             click.echo(f"  ⚠️  Could not update .gitignore: {e}")
 
 
-def setup_agent_instructions(cwd: Path):
+def setup_agent_instructions(cwd: Path, targets: list[str]):
     """Setup agent instruction files to enforce local MCP priority."""
-    agents = ["Antigravity.md", "Codex.md", "Kiro.md"]
     rule = (
         "# Local MCP Priority Rule\n"
         "CRITICAL: Always prioritize using the MCP tools and servers defined in this local project workspace. "
@@ -448,26 +447,45 @@ def setup_agent_instructions(cwd: Path):
         "if a local equivalent exists."
     )
     
-    added = 0
-    for agent in agents:
-        file_path = cwd / agent
-        if not file_path.exists():
+    target_files = {
+        "cursor": ".cursorrules",
+        "windsurf": ".windsurfrules",
+        "cline": ".clinerules",
+        "copilot": ".github/copilot-instructions.md",
+        "kiro": ".kiro/steering/brain.md",
+        "antigravity": ".agent/brain/conventions.md",
+        "kilocode": ".kilocoderules"
+    }
+    
+    # Clean up the previous incorrect files
+    wrong_files = ["Antigravity.md", "Codex.md", "Kiro.md"]
+    for wf in wrong_files:
+        wp = cwd / wf
+        if wp.exists():
             try:
-                file_path.write_text(rule + "\n", encoding="utf-8")
-                added += 1
+                wp.unlink()
             except Exception:
                 pass
-        else:
+    
+    added = 0
+    for target in targets:
+        if target in target_files:
+            file_path = cwd / target_files[target]
             try:
-                content = file_path.read_text(encoding="utf-8")
-                if "Local MCP Priority Rule" not in content:
-                    file_path.write_text(content + "\n\n" + rule + "\n", encoding="utf-8")
+                file_path.parent.mkdir(parents=True, exist_ok=True)
+                if not file_path.exists():
+                    file_path.write_text(rule + "\n", encoding="utf-8")
                     added += 1
+                else:
+                    content = file_path.read_text(encoding="utf-8")
+                    if "Local MCP Priority Rule" not in content:
+                        file_path.write_text(content + "\n\n" + rule + "\n", encoding="utf-8")
+                        added += 1
             except Exception:
                 pass
                 
     if added > 0:
-        click.echo("  📝 Setup local MCP priority rules in agent markdown files")
+        click.echo("  📝 Setup local MCP priority rules in proper IDE instruction files")
 
 
 @click.group()
@@ -668,7 +686,7 @@ def init(target, group):
 
     if installed > 0:
         update_gitignore(Path.cwd(), created_paths)
-        setup_agent_instructions(Path.cwd())
+        setup_agent_instructions(Path.cwd(), registered_targets)
 
     click.echo(f"\n✨ Done! Installed for {installed} IDE(s).")
     if group_name:

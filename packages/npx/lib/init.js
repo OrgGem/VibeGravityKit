@@ -56,29 +56,57 @@ function updateGitignore(cwd, createdPaths) {
 /**
  * Setup agent instruction files to enforce local MCP priority.
  */
-function setupAgentInstructions(cwd) {
-  const agents = ['Antigravity.md', 'Codex.md', 'Kiro.md'];
+function setupAgentInstructions(cwd, targets) {
   const rule = `
 # Local MCP Priority Rule
 CRITICAL: Always prioritize using the MCP tools and servers defined in this local project workspace. Do NOT fallback to global or user-level MCP configurations (e.g. in the user's home or gemini directory) if a local equivalent exists.
 `.trim();
 
-  let added = 0;
-  for (const agent of agents) {
-    const filePath = path.join(cwd, agent);
-    if (!fs.existsSync(filePath)) {
-      fs.writeFileSync(filePath, rule + '\n', 'utf8');
-      added++;
-    } else {
-      const content = fs.readFileSync(filePath, 'utf8');
-      if (!content.includes('Local MCP Priority Rule')) {
-        fs.writeFileSync(filePath, content + '\n\n' + rule + '\n', 'utf8');
-        added++;
-      }
+  const targetFiles = {
+    'cursor': '.cursorrules',
+    'windsurf': '.windsurfrules',
+    'cline': '.clinerules',
+    'copilot': '.github/copilot-instructions.md',
+    'kiro': '.kiro/steering/brain.md',
+    'antigravity': '.agent/brain/conventions.md',
+    'kilocode': '.kilocoderules'
+  };
+
+  // Clean up the previous incorrect files
+  const wrongFiles = ['Antigravity.md', 'Codex.md', 'Kiro.md'];
+  for (const wf of wrongFiles) {
+    const wp = path.join(cwd, wf);
+    if (fs.existsSync(wp)) {
+      try { fs.unlinkSync(wp); } catch (e) {}
     }
   }
+
+  let added = 0;
+  for (const target of targets) {
+    if (targetFiles[target]) {
+      const filePath = path.join(cwd, targetFiles[target]);
+      try {
+        const dir = path.dirname(filePath);
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, { recursive: true });
+        }
+        
+        if (!fs.existsSync(filePath)) {
+          fs.writeFileSync(filePath, rule + '\n', 'utf8');
+          added++;
+        } else {
+          const content = fs.readFileSync(filePath, 'utf8');
+          if (!content.includes('Local MCP Priority Rule')) {
+            fs.writeFileSync(filePath, content + '\n\n' + rule + '\n', 'utf8');
+            added++;
+          }
+        }
+      } catch (e) {}
+    }
+  }
+  
   if (added > 0) {
-    console.log(`  📝 Setup local MCP priority rules in agent markdown files`);
+    console.log(`  📝 Setup local MCP priority rules in proper IDE instruction files`);
   }
 }
 
@@ -467,6 +495,7 @@ async function initCommand(target = 'all', group = null) {
 
     let installed = 0;
     const createdPaths = [];
+    const registeredTargets = [];
 
     for (const ide of targets) {
       const config = IDE_CONFIG[ide];
@@ -495,6 +524,7 @@ async function initCommand(target = 'all', group = null) {
           console.log(`  ✅ ${config.label}`);
         }
         installed++;
+        registeredTargets.push(ide);
         createdPaths.push(config.targetRel);
       } catch (err) {
         console.log(`  ❌ ${ide}: ${err.message}`);
@@ -503,7 +533,7 @@ async function initCommand(target = 'all', group = null) {
 
     if (installed > 0) {
       updateGitignore(cwd, createdPaths);
-      setupAgentInstructions(cwd);
+      setupAgentInstructions(cwd, registeredTargets);
     }
 
     console.log(`\n✨ Done! Installed for ${installed} IDE(s).`);

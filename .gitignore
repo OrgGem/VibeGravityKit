@@ -43,3 +43,6 @@ Thumbs.db
 /.kilocode/
 /.code-graph-index/
 UiPathSkillCollection/
+
+# Local machine config (machine-specific absolute paths — not portable)
+.mcp.json

@@ -2092,8 +2092,8 @@
     "path": "skills/user-story-generator/SKILL.md",
     "category": "general",
     "name": "user-story-generator",
-    "description": "Generates standard user stories with acceptance criteria from feature lists.",
-    "risk": "unknown",
+    "description": "Generates User Stories and Acceptance Criteria following INVEST criteria + Given-When-Then (Gherkin) format for BA/PO. Supports 3 modes: write new from feature description, refine existing US, or add AC to existing story. Enforces 6 INVEST criteria and structures AC with happy path, edge case, and negative path scenarios. Use when: write user story, create US, write AC, acceptance criteria, INVEST user story, Gherkin AC, refine user story, split user story.",
+    "risk": "safe",
     "source": "community"
   },
   {

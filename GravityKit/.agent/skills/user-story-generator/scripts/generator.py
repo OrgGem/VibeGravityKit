@@ -1,355 +1,294 @@
 #!/usr/bin/env python3
 """
-User Story Generator — Generate user story templates from features and roles.
+User Story Generator — Generate INVEST-compliant User Stories with Gherkin AC.
+
+Follows the BA Zone INVEST + Given-When-Then framework documented in SKILL.md.
 
 Usage:
-    python generator.py --features "login,product listing,cart,checkout" --roles "buyer,admin"
+    python generator.py --feature "User Login" --persona "registered user" --goal "log in with email and password" --value "access my account"
+    python generator.py --feature "Shopping Cart" --persona "buyer" --goal "add products to cart" --value "save items before checkout"
+    python generator.py --feature "User Login" --persona "registered user" --goal "log in" --value "access account" --json
+    python generator.py --list-examples
 """
 
 import argparse
 import json
 import sys
 
-# === User Story Templates by feature type ===
-STORY_TEMPLATES = {
-    "login": {
-        "title": "Login",
-        "stories": [
-            {
-                "role": "user",
-                "action": "log in with email and password",
-                "benefit": "access my account and use personal features",
-                "priority": "Must",
-                "size": "M",
-                "criteria": [
-                    "Given login page, when correct email + password entered, then redirect to dashboard/home",
-                    "Given login page, when wrong password entered 3 times, then show error and retry after 30s",
-                    "Given not logged in, when accessing protected page, then redirect to login page",
-                    "Given logged in successfully, when reloading page, then session persists"
-                ]
-            },
-            {
-                "role": "user",
-                "action": "log in with Google/Facebook",
-                "benefit": "log in quickly without remembering passwords",
-                "priority": "Should",
-                "size": "M",
-                "criteria": [
-                    "Given login page, when clicking 'Log in with Google', then redirect to Google OAuth",
-                    "Given OAuth successful, when callback received, then create/update account and log in"
-                ]
-            }
-        ]
-    },
-    "register": {
-        "title": "Account Registration",
-        "stories": [
-            {
-                "role": "user",
-                "action": "register a new account with email",
-                "benefit": "start using the service",
-                "priority": "Must",
-                "size": "M",
-                "criteria": [
-                    "Given registration page, when valid info entered, then account created successfully",
-                    "Given email already exists, when registering, then show error 'Email already in use'",
-                    "Given weak password, when submitting, then require stronger password",
-                    "Given registration successful, when finished, then send confirmation email"
-                ]
-            }
-        ]
-    },
-    "product listing": {
-        "title": "Product Listing",
-        "stories": [
-            {
-                "role": "buyer",
-                "action": "view product list by category",
-                "benefit": "find products I am interested in",
-                "priority": "Must",
-                "size": "L",
-                "criteria": [
-                    "Given category page, when page loads, then display products in grid/list",
-                    "Given many products, when scrolling, then load more (infinite scroll or pagination)",
-                    "Given each product, when displayed, then show image, name, price, rating"
-                ]
-            },
-            {
-                "role": "buyer",
-                "action": "filter products by price, color, size",
-                "benefit": "quickly find the right product",
-                "priority": "Should",
-                "size": "M",
-                "criteria": [
-                    "Given category page, when price filter selected, then only show products in range",
-                    "Given multiple filters, when selected together, then apply AND logic",
-                    "Given active filter, when removed, then reset list"
-                ]
-            },
-            {
-                "role": "buyer",
-                "action": "search for products by keyword",
-                "benefit": "find products by name quickly",
-                "priority": "Must",
-                "size": "M",
-                "criteria": [
-                    "Given search bar, when keyword entered, then show relevant results",
-                    "Given keyword mismatch, when searching, then show 'No products found'",
-                    "Given typing, when stopped for 300ms, then auto-suggest results"
-                ]
-            }
-        ]
-    },
-    "product detail": {
-        "title": "Product Detail",
-        "stories": [
-            {
-                "role": "buyer",
-                "action": "view product details with image, price, description",
-                "benefit": "evaluate product before buying",
-                "priority": "Must",
-                "size": "M",
-                "criteria": [
-                    "Given detail page, when loaded, then show gallery, price, full description",
-                    "Given product variants, when size/color selected, then update price and stock",
-                    "Given product image, when clicked, then zoom/lightbox"
-                ]
-            }
-        ]
-    },
-    "cart": {
-        "title": "Shopping Cart",
-        "stories": [
-            {
-                "role": "buyer",
-                "action": "add product to cart",
-                "benefit": "save items to purchase later",
-                "priority": "Must",
-                "size": "M",
-                "criteria": [
-                    "Given product detail page, when clicking 'Add to Cart', then product added to cart",
-                    "Given product already in cart, when added again, then increase quantity",
-                    "Given add successful, when animating, then show badge count on cart icon"
-                ]
-            },
-            {
-                "role": "buyer",
-                "action": "view and edit shopping cart",
-                "benefit": "review before checkout",
-                "priority": "Must",
-                "size": "M",
-                "criteria": [
-                    "Given cart page, when loaded, then show list of products with image, name, price, qty",
-                    "Given item in cart, when quantity changed, then update total price",
-                    "Given item in cart, when delete clicked, then remove from cart",
-                    "Given empty cart, when loaded, then show 'Cart is empty' + link to shop"
-                ]
-            }
-        ]
-    },
-    "checkout": {
-        "title": "Checkout",
-        "stories": [
-            {
-                "role": "buyer",
-                "action": "checkout order",
-                "benefit": "complete purchase",
-                "priority": "Must",
-                "size": "L",
-                "criteria": [
-                    "Given checkout page, when loaded, then show shipping address form",
-                    "Given valid form, when payment method selected, then show payment details",
-                    "Given payment successful, when completed, then show confirmation page + send email",
-                    "Given payment failed, when error, then show error message + allow retry"
-                ]
-            }
-        ]
-    },
-    "admin": {
-        "title": "Administration",
-        "stories": [
-            {
-                "role": "admin",
-                "action": "manage products (add, edit, delete)",
-                "benefit": "update product catalog",
-                "priority": "Must",
-                "size": "L",
-                "criteria": [
-                    "Given admin panel, when adding new product, then product appears on website",
-                    "Given product list, when editing info, then update immediately",
-                    "Given product, when deleting, then confirm before permanent deletion"
-                ]
-            },
-            {
-                "role": "admin",
-                "action": "view and manage orders",
-                "benefit": "process orders timely",
-                "priority": "Must",
-                "size": "M",
-                "criteria": [
-                    "Given admin panel, when viewing orders, then list with status filter",
-                    "Given new order, when status updated, then notify buyer"
-                ]
-            }
-        ]
-    },
-    "dashboard": {
-        "title": "Dashboard",
-        "stories": [
-            {
-                "role": "user",
-                "action": "view dashboard with overview stats",
-                "benefit": "quickly grasp status",
-                "priority": "Must",
-                "size": "L",
-                "criteria": [
-                    "Given dashboard, when loaded, then show stats cards (users, revenue, orders...)",
-                    "Given charts, when hovering, then show detailed tooltip",
-                    "Given data changes, when refreshing, then update realtime"
-                ]
-            }
-        ]
-    },
-    "profile": {
-        "title": "User Profile",
-        "stories": [
-            {
-                "role": "user",
-                "action": "view and edit personal info",
-                "benefit": "keep account details up to date",
-                "priority": "Should",
-                "size": "S",
-                "criteria": [
-                    "Given profile page, when loaded, then show current info",
-                    "Given edit form, when submitted, then update and show success message",
-                    "Given avatar upload, when image selected, then resize and save"
-                ]
-            }
-        ]
-    }
-}
+# ============================================================
+# INVEST Checklist items (from references/invest-criteria.md)
+# ============================================================
+INVEST_CRITERIA = [
+    ("I", "Independent",  "Story can be developed and delivered independently"),
+    ("N", "Negotiable",   "Implementation details are open for discussion"),
+    ("V", "Valuable",     "Delivers clear value to user or business"),
+    ("E", "Estimable",    "Dev team can estimate the effort required"),
+    ("S", "Small",        "Can be completed within one sprint"),
+    ("T", "Testable",     "QA can write test cases from the acceptance criteria"),
+]
 
+# ============================================================
+# Example story templates (generic, domain-agnostic)
+# Used only when --list-examples flag is passed
+# ============================================================
+EXAMPLES = [
+    {
+        "feature": "User Login",
+        "persona": "registered user with verified email",
+        "goal": "log in using email and password",
+        "value": "access my personal account and saved data",
+        "stories": [
+            {
+                "id": "US-001",
+                "title": "Login with email and password",
+                "ac": [
+                    {
+                        "id": "AC1",
+                        "name": "Happy path — valid credentials",
+                        "given": "the user is on the login page with a verified account",
+                        "when": "the user enters correct email and password and clicks Login",
+                        "then": "the system redirects to the dashboard within 2 seconds",
+                        "and": "a session is created and persists on page reload",
+                    },
+                    {
+                        "id": "AC2",
+                        "name": "Edge case — wrong password (lockout)",
+                        "given": "the user has entered an incorrect password 3 times",
+                        "when": "the user tries to log in again",
+                        "then": "the system locks the account and displays: 'Too many attempts. Try again in 30 seconds'",
+                        "and": None,
+                    },
+                    {
+                        "id": "AC3",
+                        "name": "Negative path — unregistered email",
+                        "given": "the user enters an email that does not exist in the system",
+                        "when": "the user clicks Login",
+                        "then": "the system displays: 'Email or password is incorrect' (generic, no info leak)",
+                        "and": None,
+                    },
+                ],
+            }
+        ],
+    },
+    {
+        "feature": "Shopping Cart",
+        "persona": "authenticated buyer",
+        "goal": "add a product to the cart",
+        "value": "save items before completing checkout",
+        "stories": [
+            {
+                "id": "US-001",
+                "title": "Add product to cart",
+                "ac": [
+                    {
+                        "id": "AC1",
+                        "name": "Happy path — new item added",
+                        "given": "the buyer is on a product detail page with items in stock",
+                        "when": "the buyer clicks 'Add to Cart'",
+                        "then": "the cart item count increases by 1 and a success toast appears",
+                        "and": "the product appears in the cart with correct name, price, and quantity",
+                    },
+                    {
+                        "id": "AC2",
+                        "name": "Edge case — item already in cart",
+                        "given": "the product is already in the buyer's cart",
+                        "when": "the buyer clicks 'Add to Cart' again",
+                        "then": "the quantity of that product in the cart increases by 1",
+                        "and": None,
+                    },
+                    {
+                        "id": "AC3",
+                        "name": "Negative path — out of stock",
+                        "given": "the product is out of stock",
+                        "when": "the buyer views the product detail page",
+                        "then": "the 'Add to Cart' button is disabled and labeled 'Out of Stock'",
+                        "and": None,
+                    },
+                ],
+            }
+        ],
+    },
+]
+
+
+# ============================================================
+# Core generation logic
+# ============================================================
+
+def build_story(feature: str, persona: str, goal: str, value: str, story_id: int = 1) -> dict:
+    """Build a User Story data structure from the 4 required inputs."""
+    us_id = f"US-{story_id:03d}"
+    title = f"{goal.strip().capitalize()}"
+
+    # Generate 3 default AC placeholders based on SKILL.md patterns
+    ac_list = [
+        {
+            "id": "AC1",
+            "name": "Happy path",
+            "given": f"the {persona} is on the correct page with all prerequisites met",
+            "when": f"the {persona} performs: {goal}",
+            "then": "the system completes the action successfully and provides confirmation",
+            "and": "the result is persisted and visible on the next page load",
+        },
+        {
+            "id": "AC2",
+            "name": "Edge case / Validation",
+            "given": f"the {persona} provides invalid or boundary input",
+            "when": f"the {persona} attempts to: {goal}",
+            "then": "the system displays a clear, specific error message",
+            "and": "no data is changed or corrupted",
+        },
+        {
+            "id": "AC3",
+            "name": "Negative path / Permission denied",
+            "given": f"the {persona} does not meet the required conditions",
+            "when": f"the {persona} tries to access or perform: {goal}",
+            "then": "the system blocks the action and shows an appropriate message or redirect",
+            "and": None,
+        },
+    ]
+
+    invest_check = {c[0]: True for c in INVEST_CRITERIA}
+
+    return {
+        "id": us_id,
+        "feature": feature.strip(),
+        "title": title,
+        "persona": persona.strip(),
+        "goal": goal.strip(),
+        "value": value.strip(),
+        "story_statement": (
+            f"**As a** {persona.strip()}\n"
+            f"**I want to** {goal.strip()}\n"
+            f"**So that** {value.strip()}"
+        ),
+        "invest": invest_check,
+        "acceptance_criteria": ac_list,
+        "notes": [],
+    }
+
+
+# ============================================================
+# Output formatters
+# ============================================================
+
+def format_invest_table(invest: dict) -> str:
+    lines = ["| Criteria | Status | Description |",
+             "|----------|--------|-------------|"]
+    for letter, name, desc in INVEST_CRITERIA:
+        status = "✅" if invest.get(letter, False) else "⚠️ Review needed"
+        lines.append(f"| **{letter}** — {name} | {status} | {desc} |")
+    return "\n".join(lines)
+
+
+def format_ac(ac_list: list) -> str:
+    blocks = []
+    for ac in ac_list:
+        block = [f"**{ac['id']}: {ac['name']}**"]
+        block.append(f"- **Given** {ac['given']}")
+        block.append(f"- **When** {ac['when']}")
+        block.append(f"- **Then** {ac['then']}")
+        if ac.get("and"):
+            block.append(f"- **And** {ac['and']}")
+        blocks.append("\n".join(block))
+    return "\n\n".join(blocks)
+
+
+def print_story(story: dict):
+    sep = "=" * 65
+    thin = "─" * 65
+
+    print(f"\n{sep}")
+    print(f"  [US] {story['id']}: {story['title']}")
+    print(f"  Feature: {story['feature']}")
+    print(sep)
+
+    print("\n### User Story\n")
+    print(story["story_statement"])
+
+    print(f"\n{thin}")
+    print("\n### INVEST Self-check\n")
+    print(format_invest_table(story["invest"]))
+    print("> [!] Review each criterion against the actual story before submitting.")
+
+    print(f"\n{thin}")
+    print("\n### Acceptance Criteria\n")
+    print(format_ac(story["acceptance_criteria"]))
+
+    if story.get("notes"):
+        print(f"\n{thin}")
+        print("\n### Notes\n")
+        for note in story["notes"]:
+            print(f"- {note}")
+
+    print(f"\n{sep}\n")
+
+
+def print_examples():
+    print("\n" + "=" * 65)
+    print("  [EXAMPLES] INVEST + Gherkin format")
+    print("=" * 65)
+    for ex in EXAMPLES:
+        story = build_story(ex["feature"], ex["persona"], ex["goal"], ex["value"])
+        # Override with richer example AC
+        story["acceptance_criteria"] = ex["stories"][0]["ac"]
+        print_story(story)
+
+
+# ============================================================
+# CLI
+# ============================================================
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="User Story Generator")
-    parser.add_argument("--features", type=str, required=True, help="List of features, comma-separated")
-    parser.add_argument("--roles", type=str, default="user", help="List of roles, comma-separated")
-    parser.add_argument("--json", action="store_true", help="Output as JSON")
+    parser = argparse.ArgumentParser(
+        description="User Story Generator — INVEST + Given-When-Then (Gherkin) format",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python generator.py --feature "User Login" --persona "registered user" \\
+      --goal "log in with email and password" --value "access my account"
+
+  python generator.py --feature "Product Search" --persona "buyer" \\
+      --goal "search products by keyword" --value "find items quickly" --json
+
+  python generator.py --list-examples
+        """
+    )
+    parser.add_argument("--feature",  type=str, help="Feature or module name (e.g. 'User Login')")
+    parser.add_argument("--persona",  type=str, help="Who uses this feature (e.g. 'registered buyer')")
+    parser.add_argument("--goal",     type=str, help="What they want to do (verb phrase)")
+    parser.add_argument("--value",    type=str, help="Business/user value delivered (So that...)")
+    parser.add_argument("--id",       type=int, default=1, help="Starting story ID number (default: 1)")
+    parser.add_argument("--json",     action="store_true", help="Output as JSON instead of Markdown")
+    parser.add_argument("--list-examples", action="store_true", help="Show built-in example stories and exit")
     return parser.parse_args()
 
 
-def find_matching_template(feature_query):
-    """Find the best matching template for a feature query."""
-    query_lower = feature_query.lower().strip()
+def main():
+    args = parse_args()
 
-    # Direct match
-    if query_lower in STORY_TEMPLATES:
-        return STORY_TEMPLATES[query_lower]
+    if args.list_examples:
+        print_examples()
+        sys.exit(0)
 
-    # Partial match
-    for key, template in STORY_TEMPLATES.items():
-        if key in query_lower or query_lower in key:
-            return template
-        if template["title"].lower() in query_lower or query_lower in template["title"].lower():
-            return template
+    # Validate required args
+    missing = [f for f, v in [("--feature", args.feature), ("--persona", args.persona),
+                                ("--goal", args.goal), ("--value", args.value)] if not v]
+    if missing:
+        print(f"[!] Missing required arguments: {', '.join(missing)}", file=sys.stderr)
+        print("   Run with --help for usage, or --list-examples to see samples.", file=sys.stderr)
+        sys.exit(1)
 
-    return None
+    story = build_story(args.feature, args.persona, args.goal, args.value, args.id)
 
+    if args.json:
+        print(json.dumps(story, ensure_ascii=False, indent=2))
+    else:
+        print_story(story)
 
-def generate_stories(features, roles):
-    """Generate user stories from features."""
-    all_stories = []
-    story_id = 1
-
-    for feature in features:
-        template = find_matching_template(feature)
-
-        if template:
-            for story in template["stories"]:
-                # Replace role if needed
-                role = story["role"]
-                if role == "user" and roles and roles[0] != "user":
-                    role = roles[0]
-
-                all_stories.append({
-                    "id": f"US-{story_id:03d}",
-                    "feature": template["title"],
-                    "role": role,
-                    "action": story["action"],
-                    "benefit": story["benefit"],
-                    "priority": story["priority"],
-                    "size": story["size"],
-                    "criteria": story["criteria"]
-                })
-                story_id += 1
-        else:
-            # Generate generic story for unknown features
-            all_stories.append({
-                "id": f"US-{story_id:03d}",
-                "feature": feature.strip().title(),
-                "role": roles[0] if roles else "user",
-                "action": f"use the {feature.strip()} feature",
-                "benefit": "meet my needs",
-                "priority": "Should",
-                "size": "M",
-                "criteria": [
-                    f"Given {feature.strip()} page, when loaded, then display full content",
-                    f"Given {feature.strip()}, when interacting, then respond as expected"
-                ]
-            })
-            story_id += 1
-
-    return all_stories
-
-
-def print_readable(stories):
-    """Print user stories in a readable format."""
-    priority_emoji = {"Must": "🔴", "Should": "🟡", "Could": "🟢", "Won't": "⚪"}
-
-    print("=" * 60)
-    print("📝 USER STORIES")
-    print("=" * 60)
-
-    current_feature = ""
-    for story in stories:
-        if story["feature"] != current_feature:
-            current_feature = story["feature"]
-            print(f"\n{'━' * 60}")
-            print(f"  📌 {current_feature}")
-            print(f"{'━' * 60}")
-
-        emoji = priority_emoji.get(story["priority"], "⚪")
-        print(f"\n  {story['id']}: {story['action']}")
-        print(f"  Priority: {emoji} {story['priority']} | Size: {story['size']}")
-        print(f"  As a {story['role']}, I want to {story['action']},")
-        print(f"  so that {story['benefit']}.")
-        print(f"  Acceptance Criteria:")
-        for ac in story["criteria"]:
-            print(f"    ☐ {ac}")
-
-    # Summary
-    total = len(stories)
-    by_priority = {}
-    for s in stories:
-        by_priority[s["priority"]] = by_priority.get(s["priority"], 0) + 1
-
-    print(f"\n{'=' * 60}")
-    print(f"  📊 Total: {total} stories")
-    for p, count in sorted(by_priority.items()):
-        emoji = priority_emoji.get(p, "⚪")
-        print(f"    {emoji} {p}: {count}")
-    print(f"{'=' * 60}")
+    print("[TIP] The AC above are scaffolds. Review and refine each Given/When/Then")
+    print("   against the full checklist in: checklists/quality-checklist.md\n")
 
 
 if __name__ == "__main__":
-    args = parse_args()
-
-    features = [f.strip() for f in args.features.split(",") if f.strip()]
-    roles = [r.strip() for r in args.roles.split(",") if r.strip()]
-
-    stories = generate_stories(features, roles)
-
-    if args.json:
-        print(json.dumps(stories, ensure_ascii=False, indent=2))
-    else:
-        print_readable(stories)
+    main()

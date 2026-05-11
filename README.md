@@ -327,7 +327,7 @@ gkt watch
 Alias:
 
 ```bash
-GKit version
+gkt version
 ```
 
 NPX:

@@ -205,7 +205,7 @@ def run_python_script(script, args=None):
         sys.exit(result.returncode)
 
 
-def copy_group_selective(source_agent_dir, target_agent_dir, group_config, default_skills=None):
+def copy_group_selective(source_agent_dir, target_agent_dir, group_config, default_skills=None, minimal=False):
     """Copy only the skills and workflows defined in a group config.
     
     Always copies: brain/
@@ -223,19 +223,20 @@ def copy_group_selective(source_agent_dir, target_agent_dir, group_config, defau
     all_skills = merge_group_skills(group_config, default_skills)
 
     # Copy selected skills
-    skills_target = target_agent_dir / "skills"
-    skills_target.mkdir(parents=True, exist_ok=True)
-    skills_src = source_agent_dir / "skills"
     copied_skills = 0
-    missing_skills = []
-    for skill_name in all_skills:
-        src = skills_src / skill_name
-        if src.is_dir() and (src / "SKILL.md").exists():
-            shutil.copytree(src, skills_target / skill_name)
-            copied_skills += 1
-        else:
-            missing_skills.append(skill_name)
-    warn_missing("skills", missing_skills)
+    if not minimal:
+        skills_target = target_agent_dir / "skills"
+        skills_target.mkdir(parents=True, exist_ok=True)
+        skills_src = source_agent_dir / "skills"
+        missing_skills = []
+        for skill_name in all_skills:
+            src = skills_src / skill_name
+            if src.is_dir() and (src / "SKILL.md").exists():
+                shutil.copytree(src, skills_target / skill_name)
+                copied_skills += 1
+            else:
+                missing_skills.append(skill_name)
+        warn_missing("skills", missing_skills)
 
     # Copy selected workflows
     workflows_target = target_agent_dir / "workflows"
@@ -257,7 +258,7 @@ def copy_group_selective(source_agent_dir, target_agent_dir, group_config, defau
     return copied_skills
 
 
-def install_kiro(package_dir, group_config=None, skill_groups=None):
+def install_kiro(package_dir, group_config=None, skill_groups=None, minimal=False):
     """Install GravityKit for Kiro IDE.
 
     Maps .agent/ structure to Kiro's .kiro/ structure:
@@ -277,10 +278,10 @@ def install_kiro(package_dir, group_config=None, skill_groups=None):
 
     # 1. Copy skills: .agent/skills/ → .kiro/skills/
     skills_src = agent_dir / "skills"
-    skills_target = kiro_dir / "skills"
-    skills_target.mkdir(parents=True, exist_ok=True)
     copied_skills = 0
-    if skills_src.exists():
+    if not minimal and skills_src.exists():
+        skills_target = kiro_dir / "skills"
+        skills_target.mkdir(parents=True, exist_ok=True)
         if group_config:
             # Selective: copy group skills + _default skills
             resolved_groups = skill_groups if skill_groups is not None else load_skill_groups()
@@ -438,7 +439,7 @@ def update_gitignore(cwd: Path, created_paths: list):
             click.echo(f"  ⚠️  Could not update .gitignore: {e}")
 
 
-def setup_agent_instructions(cwd: Path, targets: list[str]):
+def setup_agent_instructions(cwd: Path, targets: list[str], minimal: bool = False):
     """Setup agent instruction files to enforce local MCP priority."""
     rule = (
         "# Local MCP Priority Rule\n"
@@ -446,6 +447,16 @@ def setup_agent_instructions(cwd: Path, targets: list[str]):
         "Do NOT fallback to global or user-level MCP configurations (e.g. in the user's home or gemini directory) "
         "if a local equivalent exists."
     )
+    
+    if minimal:
+        rule += (
+            "\n\n# Global Skills Architecture (Minimal Mode)\n"
+            "Notice: This project was initialized with `--minimal`, meaning the `skills/` folder "
+            "is NOT stored locally to save space. All skills are available in the global cache.\n"
+            "CRITICAL: You MUST use the `skill-router` MCP tool (`route_task`) to discover skills and workflows. "
+            "The router will return the absolute paths to the globally installed `SKILL.md` files. "
+            "Do NOT attempt to read `.agent/skills` locally, as it does not exist."
+        )
     
     target_files = {
         "cursor": ".cursorrules",
@@ -496,7 +507,8 @@ def main():
 @main.command()
 @click.argument('target', default='all', required=False)
 @click.option('--group', '-g', default=None, help='Skill group to install (e.g. general-dev, n8n-dev)')
-def init(target, group):
+@click.option('--minimal', is_flag=True, help='Install brain configs only, skip copying skills folder (MCP will read global cache)')
+def init(target, group, minimal):
     """Initialize GravityKit in the current directory.
     
     TARGET can be an IDE name or a skill group name.
@@ -634,20 +646,31 @@ def init(target, group):
             if target_ide == "kiro":
                 # Special install for Kiro: maps .agent/ to .kiro/ structure
                 grp = skill_groups[group_name] if group_name else None
-                copied = install_kiro(package_dir, grp, skill_groups)
-                click.echo(f"  ✅ {config['label']} ({copied} skills)")
+                copied = install_kiro(package_dir, grp, skill_groups, minimal)
+                click.echo(f"  ✅ {config['label']} ({copied} skills){' (minimal)' if minimal else ''}")
             elif group_name and target_ide == "antigravity":
                 # Selective copy for antigravity with group filter + _default merge
                 default_skills = get_default_skills(skill_groups)
-                copied = copy_group_selective(source_dir, target_dir, skill_groups[group_name], default_skills)
-                click.echo(f"  ✅ {config['label']} ({copied} skills)")
+                copied = copy_group_selective(source_dir, target_dir, skill_groups[group_name], default_skills, minimal)
+                click.echo(f"  ✅ {config['label']} ({copied} skills){' (minimal)' if minimal else ''}")
             else:
                 # Full copy (original behavior) for non-antigravity IDEs or no group
                 if target_dir.exists():
                     shutil.rmtree(target_dir)
                 target_dir.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copytree(source_dir, target_dir)
-                click.echo(f"  ✅ {config['label']}")
+                
+                if minimal:
+                    target_dir.mkdir(parents=True, exist_ok=True)
+                    for item in source_dir.iterdir():
+                        if item.name == 'skills':
+                            continue
+                        if item.is_dir():
+                            shutil.copytree(item, target_dir / item.name)
+                        else:
+                            shutil.copy2(item, target_dir / item.name)
+                else:
+                    shutil.copytree(source_dir, target_dir)
+                click.echo(f"  ✅ {config['label']}{' (minimal)' if minimal else ''}")
             installed += 1
             registered_targets.append(target_ide)
             created_paths.append(target_dir)
@@ -665,10 +688,20 @@ def init(target, group):
                 try:
                     if group_name:
                         default_skills = get_default_skills(skill_groups)
-                        copy_group_selective(agent_src, agent_target, skill_groups[group_name], default_skills)
+                        copy_group_selective(agent_src, agent_target, skill_groups[group_name], default_skills, minimal)
                     else:
-                        shutil.copytree(agent_src, agent_target)
-                    click.echo(f"  ✅ .agent/ (skills referenced by {ide_target} adapter)")
+                        if minimal:
+                            agent_target.mkdir(parents=True, exist_ok=True)
+                            for item in agent_src.iterdir():
+                                if item.name == 'skills':
+                                    continue
+                                if item.is_dir():
+                                    shutil.copytree(item, agent_target / item.name)
+                                else:
+                                    shutil.copy2(item, agent_target / item.name)
+                        else:
+                            shutil.copytree(agent_src, agent_target)
+                    click.echo(f"  ✅ .agent/ (skills referenced by {ide_target} adapter){' (minimal)' if minimal else ''}")
                     installed += 1
                     created_paths.append(agent_target)
                 except Exception as e:
@@ -686,7 +719,7 @@ def init(target, group):
 
     if installed > 0:
         update_gitignore(Path.cwd(), created_paths)
-        setup_agent_instructions(Path.cwd(), registered_targets)
+        setup_agent_instructions(Path.cwd(), registered_targets, minimal)
 
     click.echo(f"\n✨ Done! Installed for {installed} IDE(s).")
     if group_name:

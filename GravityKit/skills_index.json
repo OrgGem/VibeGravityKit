@@ -315,6 +315,24 @@
     "source": "community"
   },
   {
+    "id": "bank-metrics-analyzer",
+    "path": "skills/bank-metrics-analyzer/SKILL.md",
+    "category": "development",
+    "name": "bank-metrics-analyzer",
+    "description": "Extract, compute, and analyze specialized financial metrics for Commercial Banks  and Financial Institutions. Covers Asset Quality (NPL, NCO), Profitability (NIM,  Efficiency Ratio), Capital Adequacy (CET1), and Liquidity (LDR, LCR). Use this  skill when analyzing banks (e.g., JPM, BAC, GS, regional banks) because standard  corporate metrics (EBITDA, Gross Margin) are invalid.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "bank-valuation-models",
+    "path": "skills/bank-valuation-models/SKILL.md",
+    "category": "general",
+    "name": "bank-valuation-ddm",
+    "description": "Valuation models exclusively for Banks and Financial Institutions. Implements  the Dividend Discount Model (DDM), Residual Income Model (RIM), and Price to  Tangible Book Value (P/TBV) regression. Use this skill instead of standard DCF  when valuing banks.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "bash-linux",
     "path": "skills/bash-linux/SKILL.md",
     "category": "architecture",
@@ -2090,10 +2108,10 @@
   {
     "id": "user-story-generator",
     "path": "skills/user-story-generator/SKILL.md",
-    "category": "general",
+    "category": "data-ai",
     "name": "user-story-generator",
-    "description": "Generates User Stories and Acceptance Criteria following INVEST criteria + Given-When-Then (Gherkin) format for BA/PO. Supports 3 modes: write new from feature description, refine existing US, or add AC to existing story. Enforces 6 INVEST criteria and structures AC with happy path, edge case, and negative path scenarios. Use when: write user story, create US, write AC, acceptance criteria, INVEST user story, Gherkin AC, refine user story, split user story.",
-    "risk": "safe",
+    "description": "Generates User Stories and Acceptance Criteria following INVEST criteria +\nGiven-When-Then (Gherkin) format for BA/PO. Enforces 6 INVEST criteria\n(Independent, Negotiable, Valuable, Estimable, Small, Testable) and\nstructures AC in Gherkin syntax.\n\nSupports 3 modes:\n- Mode A (Write new): Generate US + AC from a feature description\n- Mode B (Refine): Review & improve an existing US/AC\n- Mode C (Add AC): Supplement AC to an existing User Story\n\nTrigger keywords: \"write user story\", \"create US\", \"write AC\",\n\"acceptance criteria\", \"INVEST user story\", \"Given-When-Then AC\",\n\"Gherkin AC\", \"refine user story\", \"review this US\", \"split user story\",\n\"story for this feature\", paste feature description + \"write story\",\nupload PRD + \"create US list\".\n\nNOT for: writing full PRD/URD/SRS, detailed technical test cases\n(AC ≠ test case), formal Use Cases, or business rules documentation.",
+    "risk": "unknown",
     "source": "community"
   },
   {

@@ -1,0 +1,19 @@
+{
+  "port": 7077,
+  "baseUrl": "http://localhost:7077",
+  "syncIntervalMinutes": 60,
+  "cacheDir": ".cache",
+  "source": {
+    "localPath": "../..",
+    "repoUrl": "",
+    "branch": "main",
+    "username": "",
+    "patEnv": "GRAVITYKIT_REPO_PAT"
+  },
+  "paths": {
+    "skillsDir": ".agent/skills",
+    "fallbackSkillsDir": "GravityKit/.agent/skills",
+    "skillGroups": "GravityKit/data/skill_groups.json",
+    "catalog": "GravityKit/data/catalog.json"
+  }
+}

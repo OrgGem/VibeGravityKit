@@ -1,0 +1,153 @@
+{
+  "name": "rpa-skills",
+  "displayName": "RPA Skills",
+  "description": "Skill Marketplace and Configuration Manager for RPA Skills",
+  "version": "0.0.1",
+  "publisher": "orggem",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OrgGem/VibeGravityKit.git",
+    "directory": "packages/vscode-extension"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:rpaSkills.skillsView",
+    "onCommand:rpaSkills.refreshSkills",
+    "onCommand:rpaSkills.installSkill",
+    "onCommand:rpaSkills.installGroup",
+    "onCommand:rpaSkills.openSkillDetails"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "rpaSkills.refreshSkills",
+        "title": "RPA Skills: Refresh Skills",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "rpaSkills.installSkill",
+        "title": "RPA Skills: Install or Update Skill",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "rpaSkills.installGroup",
+        "title": "RPA Skills: Install Group",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "rpaSkills.openSkillDetails",
+        "title": "RPA Skills: Open Skill Details"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "rpaSkills.refreshSkills",
+          "when": "view == rpaSkills.skillsView",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "rpaSkills.installSkill",
+          "when": "view == rpaSkills.skillsView && viewItem == skillNotInstalled",
+          "group": "inline"
+        },
+        {
+          "command": "rpaSkills.installSkill",
+          "when": "view == rpaSkills.skillsView && viewItem == skillUpdateAvailable",
+          "group": "inline"
+        },
+        {
+          "command": "rpaSkills.installSkill",
+          "when": "view == rpaSkills.skillsView && viewItem == skillInstalled",
+          "group": "navigation@1"
+        },
+        {
+          "command": "rpaSkills.installGroup",
+          "when": "view == rpaSkills.skillsView && viewItem == group",
+          "group": "navigation@1"
+        },
+        {
+          "command": "rpaSkills.openSkillDetails",
+          "when": "view == rpaSkills.skillsView && (viewItem == skillNotInstalled || viewItem == skillInstalled || viewItem == skillUpdateAvailable)",
+          "group": "navigation@2"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "rpa-skills-explorer",
+          "title": "RPA Skills",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "rpa-skills-explorer": [
+        {
+          "id": "rpaSkills.skillsView",
+          "name": "Skills"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "RPA Skills",
+      "properties": {
+        "rpaSkills.registryUrl": {
+          "type": "string",
+          "default": "http://localhost:7077/manifest.json",
+          "description": "URL of the RPA Skills registry manifest JSON file."
+        },
+        "rpaSkills.skills.path": {
+          "type": "string",
+          "default": ".agent/skills",
+          "description": "Path where RPA skills are installed, relative to the workspace root."
+        },
+        "rpaSkills.brain.path": {
+          "type": "string",
+          "default": ".agent/brain",
+          "description": "Path to the project brain directory relative to the workspace root."
+        },
+        "rpaSkills.mcp.configPaths": {
+          "type": "array",
+          "default": [
+            ".mcp.json"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "MCP configuration file paths relative to the workspace root."
+        },
+        "rpaSkills.mcp.servers": {
+          "type": "object",
+          "default": {},
+          "description": "MCP server configuration for RPA Skills."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.8",
+    "@types/node": "18.x",
+    "@types/vscode": "^1.80.0",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.17",
+    "axios": "^1.6.0"
+  }
+}

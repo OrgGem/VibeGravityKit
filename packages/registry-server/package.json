@@ -1,0 +1,16 @@
+{
+  "name": "gravitykit-registry-server",
+  "version": "0.1.0",
+  "description": "Static Skill Registry proxy for GravityKit VS Code extension.",
+  "private": true,
+  "type": "commonjs",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "smoke": "node scripts/smoke-test.js",
+    "test": "node scripts/smoke-test.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

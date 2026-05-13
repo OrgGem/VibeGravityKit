@@ -12,9 +12,26 @@ export interface SkillRegistryLookup {
     refreshLocalState(): void;
 }
 
+export interface SkillInstallTarget {
+    id?: string;
+    label: string;
+    rootPath: string;
+    mode: 'skillDirectory' | 'markdownRule';
+    ruleFileExtension?: string;
+}
+
 export async function installSkill(skill: NormalizedSkill, registry?: SkillRegistryLookup): Promise<void> {
     const plan = await buildInstallPlan(skill, registry);
     await installPlan(`Installing ${skill.name}...`, plan, registry);
+}
+
+export async function installSkillToTarget(
+    skill: NormalizedSkill,
+    target: SkillInstallTarget,
+    registry?: SkillRegistryLookup
+): Promise<void> {
+    const plan = await buildInstallPlan(skill, registry, true);
+    await installPlan(`Installing ${skill.name} for ${target.label}...`, plan, registry, target);
 }
 
 export async function installGroup(groupName: string, skills: NormalizedSkill[], registry?: SkillRegistryLookup): Promise<void> {
@@ -36,7 +53,12 @@ export async function installGroup(groupName: string, skills: NormalizedSkill[],
     await installPlan(`Installing ${groupName} skills...`, uniqueSkills(skills), registry);
 }
 
-async function installPlan(title: string, skills: NormalizedSkill[], registry?: SkillRegistryLookup): Promise<void> {
+async function installPlan(
+    title: string,
+    skills: NormalizedSkill[],
+    registry?: SkillRegistryLookup,
+    target?: SkillInstallTarget
+): Promise<void> {
     if (skills.length === 0) {
         return;
     }
@@ -50,7 +72,7 @@ async function installPlan(title: string, skills: NormalizedSkill[], registry?: 
             const increment = 100 / skills.length;
             for (const skill of skills) {
                 progress.report({ message: skill.name });
-                await installSingleSkill(skill);
+                await installSingleSkill(skill, target);
                 progress.report({ increment });
             }
 
@@ -66,22 +88,26 @@ async function installPlan(title: string, skills: NormalizedSkill[], registry?: 
     });
 }
 
-async function buildInstallPlan(skill: NormalizedSkill, registry?: SkillRegistryLookup): Promise<NormalizedSkill[]> {
+async function buildInstallPlan(
+    skill: NormalizedSkill,
+    registry?: SkillRegistryLookup,
+    includeInstalledDependencies = false
+): Promise<NormalizedSkill[]> {
     if (!registry || skill.dependencies.length === 0) {
         return [skill];
     }
 
-    const missingDependencies = skill.dependencies
+    const dependencies = skill.dependencies
         .map((dependencyId) => registry.findSkillById(dependencyId))
         .filter((dependency): dependency is NormalizedSkill => Boolean(dependency))
-        .filter((dependency) => registry.getSkillStatus(dependency).status === 'notInstalled');
+        .filter((dependency) => includeInstalledDependencies || registry.getSkillStatus(dependency).status === 'notInstalled');
 
-    if (missingDependencies.length === 0) {
+    if (dependencies.length === 0) {
         return [skill];
     }
 
     const answer = await vscode.window.showWarningMessage(
-        `${skill.name} requires ${missingDependencies.length} missing dependencies. Install them now?`,
+        `${skill.name} requires ${dependencies.length} dependencies. Install them now?`,
         { modal: true },
         'Install dependencies',
         'Skip dependencies'
@@ -91,19 +117,26 @@ async function buildInstallPlan(skill: NormalizedSkill, registry?: SkillRegistry
         return [skill];
     }
 
-    return uniqueSkills([...missingDependencies, skill]);
+    return uniqueSkills([...dependencies, skill]);
 }
 
-async function installSingleSkill(skill: NormalizedSkill): Promise<void> {
+async function installSingleSkill(skill: NormalizedSkill, target?: SkillInstallTarget): Promise<void> {
     if (!skill.downloadUrl) {
         throw new Error(`Skill ${skill.name} does not define a download URL.`);
     }
 
-    const skillsRoot = getSkillsRoot();
+    const installTarget = target || {
+        label: 'workspace',
+        rootPath: getSkillsRoot(),
+        mode: 'skillDirectory' as const
+    };
+    const skillsRoot = installTarget.rootPath;
     fs.mkdirSync(skillsRoot, { recursive: true });
 
     const safeSkillId = safeSkillDirectoryName(skill.id);
-    const targetDir = path.resolve(skillsRoot, safeSkillId);
+    const targetDir = installTarget.mode === 'skillDirectory'
+        ? path.resolve(skillsRoot, safeSkillId)
+        : path.resolve(skillsRoot, `${safeSkillId}.${installTarget.ruleFileExtension || 'md'}`);
     const tempDir = path.resolve(skillsRoot, `.${safeSkillId}.tmp-${Date.now()}`);
     ensureInside(skillsRoot, targetDir, `Install target for ${skill.id} escapes the configured skills directory.`);
     ensureInside(skillsRoot, tempDir, `Temporary install target for ${skill.id} escapes the configured skills directory.`);
@@ -118,9 +151,14 @@ async function installSingleSkill(skill: NormalizedSkill): Promise<void> {
             throw new Error(`Archive for ${skill.name} does not contain SKILL.md at its root.`);
         }
 
-        fs.rmSync(targetDir, { recursive: true, force: true });
-        fs.renameSync(tempDir, targetDir);
-        writeInstallMetadata(skill, targetDir);
+        if (installTarget.mode === 'skillDirectory') {
+            fs.rmSync(targetDir, { recursive: true, force: true });
+            fs.renameSync(tempDir, targetDir);
+            writeInstallMetadata(skill, targetDir);
+        } else {
+            fs.writeFileSync(targetDir, renderRuleFile(skill, fs.readFileSync(path.join(tempDir, 'SKILL.md'), 'utf8'), installTarget), 'utf8');
+            fs.rmSync(tempDir, { recursive: true, force: true });
+        }
     } catch (error) {
         fs.rmSync(tempDir, { recursive: true, force: true });
         throw error;
@@ -198,6 +236,40 @@ function writeInstallMetadata(skill: NormalizedSkill, targetDir: string): void {
         `${JSON.stringify(metadata, null, 2)}\n`,
         'utf8'
     );
+}
+
+function renderRuleFile(skill: NormalizedSkill, skillMarkdown: string, target: SkillInstallTarget): string {
+    const body = stripFrontmatter(skillMarkdown).trim();
+    const description = (skill.description || skill.name).replace(/\r?\n/g, ' ').trim();
+
+    if (target.ruleFileExtension === 'mdc') {
+        return [
+            '---',
+            `description: ${JSON.stringify(description)}`,
+            'alwaysApply: false',
+            '---',
+            '',
+            `# ${skill.name}`,
+            '',
+            body,
+            ''
+        ].join('\n');
+    }
+
+    return [
+        '---',
+        `description: ${JSON.stringify(description)}`,
+        '---',
+        '',
+        `# ${skill.name}`,
+        '',
+        body,
+        ''
+    ].join('\n');
+}
+
+function stripFrontmatter(markdown: string): string {
+    return markdown.replace(/^---\s*[\s\S]*?\s*---\s*/, '');
 }
 
 function uniqueSkills(skills: NormalizedSkill[]): NormalizedSkill[] {

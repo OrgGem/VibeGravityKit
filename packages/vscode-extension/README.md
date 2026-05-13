@@ -2,7 +2,7 @@
 
 MVP client for browsing and installing RPA skills from a registry server.
 
-## MVP Plan
+## Features
 
 1. Skill Explorer in the Activity Bar.
 2. Registry-backed group and skill tree.
@@ -11,6 +11,20 @@ MVP client for browsing and installing RPA skills from a registry server.
 5. ZIP download and extraction into the configured workspace skill path.
 6. Group install command.
 7. VS Code settings for registry URL, skill path, brain path, and MCP config paths.
+8. Assistant Setup dashboard for IDE target status, MCP activation, watch state, and prompt editing.
+9. Install a skill into IDE-specific targets:
+   - GravityKit Agent: `.agent/skills/<skill>/SKILL.md`
+   - Codex: `.codex/skills/<skill>/SKILL.md`
+   - Cursor: `.cursor/rules/<skill>.mdc`
+   - Windsurf: `.windsurf/rules/<skill>.md`
+   - Kilo Code: `.kilocode/rules/<skill>.md`
+   - Cline: `.clinerules/<skill>.md`
+   - Kiro: `.kiro/skills/<skill>/SKILL.md`
+   - Claude: `.claude/skills/<skill>/SKILL.md`
+   - GitHub Copilot: `.github/skills/<skill>/SKILL.md`
+10. Activate or disable MCP servers for supported IDE config files (`.mcp.json`, `.cursor/mcp.json`, `.codex/config.toml`).
+11. Watch local skill, prompt, rule, and MCP files so the extension refreshes when files change.
+12. Open or create prompt files including `AGENTS.md`, `SKILL.md`, IDE rules, and MCP configs.
 
 ## Settings
 
@@ -19,6 +33,16 @@ MVP client for browsing and installing RPA skills from a registry server.
 - `rpaSkills.brain.path`: brain directory relative to the workspace. Default: `.agent/brain`.
 - `rpaSkills.mcp.configPaths`: MCP config files relative to the workspace.
 - `rpaSkills.mcp.servers`: inline MCP server configuration object.
+- `rpaSkills.watch.enabled`: start the local watcher automatically. Default: `true`.
+
+## Commands
+
+- `RPA Skills: Assistant Setup`: open the dashboard for IDE targets, MCP, watch, and prompt files.
+- `RPA Skills: Install Skill to IDE`: install a registry skill into a selected IDE target.
+- `RPA Skills: Activate MCP for IDE`: write enabled MCP server config for the selected target.
+- `RPA Skills: Disable MCP for IDE`: keep MCP config installed but mark servers disabled.
+- `RPA Skills: Open Prompt or Instruction`: open a prompt, rule, `SKILL.md`, or MCP config for editing.
+- `RPA Skills: Start Watch` / `RPA Skills: Stop Watch`: control the workspace watcher.
 
 ## Development
 

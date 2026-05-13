@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  registry-server:
+    image: gemvn90/skill-registry:0.0.1
+    # Nếu muốn tự build lại từ source, có thể bỏ comment dòng dưới và comment dòng image:
+    # build: .
+    container_name: skill-registry
+    ports:
+      - "7077:7077"
+    env_file:
+      - .env
+    
+    # -------------------------------------------------------------
+    # Nếu bạn dùng cấu hình GRAVITYKIT_LOCAL_REPO=../.. trong .env 
+    # thì cần mount thư mục gốc của VibeGravityKit vào container.
+    # Bỏ comment các dòng dưới đây để sử dụng repo local:
+    # -------------------------------------------------------------
+    # volumes:
+    #   - ../../:/repo
+    # environment:
+    #   - GRAVITYKIT_LOCAL_REPO=/repo
+    
+    restart: unless-stopped

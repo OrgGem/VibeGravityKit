@@ -1,6 +1,45 @@
-<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
-  <rect width="128" height="128" rx="24" fill="#1f6feb"/>
-  <path d="M64 18l34 18v56L64 110 30 92V36l34-18z" fill="#0d1117" opacity=".85"/>
-  <path d="M64 30l22 12v36L64 90 42 78V42l22-12z" fill="#58a6ff"/>
-  <path d="M64 42l12 7v22l-12 7-12-7V49l12-7z" fill="#f0f6fc"/>
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="skillBlue" x1="25" y1="18" x2="84" y2="80" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1E3A8A"/>
+      <stop offset="1" stop-color="#172554"/>
+    </linearGradient>
+    <linearGradient id="skillGreen" x1="45" y1="48" x2="103" y2="110" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#34D399"/>
+      <stop offset="1" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="skillRed" x1="25" y1="50" x2="103" y2="78" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F87171"/>
+      <stop offset="1" stop-color="#DC2626"/>
+    </linearGradient>
+    <filter id="softShadow" x="12" y="10" width="104" height="108" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#softShadow)">
+    <path
+      d="M40 18h36c12.15 0 22 9.85 22 22v12H58c-13.25 0-24 10.75-24 24v2H22V36c0-9.94 8.06-18 18-18Z"
+      fill="url(#skillBlue)"
+    />
+    <circle cx="45" cy="36" r="5" fill="#EF4444"/>
+
+    <path
+      d="M88 110H52c-12.15 0-22-9.85-22-22V76h40c13.25 0 24-10.75 24-24v-2h12v42c0 9.94-8.06 18-18 18Z"
+      fill="url(#skillGreen)"
+    />
+    <circle cx="83" cy="92" r="5" fill="#1E3A8A"/>
+  </g>
+
+  <rect x="25" y="50" width="78" height="28" rx="8" fill="url(#skillRed)"/>
+  <text
+    x="64"
+    y="69"
+    fill="#FFFFFF"
+    font-family="Segoe UI, Inter, Arial, sans-serif"
+    font-size="18"
+    font-weight="800"
+    letter-spacing="0"
+    text-anchor="middle"
+  >Skill</text>
 </svg>

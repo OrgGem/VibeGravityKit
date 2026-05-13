@@ -34,3 +34,7 @@ jobs:
           files: packages/vscode-extension/rpa-skills-extension.vsix
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to Open VSX
+        # Publish the extension to open-vsx.org
+        run: npx --yes ovsx publish rpa-skills-extension.vsix -p ${{ secrets.OPEN_VSX_TOKEN }}

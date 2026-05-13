@@ -47,7 +47,11 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillTreeItem> {
                 );
                 groupItem.group = group;
                 groupItem.description = `${group.skills.length} skills`;
-                groupItem.tooltip = group.description || group.name;
+                groupItem.tooltip = [
+                    group.description || group.name,
+                    '',
+                    'Expand to browse skills. Right-click the group to install every skill in it.'
+                ].join('\n').trim();
                 return groupItem;
             });
         } else if (element.contextValue === 'group') {
@@ -63,6 +67,11 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillTreeItem> {
 
     findGroupById(groupId: string): NormalizedGroup | undefined {
         return this.groups.find((group) => group.id === groupId);
+    }
+
+    async listSkills(): Promise<NormalizedSkill[]> {
+        await this.ensureLoaded();
+        return this.groups.flatMap((group) => group.skills);
     }
 
     getSkillStatus(skill: NormalizedSkill): SkillStatus {
@@ -122,7 +131,11 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillTreeItem> {
         const registryUrl = getRpaSkillsConfigValue<string>('registryUrl');
 
         if (!registryUrl) {
-            vscode.window.showErrorMessage('RPA Skills registry URL is not configured.');
+            vscode.window.showErrorMessage('RPA Skills registry URL is not configured.', 'Open Settings').then(selection => {
+                if (selection === 'Open Settings') {
+                    vscode.commands.executeCommand('workbench.action.openSettings', 'rpaSkills.registryUrl');
+                }
+            });
             return [];
         }
 
@@ -130,7 +143,11 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillTreeItem> {
             const registry = await this.readManifest(registryUrl);
             return normalizeManifest(registry).groups;
         } catch (error: any) {
-            vscode.window.showErrorMessage(`Failed to fetch RPA Skills registry: ${error.message}`);
+            vscode.window.showErrorMessage(`Failed to fetch RPA Skills registry: ${error.message}`, 'Open Settings').then(selection => {
+                if (selection === 'Open Settings') {
+                    vscode.commands.executeCommand('workbench.action.openSettings', 'rpaSkills.registryUrl');
+                }
+            });
         }
 
         return [];
@@ -169,7 +186,14 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillTreeItem> {
 
         skillItem.skill = skill;
         skillItem.description = this.renderStatusDescription(skill, status);
-        skillItem.tooltip = `${skill.name}\n${skill.description || ''}`.trim();
+        skillItem.tooltip = [
+            skill.name,
+            skill.description || '',
+            '',
+            status.status === 'notInstalled'
+                ? 'Click for details, use Install to add it to the workspace, or Install to IDE to generate IDE-specific files.'
+                : 'Click for details. Reinstall or use Install to IDE when another editor should load this skill.'
+        ].join('\n').trim();
         skillItem.iconPath = status.status === 'installed'
             ? new vscode.ThemeIcon('check', new vscode.ThemeColor('testing.iconPassed'))
             : status.status === 'updateAvailable'
@@ -246,6 +270,8 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillTreeItem> {
     private renderSkillDetails(webview: vscode.Webview, skill: NormalizedSkill, status: SkillStatus): string {
         const installArgs = encodeURIComponent(JSON.stringify([skill.id]));
         const installUri = vscode.Uri.parse(`command:rpaSkills.installSkill?${installArgs}`).toString();
+        const installIdeArgs = encodeURIComponent(JSON.stringify([skill.id]));
+        const installIdeUri = vscode.Uri.parse(`command:rpaSkills.installSkillToIde?${installIdeArgs}`).toString();
         const statusLabel = status.status === 'updateAvailable'
             ? `Update available (${status.installedVersion || 'installed'} -> ${skill.version || 'latest'})`
             : status.status === 'installed'
@@ -286,6 +312,11 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillTreeItem> {
             border-radius: 4px;
         }
         a.button:hover { background: var(--vscode-button-hoverBackground); }
+        a.button.secondary {
+            color: var(--vscode-button-secondaryForeground);
+            background: var(--vscode-button-secondaryBackground);
+            margin-left: 8px;
+        }
         code {
             background: var(--vscode-textCodeBlock-background);
             padding: 1px 4px;
@@ -298,6 +329,11 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillTreeItem> {
             margin-top: 18px;
         }
         .label, .muted { color: var(--vscode-descriptionForeground); }
+        .hint {
+            color: var(--vscode-descriptionForeground);
+            margin: 10px 0 0;
+            max-width: 860px;
+        }
         .badge, .tag {
             display: inline-block;
             border: 1px solid var(--vscode-panel-border);
@@ -313,7 +349,9 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillTreeItem> {
 <body>
     <h1>${escapeHtml(skill.name)}</h1>
     <div class="badge">${escapeHtml(statusLabel)}</div>
-    <a class="button" href="${installUri}">${escapeHtml(actionLabel)}</a>
+    <a class="button" href="${installUri}" title="Install or update this skill in the canonical workspace skills folder.">${escapeHtml(actionLabel)}</a>
+    <a class="button secondary" href="${installIdeUri}" title="Copy this skill into the selected IDE-specific skill or rule location.">Install to IDE</a>
+    <p class="hint">Use ${escapeHtml(actionLabel)} for the shared workspace skill folder. Use Install to IDE when Cursor, Codex, Windsurf, Kiro, or another target should load its own copy or rule file.</p>
 
     <div class="meta">
         <div class="label">ID</div><div><code>${escapeHtml(skill.id)}</code></div>

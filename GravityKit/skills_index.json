@@ -234,6 +234,15 @@
     "source": "community"
   },
   {
+    "id": "article-magazine",
+    "path": "skills/article-magazine/SKILL.md",
+    "category": "general",
+    "name": "article-magazine",
+    "description": "Substack / Medium 高级感长文排版, 适合公众号、博客发布",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "auth-implementation-patterns",
     "path": "skills/auth-implementation-patterns/SKILL.md",
     "category": "security",
@@ -342,6 +351,15 @@
     "source": "community"
   },
   {
+    "id": "blog-post",
+    "path": "skills/blog-post/SKILL.md",
+    "category": "general",
+    "name": "blog-post",
+    "description": "杂志感长文, 含 masthead、hero、figures、pull quote、作者署名",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "brain-manager",
     "path": "skills/brain-manager/SKILL.md",
     "category": "data-ai",
@@ -356,6 +374,24 @@
     "category": "general",
     "name": "canva-automation",
     "description": "Automate Canva tasks via Rube MCP (Composio): designs, exports, folders, brand templates, autofill. Always search tools first for current schemas.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "card-twitter",
+    "path": "skills/card-twitter/SKILL.md",
+    "category": "general",
+    "name": "card-twitter",
+    "description": "推特金句 / 数据卡, 适合配推文",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "card-xiaohongshu",
+    "path": "skills/card-xiaohongshu/SKILL.md",
+    "category": "general",
+    "name": "card-xiaohongshu",
+    "description": "小红书风格知识卡片, 多张联排可滑动浏览",
     "risk": "unknown",
     "source": "community"
   },
@@ -621,6 +657,15 @@
     "source": "community"
   },
   {
+    "id": "dashboard",
+    "path": "skills/dashboard/SKILL.md",
+    "category": "general",
+    "name": "dashboard",
+    "description": "固定侧栏 + 顶栏 + KPI 网格 + 1-2 张图",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "data-engineer",
     "path": "skills/data-engineer/SKILL.md",
     "category": "infrastructure",
@@ -653,6 +698,15 @@
     "category": "data-ai",
     "name": "data-quality-frameworks",
     "description": "Implement data quality validation with Great Expectations, dbt tests, and data contracts. Use when building data quality pipelines, implementing validation rules, or establishing data contracts.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "data-report",
+    "path": "skills/data-report/SKILL.md",
+    "category": "data-ai",
+    "name": "data-report",
+    "description": "把 CSV/Excel/JSON 数据转成漂亮的可视化报告页",
     "risk": "unknown",
     "source": "community"
   },
@@ -756,6 +810,15 @@
     "source": "community"
   },
   {
+    "id": "dating-web",
+    "path": "skills/dating-web/SKILL.md",
+    "category": "general",
+    "name": "dating-web",
+    "description": "消费感配对仪表板: 信号 ticker + KPI + 30 天柱状 + 趋势",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "db-designer",
     "path": "skills/db-designer/SKILL.md",
     "category": "data-ai",
@@ -792,11 +855,200 @@
     "source": "community"
   },
   {
+    "id": "deck-blueprint",
+    "path": "skills/deck-blueprint/SKILL.md",
+    "category": "general",
+    "name": "deck-blueprint",
+    "description": "奶油纸 + 锈红 + 蓝图网格 mask + 黑边硬卡片 + pipeline 盒",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-course-module",
+    "path": "skills/deck-course-module/SKILL.md",
+    "category": "data-ai",
+    "name": "deck-course-module",
+    "description": "暖纸背景 + Playfair, 左侧学习目标常驻, 含 MCQ 自测页",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-dir-key-nav",
+    "path": "skills/deck-dir-key-nav/SKILL.md",
+    "category": "general",
+    "name": "deck-dir-key-nav",
+    "description": "8 页单色背景, 160px display + 4px accent + Mono 箭头列表",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-graphify-dark",
+    "path": "skills/deck-graphify-dark/SKILL.md",
+    "category": "data-ai",
+    "name": "deck-graphify-dark",
+    "description": "深夜渐变 + 漂浮 orbs + SVG 力导向图谱 + JetBrains Mono",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-guizang-editorial",
+    "path": "skills/deck-guizang-editorial/SKILL.md",
+    "category": "general",
+    "name": "deck-guizang-editorial",
+    "description": "电子杂志 × 电子墨水; 10 个版面 + 5 套调色板 (墨水/靛蓝瓷/森林墨/牛皮纸/沙丘)",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-hermes-cyber",
+    "path": "skills/deck-hermes-cyber/SKILL.md",
+    "category": "general",
+    "name": "deck-hermes-cyber",
+    "description": "黑底 + CRT 网格扫描线 + $ 命令行标题 + 薄荷绿大字 + 三档 tag",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-magazine-web",
+    "path": "skills/deck-magazine-web/SKILL.md",
+    "category": "general",
+    "name": "deck-magazine-web",
+    "description": "电子杂志 × 电子墨水风, WebGL 流体背景 + 衬线 display",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-obsidian-claude",
+    "path": "skills/deck-obsidian-claude/SKILL.md",
+    "category": "general",
+    "name": "deck-obsidian-claude",
+    "description": "GitHub-dark + 紫蓝环境光 + 三色渐变标题 + GitHub 风代码",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-open-slide-canvas",
+    "path": "skills/deck-open-slide-canvas/SKILL.md",
+    "category": "development",
+    "name": "deck-open-slide-canvas",
+    "description": "锁死 1920×1080 画布, React 组件级自由组合, 不绑模板",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-pitch",
+    "path": "skills/deck-pitch/SKILL.md",
+    "category": "general",
+    "name": "deck-pitch",
+    "description": "10 页融资 deck, 白底 + 蓝紫渐变 hero, traction 柱状, $X.XM ask",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-presenter-mode",
+    "path": "skills/deck-presenter-mode/SKILL.md",
+    "category": "general",
+    "name": "deck-presenter-mode",
+    "description": "tokyo-night 默认主题, T 切换 5 主题, S 打开提词器 popup",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-product-launch",
+    "path": "skills/deck-product-launch/SKILL.md",
+    "category": "general",
+    "name": "deck-product-launch",
+    "description": "暗 hero + 亮内容, 橙→桃 accent, 特性卡 + 定价 + CTA",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-replit",
+    "path": "skills/deck-replit/SKILL.md",
+    "category": "general",
+    "name": "deck-replit",
+    "description": "Replit Slides 八套主题 (helix/holm/vance/bevel/world/atlas/bluehouse)",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-safety-alert",
+    "path": "skills/deck-safety-alert/SKILL.md",
+    "category": "general",
+    "name": "deck-safety-alert",
+    "description": "红琥珀警示色 + hazard 条纹 + L1/L2/L3 tier 卡片 + 删除线标题",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-simple",
+    "path": "skills/deck-simple/SKILL.md",
+    "category": "data-ai",
+    "name": "deck-simple",
+    "description": "通用 horizontal-swipe HTML deck, 不要 magazine 调",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-swiss-international",
+    "path": "skills/deck-swiss-international/SKILL.md",
+    "category": "general",
+    "name": "deck-swiss-international",
+    "description": "16 列网格 + 单一饱和 accent + 22 个锁死版面 (Klein Blue / Lemon / Mint / Safety Orange)",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-tech-sharing",
+    "path": "skills/deck-tech-sharing/SKILL.md",
+    "category": "data-ai",
+    "name": "deck-tech-sharing",
+    "description": "GitHub-dark + JetBrains Mono + 终端代码块, 含 agenda + Q&A",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-xhs-pastel",
+    "path": "skills/deck-xhs-pastel/SKILL.md",
+    "category": "data-ai",
+    "name": "deck-xhs-pastel",
+    "description": "奶油底 + 柔光 blob + 马卡龙圆角卡片 + Playfair 斜体序号",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-xhs-post",
+    "path": "skills/deck-xhs-post/SKILL.md",
+    "category": "general",
+    "name": "deck-xhs-post",
+    "description": "9 页 3:4 竖版图文, 暖 pastel + 虚线 sticker 卡片",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "deck-xhs-white",
+    "path": "skills/deck-xhs-white/SKILL.md",
+    "category": "general",
+    "name": "deck-xhs-white",
+    "description": "纯白 + 顶部彩虹 bar + 渐变文字 + 马卡龙软卡片 + 黑底 pill",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "diff-applier",
     "path": "skills/diff-applier/SKILL.md",
     "category": "general",
     "name": "diff-applier",
     "description": "Smart Patcher — Apply Diff, Lint, and Auto-Index.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "digital-eguide",
+    "path": "skills/digital-eguide/SKILL.md",
+    "category": "general",
+    "name": "digital-eguide",
+    "description": "两页跨页电子指南, 封面 + 课程页 + pull-quote + 步骤列表",
     "risk": "unknown",
     "source": "community"
   },
@@ -846,11 +1098,29 @@
     "source": "community"
   },
   {
+    "id": "doc-kami-parchment",
+    "path": "skills/doc-kami-parchment/SKILL.md",
+    "category": "general",
+    "name": "doc-kami-parchment",
+    "description": "暖羊皮纸底 (#f5f4ed) + 墨蓝单色 accent (#1B365D) + 单一衬线字体, 编辑级排印",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "docker-wizard",
     "path": "skills/docker-wizard/SKILL.md",
     "category": "infrastructure",
     "name": "docker-wizard",
     "description": "Auto-generate Dockerfile & Compose configs.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "docs-page",
+    "path": "skills/docs-page/SKILL.md",
+    "category": "general",
+    "name": "docs-page",
+    "description": "三栏文档页: 侧导航 + 正文 + 右 TOC",
     "risk": "unknown",
     "source": "community"
   },
@@ -891,11 +1161,29 @@
     "source": "community"
   },
   {
+    "id": "email-marketing",
+    "path": "skills/email-marketing/SKILL.md",
+    "category": "data-ai",
+    "name": "email-marketing",
+    "description": "产品发布邮件, 含 masthead、hero、CTA、规格表, table-fallback",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "embedding-strategies",
     "path": "skills/embedding-strategies/SKILL.md",
     "category": "data-ai",
     "name": "embedding-strategies",
     "description": "Select and optimize embedding models for semantic search and RAG applications. Use when choosing embedding models, implementing chunking strategies, or optimizing embedding quality for specific domains.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "eng-runbook",
+    "path": "skills/eng-runbook/SKILL.md",
+    "category": "general",
+    "name": "eng-runbook",
+    "description": "服务概述 + alerts 表 + dashboards + 操作命令 + on-call + 事故清单",
     "risk": "unknown",
     "source": "community"
   },
@@ -1008,11 +1296,92 @@
     "source": "community"
   },
   {
+    "id": "finance-report",
+    "path": "skills/finance-report/SKILL.md",
+    "category": "general",
+    "name": "finance-report",
+    "description": "Masthead + KPI + 收入/烧钱图 + P&L 表 + 重点 + 展望",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "finance-sentiment",
     "path": "skills/finance-sentiment/SKILL.md",
     "category": "development",
     "name": "finance-sentiment",
     "description": "Fetch structured stock sentiment across Reddit, X.com, news, and Polymarket using the Adanos Finance API. Use this skill whenever the user asks how much people are talking about a stock, how hot a ticker is on social platforms, how many Polymarket bets exist for a company, whether sources are aligned, or to compare stock sentiment across multiple tickers. Triggers include: \"social sentiment on TSLA\", \"how hot is NVDA on X.com\", \"how many Reddit mentions does AAPL have\", \"compare sentiment on AMD vs NVDA\", \"how many Polymarket bets on Microsoft\", \"is Reddit aligned with X on META\", \"stock buzz\", \"bullish percentage\", and any mention of cross-source stock sentiment research. This skill is READ-ONLY and does not place trades or modify anything.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "flowai-team-dashboard",
+    "path": "skills/flowai-team-dashboard/SKILL.md",
+    "category": "data-ai",
+    "name": "flowai-team-dashboard",
+    "description": "三个 tab 的团队管理后台: 成员、详情、活动日志, 含图表 + CSV 导出",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "frame-data-chart-nyt",
+    "path": "skills/frame-data-chart-nyt/SKILL.md",
+    "category": "data-ai",
+    "name": "frame-data-chart-nyt",
+    "description": "NYT-newsroom 排版 + 错峰揭示动画 + 编辑级图表 (折线/柱/范围带)",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "frame-flowchart-sticky",
+    "path": "skills/frame-flowchart-sticky/SKILL.md",
+    "category": "data-ai",
+    "name": "frame-flowchart-sticky",
+    "description": "SVG 曲线连接 + 便利贴节点 + 光标交互, 像白板 brainstorm",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "frame-glitch-title",
+    "path": "skills/frame-glitch-title/SKILL.md",
+    "category": "general",
+    "name": "frame-glitch-title",
+    "description": "数字故障 / 像散偏移 / 数据腐败标题, 适合视频转场 / cyberpunk hero",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "frame-light-leak-cinema",
+    "path": "skills/frame-light-leak-cinema/SKILL.md",
+    "category": "general",
+    "name": "frame-light-leak-cinema",
+    "description": "胶片漏光 + 颗粒噪点 + 16:9 letterbox + 衬线大字, 电影感开场 / 章节卡",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "frame-liquid-bg-hero",
+    "path": "skills/frame-liquid-bg-hero/SKILL.md",
+    "category": "general",
+    "name": "frame-liquid-bg-hero",
+    "description": "WebGL 风流体置换背景 + 顶部叠加金句, 适合视频片头 / landing hero / 海报",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "frame-logo-outro",
+    "path": "skills/frame-logo-outro/SKILL.md",
+    "category": "general",
+    "name": "frame-logo-outro",
+    "description": "Logo 分块组装入场 + glow bloom + tagline 揭示, 适合视频片尾 / 品牌闭幕",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "frame-macos-notification",
+    "path": "skills/frame-macos-notification/SKILL.md",
+    "category": "general",
+    "name": "frame-macos-notification",
+    "description": "拟真 macOS 通知 banner + app icon + 标题正文, 适合 video overlay / 产品发布预告",
     "risk": "unknown",
     "source": "community"
   },
@@ -1026,11 +1395,110 @@
     "source": "community"
   },
   {
+    "id": "fsi-3-statement-model",
+    "path": "skills/fsi-3-statement-model/SKILL.md",
+    "category": "data-ai",
+    "name": "fsi-3-statement-model",
+    "description": "Complete, populate and fill out 3-statement financial model templates (Income Statement, Balance Sheet, Cash Flow Statement). Use when asked to fill out model templates, complete existing model frameworks, populate financial models with data. Triggers on \"3-statement model\", \"financial model\", \"IS/BS/CF\", \"income statement\", \"balance sheet\", \"cash flow statement\".",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "fsi-comps-analysis",
+    "path": "skills/fsi-comps-analysis/SKILL.md",
+    "category": "business",
+    "name": "fsi-comps-analysis",
+    "description": "Build institutional-grade comparable company analyses with operating metrics, valuation multiples, and statistical benchmarking in Excel/spreadsheet format.\nUse when users request \"comps\", \"comparable company analysis\", \"peer comparison\", \"trading multiples\", or \"valuation benchmarking\".\n\n**Perfect for:**\n- Public company valuation (M&A, investment analysis)\n- Benchmarking performance vs. industry peers\n- Pricing IPOs or funding rounds\n- Identifying valuation outliers (over/under-valued)\n- Supporting investment committee presentations\n- Creating sector overview reports\n\n**Not ideal for:**\n- Private companies without comparable public peers\n- Highly diversified conglomerates\n- Distressed/bankrupt companies\n- Pre-revenue startups\n- Companies with unique business models",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "fsi-dcf-model",
+    "path": "skills/fsi-dcf-model/SKILL.md",
+    "category": "data-ai",
+    "name": "fsi-dcf-model",
+    "description": "Institutional-quality DCF (Discounted Cash Flow) model creation for equity valuation. Retrieves financial data from SEC filings, analyst reports, and web searches. Builds comprehensive cash flow projections with proper WACC calculations, performs sensitivity analysis, and outputs professional Excel models with executive summaries.\nUse when users need to value a company using DCF methodology, request intrinsic value analysis, or ask for detailed financial modeling with growth projections and terminal value calculations.\nTriggers: \"DCF\", \"discounted cash flow\", \"intrinsic value\", \"equity valuation\", \"WACC\", \"terminal value\", \"valuation model\".",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "fsi-earnings-analysis",
+    "path": "skills/fsi-earnings-analysis/SKILL.md",
+    "category": "general",
+    "name": "fsi-earnings-analysis",
+    "description": "Create professional equity research earnings update reports (8-12 pages, 3,000-5,000 words) analyzing quarterly results. Includes beat/miss analysis, key metrics, updated estimates, and revised thesis. Triggers on \"earnings update\", \"quarterly update\", \"earnings analysis\", \"Q1/Q2/Q3/Q4 results\", \"post-earnings report\".",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "fsi-financial-plan",
+    "path": "skills/fsi-financial-plan/SKILL.md",
+    "category": "general",
+    "name": "fsi-financial-plan",
+    "description": "Build or update a comprehensive financial plan covering retirement projections, education funding, estate planning, and cash flow analysis. Triggers on \"financial plan\", \"retirement plan\", \"can I retire\", \"education funding\", \"estate plan\", \"cash flow analysis\".",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "fsi-gl-recon",
+    "path": "skills/fsi-gl-recon/SKILL.md",
+    "category": "general",
+    "name": "fsi-gl-recon",
+    "description": "Reconcile general ledger to subledger for a trade date or period — match at position or transaction level, surface breaks, and classify each break by likely cause. Triggers on \"GL recon\", \"reconciliation\", \"ledger\", \"break report\", \"subledger\".",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "fsi-ic-memo",
+    "path": "skills/fsi-ic-memo/SKILL.md",
+    "category": "general",
+    "name": "fsi-ic-memo",
+    "description": "Draft a structured investment committee memo for PE deal approval. Synthesizes due diligence findings, financial analysis, and deal terms into a professional IC-ready document. Triggers on \"IC memo\", \"investment committee memo\", \"deal write-up\", \"recommendation memo\".",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "fsi-kyc-doc-parse",
+    "path": "skills/fsi-kyc-doc-parse/SKILL.md",
+    "category": "security",
+    "name": "fsi-kyc-doc-parse",
+    "description": "Parse an investor or client onboarding packet into structured KYC fields — identity, ownership, control, source of funds, and document inventory. Triggers on \"KYC\", \"onboarding\", \"know your customer\", \"AML\", \"compliance check\".",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "fsi-lbo-model",
+    "path": "skills/fsi-lbo-model/SKILL.md",
+    "category": "data-ai",
+    "name": "fsi-lbo-model",
+    "description": "This skill should be used when completing LBO (Leveraged Buyout) model templates in Excel for private equity transactions, deal materials, or investment committee presentations. The skill fills in formulas, validates calculations, and ensures professional formatting standards that adapt to any template structure. Triggers on \"LBO\", \"leveraged buyout\", \"PE model\", \"buyout model\".",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "fsi-unit-economics",
+    "path": "skills/fsi-unit-economics/SKILL.md",
+    "category": "business",
+    "name": "fsi-unit-economics",
+    "description": "Analyze unit economics — ARR cohorts, LTV/CAC, net retention, payback periods, revenue quality, and margin waterfall. Essential for SaaS, recurring revenue, and subscription businesses. Triggers on \"unit economics\", \"cohort analysis\", \"ARR analysis\", \"LTV CAC\", \"net retention\", \"revenue quality\".",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "funda-data",
     "path": "skills/funda-data/SKILL.md",
     "category": "security",
     "name": "funda-data",
     "description": "Fetch financial data from the Funda AI API (https://api.funda.ai). Covers quotes, historical prices, financials, SEC filings, transcripts, analyst estimates, options flow/greeks/GEX, supply chain graph, social sentiment, Polymarket, congressional trades, economics, ESG, news, AI-enriched news (sentiment + event timeline), AI-company recruit signals, and a Claude API proxy via Bedrock. Triggers: stock quotes, balance sheet, income statement, cash flow, analyst targets, DCF, options chain/flow, GEX, IV rank, max pain, earnings/dividend/IPO calendar, 10-K/10-Q/8-K, suppliers/customers/competitors, insider trades, 13F, Reddit/Twitter sentiment, Polymarket, treasury rates, GDP, CPI, FRED, commodity/forex/crypto, stock screener, ETF holdings, COT, ticker sentiment, OpenAI/Anthropic/xAI/Google/Mercor/SurgeAI job postings, product launch probabilities, AI threat to public stocks. Also triggers for \"funda\" or \"funda.ai\". If only a ticker is provided and Funda API can answer, use this skill.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "gamified-app",
+    "path": "skills/gamified-app/SKILL.md",
+    "category": "general",
+    "name": "gamified-app",
+    "description": "三屏: 封面 / 今日任务带 XP / 任务详情, 暗色舞台",
     "risk": "unknown",
     "source": "community"
   },
@@ -1170,6 +1638,15 @@
     "source": "community"
   },
   {
+    "id": "hr-onboarding",
+    "path": "skills/hr-onboarding/SKILL.md",
+    "category": "general",
+    "name": "hr-onboarding",
+    "description": "首周日程 + buddy + 学习路径 + 设备 + 完成标准",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "hubspot-automation",
     "path": "skills/hubspot-automation/SKILL.md",
     "category": "general",
@@ -1242,6 +1719,15 @@
     "source": "community"
   },
   {
+    "id": "invoice",
+    "path": "skills/invoice/SKILL.md",
+    "category": "general",
+    "name": "invoice",
+    "description": "标准发票: 寄件/收件 + 明细 + 税 + 总额 + 付款指引",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "java-pro",
     "path": "skills/java-pro/SKILL.md",
     "category": "infrastructure",
@@ -1265,6 +1751,15 @@
     "category": "general",
     "name": "journal-manager",
     "description": "2-tier knowledge journal — index + entries system for capturing lessons, bugs, and insights during development.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "kanban-board",
+    "path": "skills/kanban-board/SKILL.md",
+    "category": "general",
+    "name": "kanban-board",
+    "description": "To do / In progress / In review / Done 四列, 卡片 + 头像 + 泳道",
     "risk": "unknown",
     "source": "community"
   },
@@ -1332,11 +1827,29 @@
     "source": "community"
   },
   {
+    "id": "live-dashboard",
+    "path": "skills/live-dashboard/SKILL.md",
+    "category": "data-ai",
+    "name": "live-dashboard",
+    "description": "Notion 风团队仪表板, KPI + 7 日 sparkline + activity feed + 任务表",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "llm-app-patterns",
     "path": "skills/llm-app-patterns/SKILL.md",
     "category": "infrastructure",
     "name": "llm-app-patterns",
     "description": "Production-ready patterns for building LLM applications. Covers RAG pipelines, agent architectures, prompt IDEs, and LLMOps monitoring. Use when designing AI applications, implementing RAG, building agents, or setting up LLM observability.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "magazine-poster",
+    "path": "skills/magazine-poster/SKILL.md",
+    "category": "general",
+    "name": "magazine-poster",
+    "description": "Sunday-paper 风格, 大字 serif headline + 双栏正文 + 编号 sections",
     "risk": "unknown",
     "source": "community"
   },
@@ -1359,11 +1872,38 @@
     "source": "community"
   },
   {
+    "id": "meeting-notes",
+    "path": "skills/meeting-notes/SKILL.md",
+    "category": "general",
+    "name": "meeting-notes",
+    "description": "标题 + 出席 + 议程 + 决议 + action items + 下次",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "meta-thinker",
     "path": "skills/meta-thinker/SKILL.md",
     "category": "data-ai",
     "name": "meta-thinker",
     "description": "Creative idea advisor. Brainstorm frameworks, product archetypes, industry data, and monetization models. Zero-token data retrieval via script.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "mobile-app",
+    "path": "skills/mobile-app/SKILL.md",
+    "category": "development",
+    "name": "mobile-app",
+    "description": "像素级 iPhone 15 Pro 边框, 一屏 app 截图",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "mobile-onboarding",
+    "path": "skills/mobile-onboarding/SKILL.md",
+    "category": "development",
+    "name": "mobile-onboarding",
+    "description": "三个手机框并排: splash / value-prop / sign-in",
     "risk": "unknown",
     "source": "community"
   },
@@ -1377,12 +1917,30 @@
     "source": "community"
   },
   {
+    "id": "mockup-device-3d",
+    "path": "skills/mockup-device-3d/SKILL.md",
+    "category": "data-ai",
+    "name": "mockup-device-3d",
+    "description": "iPhone + MacBook 仿 GLTF 静态展架, 屏幕内嵌真实 HTML 内容, 玻璃镜头折射, 360° 转盘构图",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "monitoring-setup",
     "path": "skills/monitoring-setup/SKILL.md",
     "category": "infrastructure",
     "name": "monitoring-setup",
     "description": "Set up application monitoring with CloudWatch, Prometheus, and Grafana. Use when instrumenting services, configuring alerts, or building dashboards for production observability.",
     "risk": "safe",
+    "source": "community"
+  },
+  {
+    "id": "motion-frames",
+    "path": "skills/motion-frames/SKILL.md",
+    "category": "general",
+    "name": "motion-frames",
+    "description": "可循环 CSS 动效组合: 旋转环、地球仪、计时器、视差标签",
+    "risk": "unknown",
     "source": "community"
   },
   {
@@ -1419,6 +1977,105 @@
     "name": "nextjs-developer",
     "description": "Full-stack Next.js development with App Router, Server Components, Server Actions, and modern patterns. Use for building Next.js applications, APIs, and optimizing performance.",
     "risk": "safe",
+    "source": "community"
+  },
+  {
+    "id": "nocobase-acl-manage",
+    "path": "skills/nocobase-acl-manage/SKILL.md",
+    "category": "business",
+    "name": "nocobase-acl-manage",
+    "description": "Task-driven ACL governance through nb CLI for role lifecycle, global role mode, permission policy, user-role membership, and risk assessment. Use when users describe business permission outcomes instead of raw command arguments.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "nocobase-data-analysis",
+    "path": "skills/nocobase-data-analysis/SKILL.md",
+    "category": "data-ai",
+    "name": "nocobase-data-analysis",
+    "description": "Query and analyze business data in NocoBase via MCP. Use when users want current counts, grouped breakdowns, owner/source distributions, or business summaries across collections, with main data source first and fallback discovery to other enabled data sources.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "nocobase-data-modeling",
+    "path": "skills/nocobase-data-modeling/SKILL.md",
+    "category": "data-ai",
+    "name": "nocobase-data-modeling",
+    "description": "Create and manage NocoBase data models through the available data-modeling surface. Use when users want to inspect or change collections, fields, relations, or view-backed schemas in a NocoBase app.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "nocobase-dsl-reconciler",
+    "path": "skills/nocobase-dsl-reconciler/SKILL.md",
+    "category": "data-ai",
+    "name": "nocobase-dsl-reconciler",
+    "description": "**Opt-in DSL path** for NocoBase app building. Use ONLY when the user explicitly asks for YAML / DSL / committed-to-git / `cli push` / spec files — e.g. \"use the DSL reconciler\", \"I want YAML I can commit\", \"build this as a workspaces/ project\". For any other UI authoring request (new page, new block, tweak an existing screen), default to `nocobase-ui-builder` instead — this reconciler is still in active development and has rough edges that the live-UI path avoids.\nWhen the user opts in: produces/changes files under `workspaces/<project>/`, supports new pages, menus, modules, whole systems, collections, tables, sub-tables, popups, dashboards, approval workflows, recordActions, and deploys them via `cli push`.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "nocobase-env-manage",
+    "path": "skills/nocobase-env-manage/SKILL.md",
+    "category": "data-ai",
+    "name": "nocobase-env-manage",
+    "description": "Use when users need NocoBase bootstrap, runtime lifecycle, CLI maintenance, and skills maintenance with nb CLI only.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "nocobase-plugin-development",
+    "path": "skills/nocobase-plugin-development/SKILL.md",
+    "category": "data-ai",
+    "name": "nocobase-plugin-development",
+    "description": "Step-by-step playbook for developing a NocoBase plugin, covering scaffolding, server-side code (collections, APIs, ACL, migrations), client-side code (blocks, fields, actions, settings pages, routes, components), i18n, and verification.\nTRIGGER when: user asks to create, build, implement, or develop a NocoBase plugin, mentions 'NocoBase plugin', or describes a feature to be built as a NocoBase plugin. This skill contains NocoBase-specific conventions and templates that general coding cannot replicate — always invoke it instead of planning from scratch.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "nocobase-plugin-manage",
+    "path": "skills/nocobase-plugin-manage/SKILL.md",
+    "category": "general",
+    "name": "nocobase-plugin-manage",
+    "description": "Use when users need to inspect, enable, or disable NocoBase plugins with direct `nb plugin` commands only.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "nocobase-publish-manage",
+    "path": "skills/nocobase-publish-manage/SKILL.md",
+    "category": "development",
+    "name": "nocobase-publish-manage",
+    "description": "Use when users need NocoBase backup restore or migration publish operations through nb api backup and nb api migration commands.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "nocobase-ui-builder",
+    "path": "skills/nocobase-ui-builder/SKILL.md",
+    "category": "data-ai",
+    "name": "nocobase-ui-builder",
+    "description": "**DEFAULT entry point for any NocoBase UI authoring or tweak** — new pages, new blocks, new menu items, AND localized edits (move / reorder / reconfigure a single block, field, action, or reaction rule) on an already-running NocoBase app. Uses the skill-local `nb-flow-surfaces.mjs` wrapper against the live app; no DSL file commit required.\nOnly hand off to `nocobase-dsl-reconciler` when the user **explicitly asks for** DSL / YAML / committed-to-git / `cli push` workflow (e.g. \"use the DSL reconciler\", \"I want YAML files\", \"commit the spec\"). The DSL reconciler is in active development and has rough edges; prefer this skill unless the user opts in.\nDoes not handle ACL, data modeling, workflow orchestration, browser reproduction, page error postmortems, or non-Modern-page navigation.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "nocobase-utils",
+    "path": "skills/nocobase-utils/SKILL.md",
+    "category": "general",
+    "name": "nocobase-utils",
+    "description": "General-purpose NocoBase reference utilities covering cross-cutting topics such as evaluator engines, expression syntax, UID generation, and more. Use when you need authoritative reference information or reusable snippets that apply across multiple NocoBase features.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "nocobase-workflow-manage",
+    "path": "skills/nocobase-workflow-manage/SKILL.md",
+    "category": "data-ai",
+    "name": "nocobase-workflow-manage",
+    "description": "Use when users need to inspect, create, revise, enable, or diagnose NocoBase workflows through the `nb` CLI, including trigger selection, node-chain changes, version safety checks, and execution troubleshooting.",
+    "risk": "unknown",
     "source": "community"
   },
   {
@@ -1539,6 +2196,24 @@
     "source": "community"
   },
   {
+    "id": "pm-spec",
+    "path": "skills/pm-spec/SKILL.md",
+    "category": "general",
+    "name": "pm-spec",
+    "description": "问题 + 成功指标 + 范围 + user stories + 设计 + 发布 + 待解决",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "poster-hero",
+    "path": "skills/poster-hero/SKILL.md",
+    "category": "general",
+    "name": "poster-hero",
+    "description": "竖版海报 / 朋友圈分享图, 强视觉冲击",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "postgresql",
     "path": "skills/postgresql/SKILL.md",
     "category": "data-ai",
@@ -1562,6 +2237,24 @@
     "category": "architecture",
     "name": "powershell-windows",
     "description": "PowerShell Windows patterns. Critical pitfalls, operator syntax, error handling.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "ppt-keynote",
+    "path": "skills/ppt-keynote/SKILL.md",
+    "category": "general",
+    "name": "ppt-keynote",
+    "description": "苹果 Keynote 级别幻灯片, 一屏一卡, 键盘左右切换",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "pricing-page",
+    "path": "skills/pricing-page/SKILL.md",
+    "category": "general",
+    "name": "pricing-page",
+    "description": "三档定价 + 特性对比表 + FAQ",
     "risk": "unknown",
     "source": "community"
   },
@@ -1665,6 +2358,15 @@
     "source": "community"
   },
   {
+    "id": "prototype-web",
+    "path": "skills/prototype-web/SKILL.md",
+    "category": "general",
+    "name": "prototype-web",
+    "description": "可点击的功能性 Web 原型, 含导航、英雄区、特性区、CTA",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "rag-engineer",
     "path": "skills/rag-engineer/SKILL.md",
     "category": "data-ai",
@@ -1728,11 +2430,29 @@
     "source": "community"
   },
   {
+    "id": "resume-modern",
+    "path": "skills/resume-modern/SKILL.md",
+    "category": "general",
+    "name": "resume-modern",
+    "description": "现代极简简历, A4 单页, 适合打印或导出 PDF",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "rust-pro",
     "path": "skills/rust-pro/SKILL.md",
     "category": "development",
     "name": "rust-pro",
     "description": "Master Rust 1.75+ with modern async patterns, advanced type system features, and production-ready systems programming. Expert in the latest Rust ecosystem including Tokio, axum, and cutting-edge crates. Use PROACTIVELY for Rust development, performance optimization, or systems programming.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "saas-landing",
+    "path": "skills/saas-landing/SKILL.md",
+    "category": "general",
+    "name": "saas-landing",
+    "description": "单页 SaaS 落地页, 含 hero/features/social-proof/pricing/CTA",
     "risk": "unknown",
     "source": "community"
   },
@@ -1872,11 +2592,74 @@
     "source": "community"
   },
   {
+    "id": "social-carousel",
+    "path": "skills/social-carousel/SKILL.md",
+    "category": "general",
+    "name": "social-carousel",
+    "description": "三张方形卡片轮播, 标题串联, 品牌 mark + 编号",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "social-media-dashboard",
+    "path": "skills/social-media-dashboard/SKILL.md",
+    "category": "general",
+    "name": "social-media-dashboard",
+    "description": "平台切换 + 粉丝/互动 KPI + 增长曲线 + Top post + 热门话题",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "social-media-matrix",
+    "path": "skills/social-media-matrix/SKILL.md",
+    "category": "general",
+    "name": "social-media-matrix",
+    "description": "电影感多平台社媒分析: 互动图、悬浮洞察、区间对比、明暗主题",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "social-reddit-card",
+    "path": "skills/social-reddit-card/SKILL.md",
+    "category": "general",
+    "name": "social-reddit-card",
+    "description": "拟真 Reddit 帖子卡 + 上下投票 + 评论数, 适合视频叠加 / 故事分享",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "social-spotify-card",
+    "path": "skills/social-spotify-card/SKILL.md",
+    "category": "general",
+    "name": "social-spotify-card",
+    "description": "Spotify Now Playing 风格卡: 专辑封面 + 进度条 + 播放控制, 适配视频叠加 / 个人主页",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "social-x-post-card",
+    "path": "skills/social-x-post-card/SKILL.md",
+    "category": "general",
+    "name": "social-x-post-card",
+    "description": "拟真 X 推文卡片 + 互动数据 (likes/reposts/views), 适配视频叠加或图卡分享",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "spark-optimization",
     "path": "skills/spark-optimization/SKILL.md",
     "category": "data-ai",
     "name": "spark-optimization",
     "description": "Optimize Apache Spark jobs with partitioning, caching, shuffle optimization, and memory tuning. Use when improving Spark performance, debugging slow jobs, or scaling data processing pipelines.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "sprite-animation",
+    "path": "skills/sprite-animation/SKILL.md",
+    "category": "general",
+    "name": "sprite-animation",
+    "description": "像素美术 + kinetic 字体的解说帧, 纯 CSS 循环, 可录视频",
     "risk": "unknown",
     "source": "community"
   },
@@ -1976,6 +2759,15 @@
     "category": "general",
     "name": "task-estimator",
     "description": "Breaks down features into tasks, assigns roles, and estimates effort/timeline.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "team-okrs",
+    "path": "skills/team-okrs/SKILL.md",
+    "category": "general",
+    "name": "team-okrs",
+    "description": "季度 banner + 3 个目标 + KR 进度条 + owner + 状态 pill",
     "risk": "unknown",
     "source": "community"
   },
@@ -2142,6 +2934,24 @@
     "source": "vibeship-spawner-skills (Apache 2.0)"
   },
   {
+    "id": "vfx-text-cursor",
+    "path": "skills/vfx-text-cursor/SKILL.md",
+    "category": "general",
+    "name": "vfx-text-cursor",
+    "description": "光标拖光 + 彩色像散射线 + 定向光斑, 适合视频片头逐字揭示金句",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "video-hyperframes",
+    "path": "skills/video-hyperframes/SKILL.md",
+    "category": "general",
+    "name": "video-hyperframes",
+    "description": "Hyperframes / Remotion 兼容的连续帧动画, 可自动播放",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "vue-nuxt-developer",
     "path": "skills/vue-nuxt-developer/SKILL.md",
     "category": "development",
@@ -2151,12 +2961,66 @@
     "source": "community"
   },
   {
+    "id": "waitlist-page",
+    "path": "skills/waitlist-page/SKILL.md",
+    "category": "data-ai",
+    "name": "waitlist-page",
+    "description": "极简产品预发布落地页, 含邮箱捕获、logo、装饰图层",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "web-proto-brutalist",
+    "path": "skills/web-proto-brutalist/SKILL.md",
+    "category": "general",
+    "name": "web-proto-brutalist",
+    "description": "Swiss industrial-print 风: 单字 grotesque、巨数字、ASCII 装饰",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "web-proto-editorial",
+    "path": "skills/web-proto-editorial/SKILL.md",
+    "category": "general",
+    "name": "web-proto-editorial",
+    "description": "Editorial-minimalist: 暖色单色 canvas + serif display + grotesque body",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "web-proto-soft",
+    "path": "skills/web-proto-soft/SKILL.md",
+    "category": "general",
+    "name": "web-proto-soft",
+    "description": "Apple 调: 银/奶 canvas + 双层斜面卡片 + button-in-button + spring",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "web-search",
     "path": "skills/web-search/SKILL.md",
     "category": "development",
     "name": "web-search",
     "description": "Live web search via DuckDuckGo API — no API key, no pip install required. Use for searching current information, documentation, news, or any web content during task execution.",
     "risk": "safe",
+    "source": "community"
+  },
+  {
+    "id": "weekly-update",
+    "path": "skills/weekly-update/SKILL.md",
+    "category": "general",
+    "name": "weekly-update",
+    "description": "6-8 页横向滑动周报: 已发布 / 进行中 / 阻塞 / 指标 / 求助",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "wireframe-sketch",
+    "path": "skills/wireframe-sketch/SKILL.md",
+    "category": "general",
+    "name": "wireframe-sketch",
+    "description": "网格背景 + marker 笔触 + 多 tab + sticky note + scribble 图表",
+    "risk": "unknown",
     "source": "community"
   },
   {

@@ -18,6 +18,7 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillTreeItem> {
     private groups: NormalizedGroup[] = [];
     private installedSkills = new Map<string, InstalledSkillRecord>();
     private manifestLoaded = false;
+    private searchQuery = '';
 
     constructor(private readonly context: vscode.ExtensionContext) {}
 
@@ -31,6 +32,24 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillTreeItem> {
         this._onDidChangeTreeData.fire();
     }
 
+    setSearchQuery(query: string): void {
+        this.searchQuery = normalizeSearchQuery(query);
+        this._onDidChangeTreeData.fire();
+    }
+
+    clearSearchQuery(): void {
+        if (!this.searchQuery) {
+            return;
+        }
+
+        this.searchQuery = '';
+        this._onDidChangeTreeData.fire();
+    }
+
+    getSearchQuery(): string {
+        return this.searchQuery;
+    }
+
     getTreeItem(element: SkillTreeItem): vscode.TreeItem {
         return element;
     }
@@ -39,23 +58,28 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillTreeItem> {
         await this.ensureLoaded();
 
         if (!element) {
-            return this.groups.map((group) => {
+            return this.getVisibleGroups().map((group) => {
                 const groupItem = new SkillTreeItem(
                     group.name,
                     vscode.TreeItemCollapsibleState.Collapsed,
                     'group'
                 );
-                groupItem.group = group;
-                groupItem.description = `${group.skills.length} skills`;
+                groupItem.group = group.sourceGroup;
+                groupItem.visibleSkills = group.skills;
+                groupItem.description = this.searchQuery
+                    ? `${group.skills.length}/${group.sourceGroup.skills.length} skills`
+                    : `${group.skills.length} skills`;
                 groupItem.tooltip = [
                     group.description || group.name,
                     '',
-                    'Expand to browse skills. Right-click the group to install every skill in it.'
+                    this.searchQuery
+                        ? `Filtered by "${this.searchQuery}". Right-click the group to install every skill in the original group.`
+                        : 'Expand to browse skills. Right-click the group to install every skill in it.'
                 ].join('\n').trim();
                 return groupItem;
             });
         } else if (element.contextValue === 'group') {
-            return (element.group?.skills || []).map((skill) => this.createSkillItem(skill));
+            return (element.visibleSkills || element.group?.skills || []).map((skill) => this.createSkillItem(skill));
         }
 
         return [];
@@ -211,6 +235,31 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillTreeItem> {
         };
 
         return skillItem;
+    }
+
+    private getVisibleGroups(): Array<NormalizedGroup & { sourceGroup: NormalizedGroup }> {
+        if (!this.searchQuery) {
+            return this.groups.map((group) => ({
+                ...group,
+                sourceGroup: group
+            }));
+        }
+
+        const queryTokens = tokenizeSearchQuery(this.searchQuery);
+        return this.groups
+            .map((group) => {
+                const groupMatches = matchesGroup(group, queryTokens);
+                const skills = groupMatches
+                    ? group.skills
+                    : group.skills.filter((skill) => matchesSkill(skill, queryTokens));
+
+                return {
+                    ...group,
+                    skills,
+                    sourceGroup: group
+                };
+            })
+            .filter((group) => group.skills.length > 0);
     }
 
     private renderStatusDescription(skill: NormalizedSkill, status: SkillStatus): string {
@@ -382,6 +431,7 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillTreeItem> {
 export class SkillTreeItem extends vscode.TreeItem {
     public group?: NormalizedGroup;
     public skill?: NormalizedSkill;
+    public visibleSkills?: NormalizedSkill[];
 
     constructor(
         public readonly label: string,
@@ -396,6 +446,52 @@ export class SkillTreeItem extends vscode.TreeItem {
             this.iconPath = new vscode.ThemeIcon('symbol-property');
         }
     }
+}
+
+function normalizeSearchQuery(query: string): string {
+    return query.trim().replace(/\s+/g, ' ');
+}
+
+function tokenizeSearchQuery(query: string): string[] {
+    return query
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(Boolean);
+}
+
+function matchesGroup(group: NormalizedGroup, queryTokens: string[]): boolean {
+    return matchesSearchText([
+        group.id,
+        group.name,
+        group.description
+    ], queryTokens);
+}
+
+function matchesSkill(skill: NormalizedSkill, queryTokens: string[]): boolean {
+    return matchesSearchText([
+        skill.id,
+        skill.name,
+        skill.description,
+        skill.version,
+        skill.author,
+        skill.downloadUrl,
+        skill.tags.join(' '),
+        skill.dependencies.join(' '),
+        skill.usage,
+        skill.markdown
+    ], queryTokens);
+}
+
+function matchesSearchText(values: Array<string | undefined>, queryTokens: string[]): boolean {
+    const text = searchableText(values);
+    return queryTokens.every((token) => text.includes(token));
+}
+
+function searchableText(values: Array<string | undefined>): string {
+    return values
+        .filter((value): value is string => Boolean(value))
+        .join(' ')
+        .toLowerCase();
 }
 
 function normalizeManifest(registry: RegistryManifest): { groups: NormalizedGroup[] } {

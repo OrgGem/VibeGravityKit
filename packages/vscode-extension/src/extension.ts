@@ -31,10 +31,32 @@ export function activate(context: vscode.ExtensionContext) {
         treeDataProvider: skillsProvider,
         showCollapseAll: true
     });
+    updateSkillSearchState(skillsProvider, skillsView);
 
     let refreshDisposable = vscode.commands.registerCommand('rpaSkills.refreshSkills', async () => {
         skillsProvider.refresh();
         await dashboard?.refresh();
+    });
+
+    let searchSkillsDisposable = vscode.commands.registerCommand('rpaSkills.searchSkills', async () => {
+        const value = await vscode.window.showInputBox({
+            title: 'Search RPA Skills',
+            placeHolder: 'Search by skill, group, tag, dependency, author, or description',
+            prompt: 'Filter the Skills tree by keyword.',
+            value: skillsProvider.getSearchQuery()
+        });
+
+        if (value === undefined) {
+            return;
+        }
+
+        skillsProvider.setSearchQuery(value);
+        await updateSkillSearchState(skillsProvider, skillsView);
+    });
+
+    let clearSkillSearchDisposable = vscode.commands.registerCommand('rpaSkills.clearSkillSearch', async () => {
+        skillsProvider.clearSearchQuery();
+        await updateSkillSearchState(skillsProvider, skillsView);
     });
 
     let openDetailsDisposable = vscode.commands.registerCommand('rpaSkills.openSkillDetails', async (input) => {
@@ -158,6 +180,8 @@ export function activate(context: vscode.ExtensionContext) {
         dashboard,
         watchController,
         refreshDisposable,
+        searchSkillsDisposable,
+        clearSkillSearchDisposable,
         openDetailsDisposable,
         installDisposable,
         installGroupDisposable,
@@ -178,6 +202,15 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {}
+
+async function updateSkillSearchState(
+    skillsProvider: SkillsProvider,
+    skillsView: vscode.TreeView<SkillTreeItem>
+): Promise<void> {
+    const query = skillsProvider.getSearchQuery();
+    skillsView.message = query ? `Search: ${query}` : undefined;
+    await vscode.commands.executeCommand('setContext', 'rpaSkills.hasSkillSearch', Boolean(query));
+}
 
 function resolveSkillInput(input: unknown, skillsProvider: SkillsProvider) {
     if (input instanceof SkillTreeItem) {

@@ -2,7 +2,7 @@
   "name": "skills",
   "displayName": "RPA Skills",
   "description": "Skill Marketplace and Configuration Manager for RPA Skills",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "publisher": "rpa",
   "license": "MIT",
   "icon": "resources/icon.png",
@@ -20,6 +20,8 @@
   "activationEvents": [
     "onView:rpaSkills.skillsView",
     "onCommand:rpaSkills.refreshSkills",
+    "onCommand:rpaSkills.searchSkills",
+    "onCommand:rpaSkills.clearSkillSearch",
     "onCommand:rpaSkills.installSkill",
     "onCommand:rpaSkills.installSkillToIde",
     "onCommand:rpaSkills.installGroup",
@@ -43,6 +45,16 @@
         "command": "rpaSkills.refreshSkills",
         "title": "RPA Skills: Refresh Skills",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "rpaSkills.searchSkills",
+        "title": "RPA Skills: Search Skills",
+        "icon": "$(search)"
+      },
+      {
+        "command": "rpaSkills.clearSkillSearch",
+        "title": "RPA Skills: Clear Skill Search",
+        "icon": "$(close)"
       },
       {
         "command": "rpaSkills.installSkill",
@@ -121,6 +133,16 @@
     ],
     "menus": {
       "view/title": [
+        {
+          "command": "rpaSkills.searchSkills",
+          "when": "view == rpaSkills.skillsView",
+          "group": "navigation"
+        },
+        {
+          "command": "rpaSkills.clearSkillSearch",
+          "when": "view == rpaSkills.skillsView && rpaSkills.hasSkillSearch",
+          "group": "navigation"
+        },
         {
           "command": "rpaSkills.refreshSkills",
           "when": "view == rpaSkills.skillsView",

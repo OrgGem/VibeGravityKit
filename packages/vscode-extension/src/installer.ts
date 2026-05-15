@@ -3,7 +3,7 @@ import axios from 'axios';
 import AdmZip = require('adm-zip');
 import * as fs from 'fs';
 import * as path from 'path';
-import { ensureInside, getSkillsRoot, getWorkspaceRootOrUndefined, safeSkillDirectoryName } from './config';
+import { ensureInside, getSkillsRoot, getWorkspaceRootOrUndefined, safeSkillDirectoryName, getRpaSkillsConfigValue } from './config';
 import { NormalizedSkill, SkillStatus } from './types';
 
 export interface SkillRegistryLookup {
@@ -32,6 +32,14 @@ export async function installSkillToTarget(
 ): Promise<void> {
     const plan = await buildInstallPlan(skill, registry, true);
     await installPlan(`Installing ${skill.name} for ${target.label}...`, plan, registry, target);
+}
+
+export async function installSkillsToTarget(
+    skills: NormalizedSkill[],
+    target: SkillInstallTarget,
+    registry?: SkillRegistryLookup
+): Promise<void> {
+    await installPlan(`Installing selected skills for ${target.label}...`, uniqueSkills(skills), registry, target);
 }
 
 export async function installGroup(groupName: string, skills: NormalizedSkill[], registry?: SkillRegistryLookup): Promise<void> {
@@ -77,10 +85,11 @@ async function installPlan(
             }
 
             registry?.refreshLocalState();
+            const installLocation = target ? ` for ${target.label} at ${path.relative(getWorkspaceRootOrUndefined() || process.cwd(), target.rootPath).replace(/\\/g, '/')}` : '';
             vscode.window.showInformationMessage(
                 skills.length === 1
-                    ? `Successfully installed skill: ${skills[0].name}`
-                    : `Successfully installed ${skills.length} skills.`
+                    ? `Successfully installed skill: ${skills[0].name}${installLocation}`
+                    : `Successfully installed ${skills.length} skills${installLocation}.`
             );
         } catch (error: any) {
             vscode.window.showErrorMessage(`Installation failed: ${error.message}`);
@@ -159,6 +168,8 @@ async function installSingleSkill(skill: NormalizedSkill, target?: SkillInstallT
             fs.writeFileSync(targetDir, renderRuleFile(skill, fs.readFileSync(path.join(tempDir, 'SKILL.md'), 'utf8'), installTarget), 'utf8');
             fs.rmSync(tempDir, { recursive: true, force: true });
         }
+        
+        updateSkillsIndex(skill, targetDir);
     } catch (error) {
         fs.rmSync(tempDir, { recursive: true, force: true });
         throw error;
@@ -236,6 +247,48 @@ function writeInstallMetadata(skill: NormalizedSkill, targetDir: string): void {
         `${JSON.stringify(metadata, null, 2)}\n`,
         'utf8'
     );
+}
+
+function updateSkillsIndex(skill: NormalizedSkill, targetDir: string): void {
+    const workspaceRoot = getWorkspaceRootOrUndefined();
+    if (!workspaceRoot) {
+        return;
+    }
+
+    const brainPathConfig = getRpaSkillsConfigValue<string>('brain.path') || '.agent/brain';
+    const brainDir = path.resolve(workspaceRoot, brainPathConfig);
+    const indexPath = path.join(brainDir, 'skills_index.json');
+
+    if (!fs.existsSync(brainDir)) {
+        fs.mkdirSync(brainDir, { recursive: true });
+    }
+
+    let indexData: any[] = [];
+    if (fs.existsSync(indexPath)) {
+        try {
+            const content = fs.readFileSync(indexPath, 'utf8');
+            if (content.trim()) {
+                indexData = JSON.parse(content);
+            }
+        } catch (e) {
+            console.error('Failed to parse skills_index.json', e);
+        }
+    }
+
+    let relPath = path.relative(workspaceRoot, targetDir).replace(/\\/g, '/');
+    if (!targetDir.endsWith('.md') && !targetDir.endsWith('.mdc')) {
+        relPath = relPath + '/SKILL.md';
+    }
+
+    indexData = indexData.filter((s: any) => s.name !== skill.name);
+
+    indexData.push({
+        name: skill.name,
+        description: skill.description || skill.name,
+        path: relPath
+    });
+
+    fs.writeFileSync(indexPath, JSON.stringify(indexData, null, 2), 'utf8');
 }
 
 function renderRuleFile(skill: NormalizedSkill, skillMarkdown: string, target: SkillInstallTarget): string {

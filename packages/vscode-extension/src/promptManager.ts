@@ -98,6 +98,56 @@ export async function createMainInstructionFile(): Promise<void> {
     await openPromptFile(relativePath);
 }
 
+export async function toggleInstructionInPromptFiles(enabled: boolean): Promise<void> {
+    const workspaceRoot = getWorkspaceRoot();
+    const targetFiles = [
+        '.kiro/steering/brain.md',
+        'AGENTS.md',
+        '.cursorrules',
+        '.windsurfrules'
+    ];
+
+    const instructionBlock = `
+<!-- MCP_SKILL_ROUTER_START -->
+> [!IMPORTANT]
+> **Skill Routing:** The MCP \`skill-router\` is enabled. You MUST use the \`search_skills\` MCP tool to search for necessary skills when the user gives you a task. If the user explicitly mentions a skill or workflow, use the tool to find it before proceeding.
+<!-- MCP_SKILL_ROUTER_END -->
+`.trim() + '\n';
+
+    for (const relativePath of targetFiles) {
+        const absolutePath = resolveWorkspacePath(workspaceRoot, relativePath);
+        if (!fs.existsSync(absolutePath)) {
+            continue;
+        }
+
+        let content = fs.readFileSync(absolutePath, 'utf8');
+        const startTag = '<!-- MCP_SKILL_ROUTER_START -->';
+        const endTag = '<!-- MCP_SKILL_ROUTER_END -->';
+        
+        // Remove existing block if present
+        const regex = new RegExp(`[\\s\\n]*${startTag}[\\s\\S]*?${endTag}[\\s\\n]*`, 'g');
+        content = content.replace(regex, '\n\n');
+
+        if (enabled) {
+            // Append to the top after frontmatter if exists, or just at the top
+            if (content.startsWith('---')) {
+                const endOfFrontmatter = content.indexOf('---', 3);
+                if (endOfFrontmatter !== -1) {
+                    content = content.slice(0, endOfFrontmatter + 3) + '\n\n' + instructionBlock + content.slice(endOfFrontmatter + 3);
+                } else {
+                    content = instructionBlock + '\n' + content;
+                }
+            } else {
+                content = instructionBlock + '\n' + content;
+            }
+        }
+
+        // Clean up multiple empty lines
+        content = content.replace(/\n{3,}/g, '\n\n').trim() + '\n';
+        fs.writeFileSync(absolutePath, content, 'utf8');
+    }
+}
+
 function addSkillMarkdownFiles(files: Map<string, PromptFile>): void {
     let skillsRoot: string;
     try {

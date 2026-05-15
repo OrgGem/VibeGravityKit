@@ -1,15 +1,23 @@
 import * as vscode from 'vscode';
 import { getRpaSkillsConfigValue, getWorkspaceRoot } from './config';
-import { getTargetStatuses, IdeTargetStatus, loadConfiguredMcpServers } from './ideTargets';
+import { getQuickSetupDefaultTargetId, getTargetStatuses, IdeTargetStatus, loadConfiguredMcpServers } from './ideTargets';
 import { collectPromptFiles, PromptFile } from './promptManager';
 import { WatchController } from './watchController';
+import { NormalizedGroup } from './types';
+
+export interface QuickSetupRequest {
+    targetId: string;
+    groupIds: string[];
+}
 
 export class AssistantDashboard implements vscode.Disposable {
     private panel?: vscode.WebviewPanel;
     private readonly disposables: vscode.Disposable[] = [];
 
     constructor(
-        private readonly watchController: WatchController
+        private readonly watchController: WatchController,
+        private readonly listSkillGroups: () => Promise<NormalizedGroup[]>,
+        private readonly runQuickSetup: (request: QuickSetupRequest) => Promise<void>
     ) {
         this.watchController.onDidChangeWatchedFiles(() => {
             this.refresh();
@@ -38,6 +46,22 @@ export class AssistantDashboard implements vscode.Disposable {
             this.panel = undefined;
         }, undefined, this.disposables);
 
+        this.panel.webview.onDidReceiveMessage(async (message) => {
+            if (!isQuickSetupMessage(message)) {
+                return;
+            }
+
+            try {
+                await this.runQuickSetup({
+                    targetId: message.targetId,
+                    groupIds: message.groupIds
+                });
+                await this.refresh();
+            } catch (error: any) {
+                vscode.window.showErrorMessage(`Quick setup failed: ${error.message || String(error)}`);
+            }
+        }, undefined, this.disposables);
+
         await this.refresh();
     }
 
@@ -63,6 +87,8 @@ export class AssistantDashboard implements vscode.Disposable {
     private async renderHtml(): Promise<string> {
         const workspaceRoot = getWorkspaceRoot();
         const targets = getTargetStatuses();
+        const skillGroups = await this.listSkillGroups();
+        const quickSetupDefaultTargetId = getQuickSetupDefaultTargetId(targets);
         const promptFiles = collectPromptFiles();
         const mcpServers = await loadConfiguredMcpServers();
         const mcpServerNames = Object.keys(mcpServers);
@@ -71,6 +97,7 @@ export class AssistantDashboard implements vscode.Disposable {
         const watchLabel = this.watchController.isRunning ? 'Running' : 'Stopped';
         const watchCommand = this.watchController.isRunning ? 'rpaSkills.stopWatch' : 'rpaSkills.startWatch';
         const watchAction = this.watchController.isRunning ? 'Stop Watch' : 'Start Watch';
+        const mcpSkillRouterEnabled = getRpaSkillsConfigValue<boolean>('mcp.enableSkillRouter') ?? true;
         const targetCounts = {
             all: targets.length,
             detected: targets.filter((target) => target.detected).length,
@@ -127,11 +154,77 @@ export class AssistantDashboard implements vscode.Disposable {
             gap: 8px;
             margin-bottom: 18px;
         }
+        .quick-setup {
+            border: 1px solid var(--vscode-focusBorder);
+            border-radius: 6px;
+            margin: 0 0 18px;
+            padding: 12px;
+        }
+        .quick-setup-header {
+            align-items: flex-start;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .quick-setup-title {
+            min-width: 220px;
+        }
+        .quick-setup-controls {
+            align-items: flex-end;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .field {
+            display: grid;
+            gap: 4px;
+        }
+        .field label {
+            color: var(--vscode-descriptionForeground);
+            font-size: 12px;
+        }
+        .select-input {
+            background: var(--vscode-dropdown-background);
+            border: 1px solid var(--vscode-dropdown-border, var(--vscode-panel-border));
+            border-radius: 4px;
+            color: var(--vscode-dropdown-foreground);
+            min-height: 28px;
+            min-width: 240px;
+            padding: 3px 8px;
+        }
+        .table-wrap {
+            overflow-x: auto;
+        }
+        .group-table {
+            border-collapse: collapse;
+            min-width: 620px;
+            width: 100%;
+        }
+        .group-table th,
+        .group-table td {
+            border-top: 1px solid var(--vscode-panel-border);
+            padding: 7px 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        .group-table th {
+            color: var(--vscode-descriptionForeground);
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .group-check {
+            width: 1%;
+            white-space: nowrap;
+        }
         .button {
             align-items: center;
             background: var(--vscode-button-background);
+            border: 0;
             border-radius: 4px;
             color: var(--vscode-button-foreground);
+            cursor: pointer;
             display: inline-flex;
             min-height: 28px;
             padding: 4px 10px;
@@ -327,11 +420,13 @@ export class AssistantDashboard implements vscode.Disposable {
         <span class="step">4. Activate MCP if needed</span>
         <span class="step">5. Edit prompts</span>
     </div>
+    ${renderQuickSetupPanel(targets, skillGroups, quickSetupDefaultTargetId)}
     <div class="toolbar">
         ${button('Refresh', 'rpaSkills.refreshSkills', [], false, 'Reload registry data and rescan installed workspace skills.')}
         ${button('Settings', 'rpaSkills.openSettings', [], true, 'Open extension settings such as registry URL, skills path, and MCP source config.')}
         ${button(watchAction, watchCommand, [], true, 'Watch prompt, skill, rule, and MCP files so the dashboard refreshes after local edits.')}
         ${button('New AGENTS.md', 'rpaSkills.createMainInstruction', [], true, 'Create or open the workspace-wide agent instruction file.')}
+        ${button(mcpSkillRouterEnabled ? 'Disable Skill Router' : 'Enable Skill Router', 'rpaSkills.toggleMcpSkillRouter', [], true, 'Toggle MCP skill routing capability for IDEs')}
         <button class="icon-button" type="button" data-expand-all title="Expand all dashboard sections">Expand All</button>
         <button class="icon-button" type="button" data-collapse-all title="Collapse all dashboard sections">Collapse All</button>
     </div>
@@ -343,6 +438,7 @@ export class AssistantDashboard implements vscode.Disposable {
                 <div class="meta"><code>${escapeHtml(workspaceRoot)}</code></div>
                 <div>
                     <span class="status ${this.watchController.isRunning ? 'good' : 'warn'}" title="Local file watch keeps the dashboard and tree state fresh after edits.">Watch ${escapeHtml(watchLabel)}</span>
+                    <span class="status ${mcpSkillRouterEnabled ? 'good' : 'warn'}" title="When enabled, the skill router is registered in MCP files so agents can search installed skills dynamically.">Skill Router ${mcpSkillRouterEnabled ? 'Enabled' : 'Disabled'}</span>
                     <span class="status" title="The manifest URL used to load skill groups.">Registry ${escapeHtml(registryUrl || 'not set')}</span>
                     <span class="status" title="Canonical workspace install folder used by the normal Install action.">Skills ${escapeHtml(skillsPath)}</span>
                     <span class="status" title="MCP servers loaded from rpaSkills.mcp.servers or configured MCP files.">MCP ${mcpServerNames.length} servers</span>
@@ -426,6 +522,80 @@ function renderSectionHeader(title: string, hint: string): string {
 </div>`;
 }
 
+function renderQuickSetupPanel(
+    targets: IdeTargetStatus[],
+    skillGroups: NormalizedGroup[],
+    defaultTargetId: string
+): string {
+    const selectedTarget = targets.find((target) => target.id === defaultTargetId);
+    const mcpHint = selectedTarget?.mcpConfigPath
+        ? `MCP will be activated in ${selectedTarget.mcpConfigPath}.`
+        : 'This target has no MCP config path, so quick setup will only install selected skills.';
+
+    return `<section class="quick-setup" aria-label="Quick setup">
+    <div class="quick-setup-header">
+        <div class="quick-setup-title">
+            <h2>Quick Setup</h2>
+            <p class="hint">Auto-detect the current IDE target, install selected skill groups, and activate MCP when the target supports it.</p>
+            <div class="meta" data-quick-target-hint>${escapeHtml(mcpHint)}</div>
+        </div>
+        <div class="quick-setup-controls">
+            <div class="field">
+                <label for="quick-setup-target">IDE selection</label>
+                <select id="quick-setup-target" class="select-input" data-quick-target>
+                    ${targets.map((target) => renderQuickSetupTargetOption(target, defaultTargetId)).join('')}
+                </select>
+            </div>
+            <button class="button" type="button" data-quick-setup-run title="Install selected groups and IDE settings">Quick Setup</button>
+        </div>
+    </div>
+    <div class="table-wrap">
+        <table class="group-table">
+            <thead>
+                <tr>
+                    <th class="group-check">
+                        <label title="Select or clear all skill groups">
+                            <input type="checkbox" data-quick-check-all checked>
+                            All
+                        </label>
+                    </th>
+                    <th>Skill group</th>
+                    <th>Detail</th>
+                    <th>Skills</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${skillGroups.length
+                    ? skillGroups.map(renderQuickSetupGroupRow).join('')
+                    : '<tr><td colspan="4" class="empty">No registry groups loaded. Configure the registry URL, then refresh.</td></tr>'}
+            </tbody>
+        </table>
+    </div>
+</section>`;
+}
+
+function renderQuickSetupTargetOption(target: IdeTargetStatus, defaultTargetId: string): string {
+    const badges = [
+        target.currentIde ? 'current IDE' : '',
+        target.detected ? 'detected' : 'not created',
+        target.installMode === 'markdownRule' ? 'rule file' : 'skill folder',
+        target.mcpConfigPath ? 'MCP' : ''
+    ].filter(Boolean).join(', ');
+
+    return `<option value="${escapeHtml(target.id)}" data-mcp-path="${escapeHtml(target.mcpConfigPath || '')}"${target.id === defaultTargetId ? ' selected' : ''}>${escapeHtml(target.name)} - ${escapeHtml(badges)}</option>`;
+}
+
+function renderQuickSetupGroupRow(group: NormalizedGroup): string {
+    const detail = group.description || group.name;
+
+    return `<tr>
+    <td class="group-check"><input type="checkbox" data-quick-group value="${escapeHtml(group.id)}" checked></td>
+    <td><strong>${escapeHtml(group.name)}</strong><div class="meta"><code>${escapeHtml(group.id)}</code></div></td>
+    <td>${escapeHtml(detail)}</td>
+    <td>${group.skills.length}</td>
+</tr>`;
+}
+
 function renderTab(scope: 'target' | 'prompt', group: string, label: string, active = false): string {
     return `<button class="tab${active ? ' is-active' : ''}" type="button" role="tab" data-tab-scope="${scope}" data-tab="${group}">${escapeHtml(label)}</button>`;
 }
@@ -451,6 +621,7 @@ function renderTargetCard(target: IdeTargetStatus): string {
     <div class="meta">${escapeHtml(target.description)}</div>
     <div>
         <span class="status ${target.detected ? 'good' : 'warn'}" title="Detected means this workspace already has a folder or config for the target.">${target.detected ? 'Detected' : 'Not created'}</span>
+        ${target.currentIde ? '<span class="status good" title="Matched from the VS Code-compatible host app name.">Current IDE</span>' : ''}
         <span class="status" title="Current number of installed skill or rule entries for this target.">${target.installMode === 'markdownRule' ? 'Rules' : 'Skills'} ${target.skillEntryCount}</span>
         ${target.mcpConfigPath ? `<span class="status ${target.mcpConfigured ? 'good' : 'warn'}" title="MCP status for the target config file.">MCP ${target.activeMcpServers} active / ${target.disabledMcpServers} disabled</span>` : ''}
     </div>
@@ -499,6 +670,7 @@ function promptCategoryLabel(category: PromptFile['category']): string {
 function renderDashboardScript(): string {
     return `
 (function () {
+    const vscodeApi = typeof acquireVsCodeApi === 'function' ? acquireVsCodeApi() : undefined;
     const state = {
         target: { tab: 'all', query: '' },
         prompt: { tab: 'all', query: '' }
@@ -594,10 +766,76 @@ function renderDashboardScript(): string {
         });
     });
 
+    function quickGroupChecks() {
+        return Array.from(document.querySelectorAll('[data-quick-group]'));
+    }
+
+    function updateQuickCheckAll() {
+        const checkAll = document.querySelector('[data-quick-check-all]');
+        if (!checkAll) {
+            return;
+        }
+
+        const checks = quickGroupChecks();
+        const checked = checks.filter((checkbox) => checkbox.checked);
+        checkAll.checked = checks.length > 0 && checked.length === checks.length;
+        checkAll.indeterminate = checked.length > 0 && checked.length < checks.length;
+    }
+
+    document.querySelector('[data-quick-check-all]')?.addEventListener('change', (event) => {
+        const checked = event.target.checked;
+        quickGroupChecks().forEach((checkbox) => {
+            checkbox.checked = checked;
+        });
+        updateQuickCheckAll();
+    });
+
+    quickGroupChecks().forEach((checkbox) => {
+        checkbox.addEventListener('change', updateQuickCheckAll);
+    });
+
+    document.querySelector('[data-quick-target]')?.addEventListener('change', (event) => {
+        const selected = event.target.selectedOptions[0];
+        const mcpPath = selected?.dataset.mcpPath || '';
+        const hint = document.querySelector('[data-quick-target-hint]');
+        if (hint) {
+            hint.textContent = mcpPath
+                ? 'MCP will be activated in ' + mcpPath + '.'
+                : 'This target has no MCP config path, so quick setup will only install selected skills.';
+        }
+    });
+
+    document.querySelector('[data-quick-setup-run]')?.addEventListener('click', () => {
+        const target = document.querySelector('[data-quick-target]');
+        const targetId = target?.value || '';
+        const groupIds = quickGroupChecks()
+            .filter((checkbox) => checkbox.checked)
+            .map((checkbox) => checkbox.value);
+
+        vscodeApi?.postMessage({
+            type: 'quickSetup',
+            targetId,
+            groupIds
+        });
+    });
+
     applyFilter('target');
     applyFilter('prompt');
+    updateQuickCheckAll();
 }());
 `;
+}
+
+function isQuickSetupMessage(message: unknown): message is QuickSetupRequest & { type: 'quickSetup' } {
+    if (typeof message !== 'object' || message === null) {
+        return false;
+    }
+
+    const candidate = message as { type?: unknown; targetId?: unknown; groupIds?: unknown };
+    return candidate.type === 'quickSetup'
+        && typeof candidate.targetId === 'string'
+        && Array.isArray(candidate.groupIds)
+        && candidate.groupIds.every((groupId) => typeof groupId === 'string');
 }
 
 function createNonce(): string {

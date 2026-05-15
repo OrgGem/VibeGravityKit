@@ -2,7 +2,7 @@
   "name": "skills",
   "displayName": "RPA Skills",
   "description": "Skill Marketplace and Configuration Manager for RPA Skills",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "publisher": "rpa",
   "license": "MIT",
   "icon": "resources/icon.png",
@@ -25,6 +25,7 @@
     "onCommand:rpaSkills.installGroup",
     "onCommand:rpaSkills.openSkillDetails",
     "onCommand:rpaSkills.openAssistantDashboard",
+    "onCommand:rpaSkills.previewDocumentAsMarkdown",
     "onCommand:rpaSkills.activateMcpForIde",
     "onCommand:rpaSkills.deactivateMcpForIde",
     "onCommand:rpaSkills.openPromptFile",
@@ -32,7 +33,8 @@
     "onCommand:rpaSkills.startWatch",
     "onCommand:rpaSkills.stopWatch",
     "onCommand:rpaSkills.toggleWatch",
-    "onCommand:rpaSkills.openSettings"
+    "onCommand:rpaSkills.openSettings",
+    "onCommand:rpaSkills.toggleMcpSkillRouter"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -65,6 +67,11 @@
         "command": "rpaSkills.openAssistantDashboard",
         "title": "RPA Skills: Assistant Setup",
         "icon": "$(layout)"
+      },
+      {
+        "command": "rpaSkills.previewDocumentAsMarkdown",
+        "title": "RPA Skills: Preview Office File as Markdown",
+        "icon": "$(preview)"
       },
       {
         "command": "rpaSkills.activateMcpForIde",
@@ -105,6 +112,11 @@
         "command": "rpaSkills.openSettings",
         "title": "RPA Skills: Settings",
         "icon": "$(settings-gear)"
+      },
+      {
+        "command": "rpaSkills.toggleMcpSkillRouter",
+        "title": "RPA Skills: Toggle MCP Skill Router",
+        "icon": "$(zap)"
       }
     ],
     "menus": {
@@ -127,6 +139,20 @@
         {
           "command": "rpaSkills.openSettings",
           "when": "view == rpaSkills.skillsView",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "rpaSkills.previewDocumentAsMarkdown",
+          "when": "resourceExtname =~ /\\.(docx|docm|pptx|pptm|xlsx|xlsm|xls|xlsb)$/i",
+          "group": "navigation@50"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "rpaSkills.previewDocumentAsMarkdown",
+          "when": "resourceExtname =~ /\\.(docx|docm|pptx|pptm|xlsx|xlsm|xls|xlsb)$/i",
           "group": "navigation"
         }
       ],
@@ -219,10 +245,25 @@
           "default": {},
           "description": "MCP server configuration for RPA Skills."
         },
+        "rpaSkills.mcp.enableSkillRouter": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable MCP Skill Router to allow AI Agents to dynamically search and load skills from the workspace brain index."
+        },
         "rpaSkills.watch.enabled": {
           "type": "boolean",
           "default": true,
           "description": "Automatically watch skill, agent prompt, IDE rule, and MCP config files for local state refresh."
+        },
+        "rpaSkills.markitdown.pythonPath": {
+          "type": "string",
+          "default": "python",
+          "description": "Python executable used to run MarkItDown with `python -m markitdown`."
+        },
+        "rpaSkills.markitdown.timeoutMs": {
+          "type": "number",
+          "default": 120000,
+          "description": "Maximum time in milliseconds to wait for MarkItDown document conversion."
         }
       }
     }

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { SkillTreeItem, SkillsProvider } from './skillsProvider';
-import { installGroup, installSkill, installSkillToTarget } from './installer';
-import { AssistantDashboard } from './dashboard';
+import { installGroup, installSkill, installSkillsToTarget, installSkillToTarget } from './installer';
+import { AssistantDashboard, QuickSetupRequest } from './dashboard';
 import {
     getIdeTarget,
     getMcpCapableTargets,
@@ -9,8 +9,9 @@ import {
     installMcpForTarget,
     resolveTargetInstallRoot
 } from './ideTargets';
-import { createMainInstructionFile, openPromptFile } from './promptManager';
+import { createMainInstructionFile, openPromptFile, toggleInstructionInPromptFiles } from './promptManager';
 import { WatchController } from './watchController';
+import { previewDocumentAsMarkdown } from './documentMarkdownPreview';
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('RPA Skills extension is now active!');
@@ -21,7 +22,11 @@ export function activate(context: vscode.ExtensionContext) {
         skillsProvider.refreshLocalState();
         dashboard?.refresh();
     });
-    dashboard = new AssistantDashboard(watchController);
+    dashboard = new AssistantDashboard(
+        watchController,
+        () => skillsProvider.listGroups(),
+        (request) => runQuickSetup(request, skillsProvider, dashboard)
+    );
     const skillsView = vscode.window.createTreeView('rpaSkills.skillsView', {
         treeDataProvider: skillsProvider,
         showCollapseAll: true
@@ -84,6 +89,10 @@ export function activate(context: vscode.ExtensionContext) {
         await dashboard?.show();
     });
 
+    let previewDocumentDisposable = vscode.commands.registerCommand('rpaSkills.previewDocumentAsMarkdown', async (input?: vscode.Uri) => {
+        await previewDocumentAsMarkdown(input);
+    });
+
     let activateMcpDisposable = vscode.commands.registerCommand('rpaSkills.activateMcpForIde', async (targetId?: string) => {
         await configureMcpForIde(targetId, false, dashboard);
     });
@@ -116,6 +125,18 @@ export function activate(context: vscode.ExtensionContext) {
         await dashboard?.refresh();
     });
 
+    let toggleMcpSkillRouterDisposable = vscode.commands.registerCommand('rpaSkills.toggleMcpSkillRouter', async () => {
+        const config = vscode.workspace.getConfiguration('rpaSkills');
+        const currentValue = config.get<boolean>('mcp.enableSkillRouter') ?? true;
+        const newValue = !currentValue;
+        await config.update('mcp.enableSkillRouter', newValue, vscode.ConfigurationTarget.Workspace);
+        
+        await toggleInstructionInPromptFiles(newValue);
+        
+        vscode.window.showInformationMessage(`MCP Skill Router has been ${newValue ? 'enabled' : 'disabled'}.`);
+        await dashboard?.refresh();
+    });
+
     let openSettingsDisposable = vscode.commands.registerCommand('rpaSkills.openSettings', () => {
         vscode.commands.executeCommand('workbench.action.openSettings', 'rpaSkills.registryUrl');
     });
@@ -142,6 +163,7 @@ export function activate(context: vscode.ExtensionContext) {
         installGroupDisposable,
         installToIdeDisposable,
         openDashboardDisposable,
+        previewDocumentDisposable,
         activateMcpDisposable,
         deactivateMcpDisposable,
         openPromptDisposable,
@@ -149,6 +171,7 @@ export function activate(context: vscode.ExtensionContext) {
         startWatchDisposable,
         stopWatchDisposable,
         toggleWatchDisposable,
+        toggleMcpSkillRouterDisposable,
         openSettingsDisposable,
         configDisposable
     );
@@ -295,4 +318,79 @@ function getInstallTargets(): IdeTargetDefinition[] {
     ]
         .map((targetId) => getIdeTarget(targetId))
         .filter((target): target is IdeTargetDefinition => Boolean(target));
+}
+
+async function runQuickSetup(
+    request: QuickSetupRequest,
+    skillsProvider: SkillsProvider,
+    dashboard: AssistantDashboard | undefined
+): Promise<void> {
+    const target = getIdeTarget(request.targetId);
+    if (!target) {
+        vscode.window.showErrorMessage('Quick setup target was not found.');
+        return;
+    }
+
+    const groups = await skillsProvider.listGroups();
+    const selectedGroupIds = new Set(request.groupIds);
+    const selectedSkills = uniqueSkills(
+        groups
+            .filter((group) => selectedGroupIds.has(group.id))
+            .flatMap((group) => group.skills)
+    );
+    const notes: string[] = [];
+
+    if (target.mcpConfigPath) {
+        try {
+            const configPath = await installMcpForTarget(target, false);
+            notes.push(`MCP activated: ${configPath}`);
+            await enableSkillRouterInstruction();
+        } catch (error: any) {
+            vscode.window.showWarningMessage(`Quick setup could not activate MCP for ${target.name}: ${error.message || String(error)}`);
+        }
+    }
+
+    if (selectedSkills.length > 0) {
+        await installSkillsToTarget(selectedSkills, {
+            id: target.id,
+            label: target.name,
+            rootPath: resolveTargetInstallRoot(target),
+            mode: target.installMode,
+            ruleFileExtension: target.ruleFileExtension
+        }, skillsProvider);
+        notes.push(`${selectedSkills.length} skills installed for ${target.name}`);
+    } else {
+        notes.push(`No skill groups selected for ${target.name}`);
+    }
+
+    skillsProvider.refreshLocalState();
+    await dashboard?.refresh();
+    vscode.window.showInformationMessage(`Quick setup finished for ${target.name}. ${notes.join(' ')}`);
+}
+
+async function enableSkillRouterInstruction(): Promise<void> {
+    const config = vscode.workspace.getConfiguration('rpaSkills');
+    const currentValue = config.get<boolean>('mcp.enableSkillRouter') ?? true;
+
+    if (!currentValue) {
+        await config.update('mcp.enableSkillRouter', true, vscode.ConfigurationTarget.Workspace);
+    }
+
+    await toggleInstructionInPromptFiles(true);
+}
+
+function uniqueSkills<T extends { id: string }>(skills: T[]): T[] {
+    const seen = new Set<string>();
+    const result: T[] = [];
+
+    for (const skill of skills) {
+        if (seen.has(skill.id)) {
+            continue;
+        }
+
+        seen.add(skill.id);
+        result.push(skill);
+    }
+
+    return result;
 }

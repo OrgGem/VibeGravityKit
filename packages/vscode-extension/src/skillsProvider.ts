@@ -74,6 +74,11 @@ export class SkillsProvider implements vscode.TreeDataProvider<SkillTreeItem> {
         return this.groups.flatMap((group) => group.skills);
     }
 
+    async listGroups(): Promise<NormalizedGroup[]> {
+        await this.ensureLoaded();
+        return this.groups;
+    }
+
     getSkillStatus(skill: NormalizedSkill): SkillStatus {
         const installed = this.installedSkills.get(skill.id);
         if (!installed) {

@@ -33,14 +33,20 @@ def load_skills_index() -> list:
     """Load the master skills_index.json file."""
     root = get_project_root()
     paths = [
+        root / ".agent" / "brain" / "skills_index.json",
+        root / ".kiro" / "brain" / "skills_index.json",
         root / "GravityKit" / "skills_index.json",
         root / "skills_index.json",
     ]
+    all_skills = []
     for p in paths:
         if p.exists():
-            with open(p, "r", encoding="utf-8") as f:
-                return json.load(f)
-    return []
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    all_skills.extend(json.load(f))
+            except Exception:
+                pass
+    return all_skills
 
 
 def load_skill_groups() -> dict:
@@ -282,12 +288,43 @@ def list_active_sessions() -> dict:
     return {"active_sessions": active}
 
 
+def search_skills(query: str) -> str:
+    """Search for skills by name or description.
+    
+    Args:
+        query: The keyword to search for.
+    """
+    skills = load_skills_index()
+    results = []
+    q_lower = query.lower()
+    for s in skills:
+        name = s.get('name', '').lower()
+        desc = s.get('description', '').lower()
+        if q_lower in name or q_lower in desc:
+            results.append(s)
+            
+    if not results:
+        return f"No skills found matching '{query}'"
+        
+    out = [f"Found {len(results)} skills matching '{query}':"]
+    for i, s in enumerate(results, 1):
+        out.append(f"{i}. {s.get('name')} (File: {s.get('path', 'Unknown')})")
+        desc_preview = s.get('description', '')[:100]
+        if len(s.get('description', '')) > 100:
+            desc_preview += "..."
+        out.append(f"   Description: {desc_preview}")
+        
+    out.append("\nInstruction: Read the contents of the relevant file(s) before proceeding.")
+    return "\n".join(out)
+
+
 if mcp is not None:
     mcp.tool()(route_task)
     mcp.tool()(get_skill_info)
     mcp.tool()(get_group_skills)
     mcp.tool()(list_groups)
     mcp.tool()(list_active_sessions)
+    mcp.tool()(search_skills)
 
 
 def main() -> None:

@@ -32,6 +32,7 @@ export interface IdeTargetDefinition {
 
 export interface IdeTargetStatus extends IdeTargetDefinition {
     detected: boolean;
+    currentIde: boolean;
     absoluteSkillPath: string;
     absoluteMcpConfigPath?: string;
     skillEntryCount: number;
@@ -121,11 +122,13 @@ export const IDE_TARGETS: IdeTargetDefinition[] = [
     {
         id: 'kiro',
         name: 'Kiro',
-        description: 'Kiro skills, agents, specs, and steering files.',
+        description: 'Kiro skill folders, agents, specs, steering files and MCP config.',
         skillPath: '.kiro/skills',
         installMode: 'skillDirectory',
-        promptPaths: ['.kiro/steering/product.md', '.kiro/steering/tech.md', '.kiro/steering/structure.md'],
-        promptDirs: ['.kiro/agents', '.kiro/specs', '.kiro/steering']
+        mcpConfigPath: '.kiro/mcp.json',
+        mcpFormat: 'json',
+        promptPaths: ['.kiro/mcp.json', '.kiro/steering/product.md', '.kiro/steering/tech.md', '.kiro/steering/structure.md'],
+        promptDirs: ['.kiro/skills', '.kiro/agents', '.kiro/specs', '.kiro/steering']
     },
     {
         id: 'claude',
@@ -157,6 +160,7 @@ export function getMcpCapableTargets(): IdeTargetDefinition[] {
 
 export function getTargetStatuses(): IdeTargetStatus[] {
     const root = getWorkspaceRoot();
+    const currentIdeTargetId = detectCurrentIdeTargetId();
 
     return IDE_TARGETS.map((target) => {
         const absoluteSkillPath = resolveWorkspacePath(root, target.skillPath);
@@ -170,6 +174,7 @@ export function getTargetStatuses(): IdeTargetStatus[] {
         return {
             ...target,
             detected: targetExists(root, target),
+            currentIde: target.id === currentIdeTargetId,
             absoluteSkillPath,
             absoluteMcpConfigPath,
             skillEntryCount: countDirectoryEntries(absoluteSkillPath),
@@ -178,6 +183,54 @@ export function getTargetStatuses(): IdeTargetStatus[] {
             disabledMcpServers: mcpStatus.disabled
         };
     });
+}
+
+export function detectCurrentIdeTargetId(appName = vscode.env.appName): IdeTargetId | undefined {
+    const normalized = appName.toLowerCase();
+
+    if (normalized.includes('cursor')) {
+        return 'cursor';
+    }
+    if (normalized.includes('windsurf')) {
+        return 'windsurf';
+    }
+    if (normalized.includes('kiro')) {
+        return 'kiro';
+    }
+    if (normalized.includes('codex')) {
+        return 'codex';
+    }
+    if (normalized.includes('claude')) {
+        return 'claude';
+    }
+    if (normalized.includes('kilo')) {
+        return 'kilocode';
+    }
+    if (normalized.includes('cline')) {
+        return 'cline';
+    }
+    if (
+        normalized.includes('visual studio code')
+        || normalized.includes('vscode')
+        || normalized.includes('vscodium')
+        || normalized.includes('code - oss')
+    ) {
+        return 'copilot';
+    }
+
+    return undefined;
+}
+
+export function getQuickSetupDefaultTargetId(targets: IdeTargetStatus[]): IdeTargetId {
+    const currentTarget = targets.find((target) => target.currentIde);
+    if (currentTarget) {
+        return currentTarget.id;
+    }
+
+    const detectedTarget = targets.find((target) => target.detected && target.id !== 'agent')
+        || targets.find((target) => target.detected);
+
+    return detectedTarget?.id || 'agent';
 }
 
 export function resolveTargetInstallRoot(target: IdeTargetDefinition): string {

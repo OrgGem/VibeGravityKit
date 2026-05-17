@@ -1503,6 +1503,15 @@
     "source": "community"
   },
   {
+    "id": "gen-doc-ocr-reader",
+    "path": "skills/gen-doc-ocr-reader/SKILL.md",
+    "category": "data-ai",
+    "name": "gen-doc-ocr-reader",
+    "description": "AI-driven OCR document reader for scanned PDFs and images. Integrates Tesseract, OneOCR, Win11-OneOCR (Snipping Tool OCR), and DocPixie for text extraction. Use for \"read scanned pdf\", \"image to text\", or \"ocr document\".",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "gen-doc-ppt-master",
     "path": "skills/gen-doc-ppt-master/SKILL.md",
     "category": "data-ai",

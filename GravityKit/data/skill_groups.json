@@ -691,6 +691,7 @@
   "gen-doc": {
     "description": "Document Generation - Multi-format Markdown to PPTX with AI design",
     "skills": [
+      "gen-doc-ocr-reader",
       "gen-doc-ppt-master",
       "article-magazine",
       "blog-post",

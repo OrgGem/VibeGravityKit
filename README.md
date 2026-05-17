@@ -105,7 +105,7 @@ Với Kiro:
 ```text
 .kiro/
   skills/
-  steering/
+  steering/               # product.md, tech.md, structure.md duoc gkt load dien context
   hooks/
   specs/                  # workflow files
   agents/
@@ -306,6 +306,7 @@ gkt watch
 | ---------------------------------- | ------------------------------------------------------- |
 | `gkt init [target]`                | Cài GKit cho IDE hoặc group. Mặc định là `all`.         |
 | `gkt init [target] --group <name>` | Cài một skill group cho target cụ thể.                  |
+| `gkt load --target kiro`           | Quet project va dien noi dung cho `.kiro/steering/product.md`, `tech.md`, `structure.md`. |
 | `gkt groups`                       | Liệt kê skill groups, số skill, workflow, mô tả.        |
 | `gkt list`                         | Liệt kê workflow/agent command có sẵn.                  |
 | `gkt doctor`                       | Kiểm tra Python, Node.js, Git, npm và `.agent/`.        |

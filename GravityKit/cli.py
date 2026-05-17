@@ -6,6 +6,7 @@ import re
 import json
 import shutil
 import subprocess as sp
+from collections import Counter
 from pathlib import Path
 
 # Fix Unicode encoding on Windows (cp1252 cannot render emoji)
@@ -205,6 +206,521 @@ def run_python_script(script, args=None):
         sys.exit(result.returncode)
 
 
+PROJECT_SCAN_EXCLUDE_DIRS = {
+    ".git", ".agent", ".kiro", ".code-graph-index", ".gkt",
+    ".venv", "venv", "env", "node_modules", "__pycache__",
+    "dist", "build", ".next", ".nuxt", ".turbo", ".cache",
+    ".pytest_cache", ".mypy_cache", ".ruff_cache", ".tox",
+    "coverage", ".coverage", "htmlcov", ".idea", ".vscode",
+}
+
+LANGUAGE_BY_EXT = {
+    ".py": "Python",
+    ".js": "JavaScript",
+    ".jsx": "JavaScript/React",
+    ".ts": "TypeScript",
+    ".tsx": "TypeScript/React",
+    ".go": "Go",
+    ".rs": "Rust",
+    ".java": "Java",
+    ".cs": "C#",
+    ".php": "PHP",
+    ".rb": "Ruby",
+    ".md": "Markdown",
+    ".json": "JSON",
+    ".yml": "YAML",
+    ".yaml": "YAML",
+    ".toml": "TOML",
+    ".sql": "SQL",
+    ".xaml": "XAML",
+}
+
+
+def _safe_read_text(path: Path, limit: int = 80000) -> str:
+    try:
+        return path.read_text(encoding="utf-8", errors="ignore")[:limit]
+    except OSError:
+        return ""
+
+
+def _safe_read_json(path: Path) -> dict:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def _strip_frontmatter(text: str) -> str:
+    stripped = text.lstrip("\ufeff")
+    if stripped.startswith("---"):
+        parts = stripped.split("---", 2)
+        if len(parts) >= 3:
+            return parts[2]
+    return text
+
+
+def _kiro_steering_needs_load(path: Path) -> bool:
+    if not path.exists():
+        return True
+    body = _strip_frontmatter(_safe_read_text(path))
+    if "<!--" in body and "-->" in body:
+        return True
+    visible = re.sub(r"<!--.*?-->", "", body, flags=re.DOTALL)
+    meaningful = [
+        line.strip()
+        for line in visible.splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    ]
+    return not meaningful
+
+
+def _first_existing(root: Path, names: list[str]):
+    for name in names:
+        candidate = root / name
+        if candidate.exists():
+            return candidate
+    return None
+
+
+def _readme_summary(root: Path):
+    readme = _first_existing(root, ["README.md", "readme.md", "Readme.md"])
+    if not readme:
+        return None, None
+    text = _safe_read_text(readme)
+    title = None
+    paragraphs: list[str] = []
+    current: list[str] = []
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not title and line.startswith("# "):
+            title = line[2:].strip(" #")
+            continue
+        if not line:
+            if current:
+                paragraphs.append(" ".join(current))
+                current = []
+            continue
+        if (
+            line.startswith("#")
+            or line.startswith("[!")
+            or line.startswith("![")
+            or line.startswith("<")
+            or line.startswith("|")
+            or line.startswith("```")
+        ):
+            continue
+        current.append(re.sub(r"\s+", " ", line))
+        if len(" ".join(current)) > 500:
+            break
+    if current:
+        paragraphs.append(" ".join(current))
+    summary = paragraphs[0] if paragraphs else None
+    return title, summary
+
+
+def _parse_pyproject_fields(path: Path) -> dict:
+    text = _safe_read_text(path)
+    if not text:
+        return {}
+    out = {}
+    for key in ("name", "description"):
+        match = re.search(rf"(?m)^\s*{key}\s*=\s*['\"]([^'\"]+)['\"]", text)
+        if match:
+            out[key] = match.group(1).strip()
+    out["raw"] = text.lower()
+    return out
+
+
+def _walk_project_files(root: Path, max_files: int = 2500) -> list[Path]:
+    files: list[Path] = []
+    for dirpath, dirnames, filenames in os.walk(root):
+        current = Path(dirpath)
+        dirnames[:] = [
+            d for d in dirnames
+            if d not in PROJECT_SCAN_EXCLUDE_DIRS
+            and not (d.startswith(".") and d not in {".github"})
+        ]
+        for filename in filenames:
+            if filename.endswith((".pyc", ".pyo", ".lock")):
+                continue
+            try:
+                files.append((current / filename).relative_to(root))
+            except ValueError:
+                continue
+            if len(files) >= max_files:
+                return files
+    return files
+
+
+def _top_level_dirs(root: Path) -> list[Path]:
+    out = []
+    try:
+        for item in root.iterdir():
+            if not item.is_dir():
+                continue
+            if item.name in PROJECT_SCAN_EXCLUDE_DIRS:
+                continue
+            if item.name.startswith(".") and item.name != ".github":
+                continue
+            out.append(item.relative_to(root))
+    except OSError:
+        return []
+    return sorted(out, key=lambda p: p.as_posix().lower())
+
+
+def _add_unique(items: list[str], value: str) -> None:
+    if value and value not in items:
+        items.append(value)
+
+
+def _detect_frameworks(root: Path, package_json: dict, pyproject: dict, files: list[Path]) -> list[str]:
+    frameworks: list[str] = []
+    deps = {}
+    for key in ("dependencies", "devDependencies", "peerDependencies", "optionalDependencies"):
+        value = package_json.get(key, {})
+        if isinstance(value, dict):
+            deps.update({str(k).lower(): v for k, v in value.items()})
+    dep_names = set(deps)
+    dep_map = {
+        "next": "Next.js",
+        "react": "React",
+        "vue": "Vue",
+        "svelte": "Svelte",
+        "vite": "Vite",
+        "tailwindcss": "Tailwind CSS",
+        "express": "Express",
+        "fastify": "Fastify",
+        "@nestjs/core": "NestJS",
+        "prisma": "Prisma",
+        "drizzle-orm": "Drizzle ORM",
+        "playwright": "Playwright",
+        "vitest": "Vitest",
+        "jest": "Jest",
+    }
+    for dep, label in dep_map.items():
+        if dep in dep_names:
+            _add_unique(frameworks, label)
+    if any(name.startswith("@angular/") for name in dep_names):
+        _add_unique(frameworks, "Angular")
+
+    raw_pyproject = pyproject.get("raw", "")
+    py_map = {
+        "click": "Click CLI",
+        "fastapi": "FastAPI",
+        "django": "Django",
+        "flask": "Flask",
+        "sqlalchemy": "SQLAlchemy",
+        "pydantic": "Pydantic",
+        "pytest": "pytest",
+        "pyyaml": "PyYAML",
+        "requests": "Requests",
+    }
+    for token, label in py_map.items():
+        if token in raw_pyproject:
+            _add_unique(frameworks, label)
+
+    file_names = {p.name.lower() for p in files}
+    if "pyproject.toml" in file_names:
+        _add_unique(frameworks, "Python packaging")
+    if "package.json" in file_names:
+        _add_unique(frameworks, "Node.js package")
+    if any(p.name.lower().startswith("next.config") for p in files):
+        _add_unique(frameworks, "Next.js")
+    if any(p.name.lower().startswith("vite.config") for p in files):
+        _add_unique(frameworks, "Vite")
+    if any(p.name.lower().startswith("tailwind.config") for p in files):
+        _add_unique(frameworks, "Tailwind CSS")
+    if (root / "GravityKit" / "cli.py").exists():
+        _add_unique(frameworks, "Click CLI")
+    return frameworks
+
+
+def _detect_infrastructure(files: list[Path]) -> list[str]:
+    infra: list[str] = []
+    names = {p.name.lower() for p in files}
+    if any(name == "dockerfile" or name.startswith("dockerfile.") for name in names):
+        _add_unique(infra, "Docker")
+    if any(name.startswith("docker-compose") for name in names):
+        _add_unique(infra, "Docker Compose")
+    if any(p.parts[:2] == (".github", "workflows") for p in files if len(p.parts) >= 2):
+        _add_unique(infra, "GitHub Actions")
+    if "vercel.json" in names:
+        _add_unique(infra, "Vercel")
+    if "netlify.toml" in names:
+        _add_unique(infra, "Netlify")
+    if any(p.suffix == ".tf" for p in files):
+        _add_unique(infra, "Terraform")
+    if any(part in {"k8s", "kubernetes"} for p in files for part in p.parts):
+        _add_unique(infra, "Kubernetes manifests")
+    return infra
+
+
+def _directory_purpose(path: Path) -> str:
+    name = path.name
+    known = {
+        "src": "Application source code",
+        "app": "Application source or route tree",
+        "pages": "Page routes",
+        "components": "Reusable UI components",
+        "tests": "Automated tests",
+        "test": "Automated tests",
+        "docs": "Documentation",
+        "scripts": "Automation and helper scripts",
+        "data": "Structured data and catalog metadata",
+        "lib": "Shared library code",
+        "packages": "Workspace packages or distributable subpackages",
+        "public": "Static public assets",
+        "assets": "Static assets and templates",
+        "GravityKit": "GravityKit Python package source",
+        "build": "Build artifacts",
+        "dist": "Distribution artifacts",
+    }
+    return known.get(name, "Project directory")
+
+
+def _collect_project_profile(root: Path) -> dict:
+    files = _walk_project_files(root)
+    language_counts = Counter()
+    for rel in files:
+        language = LANGUAGE_BY_EXT.get(rel.suffix.lower())
+        if language:
+            language_counts[language] += 1
+
+    package_json = _safe_read_json(root / "package.json")
+    pyproject = _parse_pyproject_fields(root / "pyproject.toml")
+    readme_title, readme_summary = _readme_summary(root)
+
+    project_name = (
+        pyproject.get("name")
+        or package_json.get("name")
+        or readme_title
+        or root.name
+    )
+    description = (
+        pyproject.get("description")
+        or package_json.get("description")
+        or readme_summary
+        or f"{project_name} project workspace."
+    )
+
+    top_dirs = _top_level_dirs(root)
+    frameworks = _detect_frameworks(root, package_json, pyproject, files)
+    infrastructure = _detect_infrastructure(files)
+
+    features: list[str] = []
+    if (root / "GravityKit" / "cli.py").exists():
+        _add_unique(features, "Python CLI commands for installing and managing agent tooling")
+    if (root / "GravityKit" / ".agent" / "skills").exists():
+        _add_unique(features, "Packaged Agent Skills, workflows, agents, and brain templates")
+    if (root / "GravityKit" / "ide-adapters").exists():
+        _add_unique(features, "IDE adapter templates for agent-aware development environments")
+    if (root / "packages" / "npx").exists():
+        _add_unique(features, "NPX distribution path for Node-first users")
+    if (root / "data").exists() or (root / "GravityKit" / "data").exists():
+        _add_unique(features, "Catalog and group metadata for selecting installed capabilities")
+    if not features:
+        _add_unique(features, "Project source code and configuration")
+        if readme_summary:
+            _add_unique(features, readme_summary[:180])
+
+    return {
+        "root": root,
+        "name": str(project_name),
+        "description": str(description),
+        "languages": language_counts.most_common(8),
+        "frameworks": frameworks,
+        "infrastructure": infrastructure,
+        "top_dirs": top_dirs[:16],
+        "files": files,
+        "package_json": package_json,
+        "pyproject": pyproject,
+        "features": features[:8],
+    }
+
+
+def _bullet_lines(items: list[str], fallback: str) -> str:
+    values = [str(item).strip() for item in items if str(item).strip()]
+    if not values:
+        values = [fallback]
+    return "\n".join(f"- {item}" for item in values)
+
+
+def _render_product_md(profile: dict) -> str:
+    name = profile["name"]
+    desc = profile["description"]
+    target_users = [
+        "Developers and teams working in this repository.",
+        "AI IDE agents that need project purpose, boundaries, and expected outcomes.",
+    ]
+    lower_desc = desc.lower()
+    if "agent" in lower_desc or "gravitykit" in lower_desc:
+        target_users.insert(0, "Developers adopting AI-agent workflows across IDEs.")
+    objectives = [
+        "Keep project purpose and expected behavior visible to Kiro in every session.",
+        "Make implementation choices align with the existing repository structure and tooling.",
+        "Reduce repeated context gathering by maintaining accurate steering files.",
+    ]
+    return f"""---
+inclusion: always
+---
+
+# Product Overview
+
+Generated by `gkt load` from repository metadata. Review and refine these notes
+as the product direction evolves.
+
+## Purpose
+
+- {name}: {desc}
+
+## Target Users
+
+{_bullet_lines(target_users, "Developers working in this repository.")}
+
+## Key Features
+
+{_bullet_lines(profile["features"], "Project source code, configuration, and documentation.")}
+
+## Business Objectives
+
+{_bullet_lines(objectives, "Keep project context accurate for Kiro.")}
+"""
+
+
+def _render_tech_md(profile: dict) -> str:
+    languages = [
+        f"{language} ({count} files)"
+        for language, count in profile["languages"]
+    ]
+    frameworks = profile["frameworks"]
+    infrastructure = profile["infrastructure"]
+    tools: list[str] = []
+    if profile["package_json"].get("scripts"):
+        _add_unique(tools, "npm scripts from `package.json`")
+    if profile["pyproject"]:
+        _add_unique(tools, "Python project metadata from `pyproject.toml`")
+    if any(p.name == "README.md" for p in profile["files"]):
+        _add_unique(tools, "Repository README documentation")
+    constraints = [
+        "Prefer the frameworks, scripts, and package managers already present in this repository.",
+        "Do not introduce new runtime dependencies unless the task requires them.",
+        "Keep generated Kiro steering files concise enough to load on every interaction.",
+    ]
+    return f"""---
+inclusion: always
+---
+
+# Technology Stack
+
+Generated by `gkt load` from repository files and package metadata.
+
+## Languages
+
+{_bullet_lines(languages, "No dominant language detected yet.")}
+
+## Frameworks
+
+{_bullet_lines(frameworks, "No major framework detected from package metadata yet.")}
+
+## Libraries & Tools
+
+{_bullet_lines(tools, "Use the tooling already documented in this repository.")}
+
+## Infrastructure
+
+{_bullet_lines(infrastructure, "No deployment or infrastructure files detected yet.")}
+
+## Constraints
+
+{_bullet_lines(constraints, "Follow existing project constraints and conventions.")}
+"""
+
+
+def _render_structure_md(profile: dict) -> str:
+    layout_rows = []
+    for directory in profile["top_dirs"]:
+        layout_rows.append(f"| `{directory.as_posix()}/` | {_directory_purpose(directory)} |")
+    if not layout_rows:
+        layout_rows.append("| `./` | Project root |")
+
+    file_names = {p.name for p in profile["files"]}
+    naming = ["Follow naming patterns already established in each directory."]
+    if "SKILL.md" in file_names:
+        naming.append("Agent skills live in folders with a required `SKILL.md` file.")
+    if any(p.name.startswith("wf-") and p.suffix == ".md" for p in profile["files"]):
+        naming.append("GravityKit workflow files use the `wf-` prefix.")
+    if any(p.suffix == ".py" for p in profile["files"]):
+        naming.append("Python modules should use snake_case filenames.")
+    if any(p.suffix in {".ts", ".tsx", ".js", ".jsx"} for p in profile["files"]):
+        naming.append("JavaScript and TypeScript files should follow local framework conventions.")
+
+    imports = ["Prefer local helpers and existing module boundaries over new abstractions."]
+    if any(p.suffix == ".py" for p in profile["files"]):
+        imports.append("For Python, keep imports explicit and package-relative where appropriate.")
+    if any(p.suffix in {".ts", ".tsx", ".js", ".jsx"} for p in profile["files"]):
+        imports.append("For JavaScript/TypeScript, follow existing package and path alias conventions.")
+
+    decisions = []
+    root = profile["root"]
+    if (root / "GravityKit" / "cli.py").exists():
+        decisions.append("The Python CLI is the canonical implementation for full GravityKit behavior.")
+    if (root / "packages" / "npx").exists():
+        decisions.append("The NPX package is a distribution and installer layer.")
+    if (root / "GravityKit" / ".agent").exists():
+        decisions.append("Canonical agent templates are stored under `GravityKit/.agent/` before install.")
+    if (root / "GravityKit" / "ide-adapters" / "kiro").exists():
+        decisions.append("Kiro-specific instructions are installed from `GravityKit/ide-adapters/kiro/`.")
+    if not decisions:
+        decisions.append("Keep architecture decisions aligned with the existing directory layout.")
+
+    return f"""---
+inclusion: always
+---
+
+# Project Structure
+
+Generated by `gkt load` from the current repository layout.
+
+## Directory Layout
+
+| Path | Purpose |
+| --- | --- |
+{chr(10).join(layout_rows)}
+
+## Naming Conventions
+
+{_bullet_lines(naming, "Follow existing repository naming conventions.")}
+
+## Import Patterns
+
+{_bullet_lines(imports, "Follow existing import patterns.")}
+
+## Architecture Decisions
+
+{_bullet_lines(decisions, "Keep architecture decisions consistent with existing code.")}
+"""
+
+
+def load_kiro_foundation_docs(project_root: Path, force: bool = False) -> list[str]:
+    """Populate Kiro foundation steering docs from local project metadata."""
+    project_root = project_root.resolve()
+    steering_dir = project_root / ".kiro" / "steering"
+    steering_dir.mkdir(parents=True, exist_ok=True)
+    profile = _collect_project_profile(project_root)
+    docs = {
+        "product.md": _render_product_md(profile),
+        "tech.md": _render_tech_md(profile),
+        "structure.md": _render_structure_md(profile),
+    }
+    written = []
+    for filename, content in docs.items():
+        target = steering_dir / filename
+        if force or _kiro_steering_needs_load(target):
+            target.write_text(content.rstrip() + "\n", encoding="utf-8")
+            written.append(filename)
+    return written
+
+
 def copy_group_selective(source_agent_dir, target_agent_dir, group_config, default_skills=None, minimal=False):
     """Copy only the skills and workflows defined in a group config.
     
@@ -342,6 +858,8 @@ def install_kiro(package_dir, group_config=None, skill_groups=None, minimal=Fals
     brain_src = agent_dir / "brain"
     if brain_src.exists():
         shutil.copytree(brain_src, kiro_dir / "brain")
+
+    load_kiro_foundation_docs(Path.cwd())
 
     return copied_skills
 
@@ -738,6 +1256,34 @@ def init(target, group, minimal):
         click.echo("\n🧠 Enable Semantic Code Graph Search (Requires Python 3.9+):")
         click.echo("  Run this command to build the FAISS index and auto-configure MCP servers for your IDEs:")
         click.echo("  👉 gkt mcp")
+
+@main.command("load")
+@click.option(
+    "--target",
+    default="kiro",
+    type=click.Choice(["kiro"]),
+    show_default=True,
+    help="Instruction target to populate.",
+)
+@click.option(
+    "--project-root",
+    default=".",
+    type=click.Path(file_okay=False, dir_okay=True, path_type=Path),
+    show_default=True,
+    help="Project root to scan.",
+)
+@click.option("--force", is_flag=True, help="Overwrite existing steering files.")
+def load_context(target, project_root, force):
+    """Load project metadata into generated instruction files."""
+    root = project_root.resolve()
+    if target == "kiro":
+        written = load_kiro_foundation_docs(root, force=force)
+        if written:
+            click.echo(f"Loaded Kiro steering docs: {', '.join(written)}")
+            click.echo(f"Target: {root / '.kiro' / 'steering'}")
+        else:
+            click.echo("No Kiro steering docs changed. Use --force to regenerate existing files.")
+
 
 @main.command()
 def groups():

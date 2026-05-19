@@ -413,6 +413,7 @@
       "discord-automation",
       "whatsapp-automation",
       "gmail-automation",
+      "outlook-automation",
       "sendgrid-automation",
       "mailchimp-automation"
     ],

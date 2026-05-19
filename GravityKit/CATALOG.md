@@ -2,7 +2,7 @@
 
 Generated at: 2026-02-08T00:00:00.000Z
 
-Total skills: 342
+Total skills: 344
 
 ## architecture (23)
 
@@ -120,7 +120,7 @@ Total skills: 342
 | `vector-index-tuning` | Optimize vector index performance for latency, recall, and memory. Use when tuning HNSW parameters, selecting quantization strategies, or scaling vector sear... | vector, index, tuning | vector, index, tuning, optimize, performance, latency, recall, memory, hnsw, parameters, selecting, quantization |
 | `yfinance-data` | > | yfinance, data | yfinance, data |
 
-## development (33)
+## development (34)
 
 | Skill | Description | Tags | Triggers |
 | --- | --- | --- | --- |
@@ -150,6 +150,7 @@ Total skills: 342
 | `nextjs-developer` | Full-stack Next.js development with App Router, Server Components, Server Actions, and modern patterns. Use for building Next.js applications, APIs, and opti... | nextjs | nextjs, developer, full, stack, next, js, development, app, router, server, components, actions |
 | `nocobase-publish-manage` | Use when users need NocoBase backup restore or migration publish operations through nb api backup and nb api migration commands. | nocobase, publish, manage | nocobase, publish, manage, users, backup, restore, migration, operations, through, nb, api, commands |
 | `nocobase-workflow-manage` | Use when users need to inspect, create, revise, enable, or diagnose NocoBase workflows through the `nb` CLI, including trigger selection, node-chain changes,... | nocobase, manage | nocobase, manage, users, inspect, revise, enable, diagnose, through, nb, cli, including, trigger |
+| `outlook-automation` | Automate Microsoft Outlook on Windows (Desktop App): send/reply, search, read emails, and manage folders via Python pywin32 or PowerShell COM interface. | outlook | outlook, automation, automate, microsoft, windows, desktop, app, send, reply, search, read, emails |
 | `react-patterns` | Modern React patterns and principles. Hooks, composition, performance, TypeScript best practices. | react | react, principles, hooks, composition, performance, typescript |
 | `react-pro` | Expert React development — hooks, performance optimization, state management patterns, and modern React 18+ features. Use for building scalable React applica... | react | react, pro, development, hooks, performance, optimization, state, 18, features, building, scalable, applications |
 | `rust-pro` | Master Rust 1.75+ with modern async patterns, advanced type system | rust | rust, pro, 75, async, type |
@@ -378,7 +379,7 @@ Total skills: 342
 | `debugger` | Debugging specialist for errors, test failures, and unexpected | debugger | debugger, debugging, errors, test, failures, unexpected |
 | `fsi-unit-economics` | Analyze unit economics — ARR cohorts, LTV/CAC, net retention, payback periods, revenue quality, and margin waterfall. Essential for SaaS, recurring revenue, ... | fsi, unit, economics | fsi, unit, economics, analyze, arr, cohorts, ltv, cac, net, retention, payback, periods |
 
-## workflow (8)
+## workflow (9)
 
 | Skill | Description | Tags | Triggers |
 | --- | --- | --- | --- |
@@ -387,6 +388,7 @@ Total skills: 342
 | `datadog-automation` | Automate Datadog tasks via Rube MCP (Composio): query metrics, search logs, manage monitors/dashboards, create events and downtimes. Always search tools firs... | datadog | datadog, automation, automate, tasks, via, rube, mcp, composio, query, metrics, search, logs |
 | `gmail-automation` | Automate Gmail tasks via Rube MCP (Composio): send/reply, search, labels, drafts, attachments. Always search tools first for current schemas. | gmail | gmail, automation, automate, tasks, via, rube, mcp, composio, send, reply, search, labels |
 | `hubspot-automation` | Automate HubSpot CRM operations (contacts, companies, deals, tickets, properties) via Rube MCP using Composio integration. | hubspot | hubspot, automation, automate, crm, operations, contacts, companies, deals, tickets, properties, via, rube |
+| `jira-automation` | Migrated from grandcamel/jira-assistant-skills: A unified, 14-module enterprise JIRA automation suite. Allows conversational Jira execution covering CRUD, ag... | jira | jira, automation, migrated, grandcamel, assistant, skills, unified, 14, module, enterprise, suite, allows |
 | `release-manager` | Changelog generation, version bumping, and release automation. | release, manager | release, manager, changelog, generation, version, bumping, automation |
 | `skill-creator` | This skill should be used when the user asks to create a new skill, build a skill, make a custom skill, develop a CLI skill, or wants to extend the CLI with ... | automation, scaffolding, skill-creation, meta-skill | automation, scaffolding, skill-creation, meta-skill, skill, creator, should, used, user, asks, new, custom |
 | `uipath-shared` | Shared UiPath reference docs — uip CLI reference, UI Automation prerequisites & configuration, debugging, selector recovery, multi-step flows, validation loop. | uipath, rpa, reference, cli, ui-automation | uipath, rpa, reference, cli, ui-automation, shared, docs, uip, ui, automation, prerequisites, configuration |

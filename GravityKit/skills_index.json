@@ -1755,6 +1755,15 @@
     "source": "community"
   },
   {
+    "id": "jira-automation",
+    "path": "skills/jira-automation/SKILL.md",
+    "category": "general",
+    "name": "jira-automation",
+    "description": "Migrated from grandcamel/jira-assistant-skills: A unified, 14-module enterprise JIRA automation suite. Allows conversational Jira execution covering CRUD, agile, JSM, relationships, and time logs.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
     "id": "journal-manager",
     "path": "skills/journal-manager/SKILL.md",
     "category": "general",
@@ -2174,6 +2183,15 @@
     "category": "general",
     "name": "options-payoff",
     "description": "Generate an interactive options payoff curve chart with dynamic parameter controls. Use this skill whenever the user shares an options position screenshot, describes an options strategy, or asks to visualize how an options trade makes or loses money. Triggers include: any mention of butterfly, spread (vertical/calendar/diagonal/ratio), straddle, strangle, condor, covered call, protective put, iron condor, or any multi-leg options structure. Also triggers when a user pastes strike prices, premiums, expiry dates, or says things like \"show me the payoff\", \"draw the P&L curve\", \"what does this trade look like\", or uploads a screenshot from a broker (IBKR, TastyTrade, Robinhood, etc). Always use this skill even if the user only provides partial info — extract what you can and use defaults for the rest.",
+    "risk": "unknown",
+    "source": "community"
+  },
+  {
+    "id": "outlook-automation",
+    "path": "skills/outlook-automation/SKILL.md",
+    "category": "data-ai",
+    "name": "outlook-automation",
+    "description": "Automate Microsoft Outlook on Windows (Desktop App): send/reply, search, read emails, and manage folders via Python pywin32 or PowerShell COM interface.",
     "risk": "unknown",
     "source": "community"
   },

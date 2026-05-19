@@ -104,6 +104,26 @@ Agents should use these skills proactively to maintain quality, consistency, and
 - **Use when**: Running commands on Linux/macOS, writing shell scripts
 - **Integration**: Provides defensive scripting patterns
 
+## File Reading Rules
+
+> **ALWAYS** choose the right tool to avoid hangs and wasted tokens.
+
+### Rule: `view_file` first for text formats
+Use `view_file` directly for **all plain-text file formats**:
+- Documents: `.md`, `.txt`, `.rst`, `.adoc`
+- Data: `.json`, `.yaml`, `.yml`, `.csv`, `.toml`, `.xml`, `.ini`, `.cfg`, `.env`
+- Code: `.py`, `.js`, `.ts`, `.go`, `.rs`, `.java`, `.c`, `.cpp`, `.cs`, `.rb`, `.php`, `.sh`, `.ps1`, `.sql`, `.html`, `.css`
+- Config: `.gitignore`, `.gitattributes`, `.editorconfig`, `Dockerfile`, `Makefile`
+
+### Rule: `mcp_document-reader` only for binary formats
+Reserve `mcp_document-reader` for formats that **require conversion**:
+- `.pdf`, `.docx`, `.doc`, `.xlsx`, `.xls`, `.pptx`, `.ppt`
+- `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` (image with text extraction)
+- `.mp3`, `.mp4`, `.wav` (audio/video with transcription)
+
+> **Why**: `mcp_document-reader` spawns a MarkItDown subprocess. On Windows, long paths (>260 chars) or unusual file encodings can cause the subprocess to **hang indefinitely** with no error message. `view_file` is native and has no such risk.
+> See: `platform_notes.md` → "File Reading Tool Selection" for the full reference table.
+
 ## Workflow Integration Guide
 
 When building or optimizing workflows, agents should reference these default skills to:

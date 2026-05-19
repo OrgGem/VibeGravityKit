@@ -963,7 +963,17 @@ def setup_agent_instructions(cwd: Path, targets: list[str], minimal: bool = Fals
         "# Local MCP Priority Rule\n"
         "CRITICAL: Always prioritize using the MCP tools and servers defined in this local project workspace. "
         "Do NOT fallback to global or user-level MCP configurations (e.g. in the user's home or gemini directory) "
-        "if a local equivalent exists."
+        "if a local equivalent exists.\n\n"
+        "# Zero-CLI Session/Brain & Guardrails\n"
+        "1. CRITICAL: NEVER require the user to run CLI commands for managing tasks, git branches, or context compaction (e.g. `gkt brain start`, `git checkout -b`, `gkt brain compact`). The user's workflow must be 100% Zero-CLI Friction.\n"
+        "2. TASK SESSION LIFECYCLE:\n"
+        "   - When the user asks to start a new task/feature (or you are about to implement a plan), you MUST first call the `start_task_session` tool with a safe task name under the hood. This automatically switches git branch to 'gkt-task/<name>' and sets 'discussion_mode' to true in '.agent/brain/project_context.json'.\n"
+        "   - When the user says they are done, finished, or triggers 'finito'/'hoàn thành'/'xong rồi', you MUST run checks and call the `complete_task_session` tool under the hood to automatically commit, merge back, and delete the branch. Do NOT tell the user to do it.\n"
+        "3. DISCUSSION GUARDRAILS:\n"
+        "   - Look at '.agent/brain/project_context.json'. If 'discussion_mode' is true, you are strictly FORBIDDEN from using write/edit tools ('write_to_file', 'replace_file_content', 'multi_replace_file_content'). You must only discuss, design, and plan with the user.\n"
+        "   - To unlock editing capabilities, wait for the user's explicit approval or trigger word ('yert', 'duyệt', 'code đi'). Once approved, you must call the `update_project_context` tool under the hood to set 'discussion_mode' to false (or use key_path='discussion_mode', value='false') and only then proceed with editing files.\n"
+        "4. CONTEXT COMPACTION:\n"
+        "   - When the context gets too large, or the user triggers 'squish'/'compact'/'nén ngữ cảnh', you MUST call the `compact_context` tool under the hood, present the generated compact handoff summary located at '.agent/brain/workflow_sessions/compact-handoff.md', and explain how they can start a fresh chat to save tokens."
     )
     
     if minimal:
@@ -1253,9 +1263,14 @@ def init(target, group, minimal):
         click.echo("  👉 @[/wf-uipath-project]: End-to-end UiPath RPA automation workflow")
         click.echo("\n💬 Tip: Type /wf- to filter and view all 40+ available workflows.")
 
-        click.echo("\n🧠 Enable Semantic Code Graph Search (Requires Python 3.9+):")
-        click.echo("  Run this command to build the FAISS index and auto-configure MCP servers for your IDEs:")
-        click.echo("  👉 gkt mcp")
+    click.echo("\n⚡ Zero-CLI Brain & Guardrails are Active:")
+    click.echo("  👉 Start Task : Just tell your AI Agent what feature to build. It auto-branches Git and locks files under the hood.")
+    click.echo("  👉 Guardrails : Agent is locked in 'Discussion Mode' until you approve (type 'yert' or 'duyệt' to unlock).")
+    click.echo("  👉 Compact    : Type 'squish' or 'nén' in chat to compress history and save tokens.")
+
+    click.echo("\n🧠 Enable Semantic Code Graph Search (Requires Python 3.9+):")
+    click.echo("  Run this command to build the FAISS index and auto-configure MCP servers for your IDEs:")
+    click.echo("  👉 gkt mcp")
 
 @main.command("load")
 @click.option(
@@ -1439,7 +1454,19 @@ def version():
 @main.command(context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
 @click.pass_context
 def brain(ctx):
-    """Manage project brain — context, decisions, conventions."""
+    """Manage project brain — context, decisions, conventions.
+    
+    Supports Zero-CLI workflow with under-the-hood session lifecycle,
+    discussion guardrails, and context compaction.
+    
+    Subcommands:
+      gkt brain start    : Start a new git-tied task session (discussion locked)
+      gkt brain complete : Auto-commit, merge, and clean up the active session
+      gkt brain compact  : Compress session history to save token context
+    
+    Tip: For a 100% friction-free experience, let your AI Agent trigger these
+    automatically under the hood through the local MCP server.
+    """
     local_script = Path.cwd() / ".agent" / "skills" / "brain-manager" / "scripts" / "brain.py"
     global_script = Path(__file__).resolve().parent / ".agent" / "skills" / "brain-manager" / "scripts" / "brain.py"
     script = local_script if local_script.exists() else global_script

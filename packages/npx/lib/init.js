@@ -589,11 +589,16 @@ async function initCommand(target = 'all', group = null) {
       console.log('  👉 @[/wf-gen-doc]      : Generate AI-designed PowerPoint presentations');
       console.log('  👉 @[/wf-uipath-project]: End-to-end UiPath RPA automation workflow');
       console.log('\n💬 Tip: Type /wf- to filter and view all available workflows.');
-
-      console.log('\n🧠 Enable Semantic Code Graph Search (Requires Python 3.9+):');
-      console.log('  Run this command to build the FAISS index and auto-configure MCP servers for your IDEs:');
-      console.log('  👉 npx gkt mcp');
     }
+
+    console.log('\n⚡ Zero-CLI Brain & Guardrails are Active:');
+    console.log('  👉 Start Task : Just tell your AI Agent what feature to build. It auto-branches Git and locks files under the hood.');
+    console.log('  👉 Guardrails : Agent is locked in \'Discussion Mode\' until you approve (type \'yert\' or \'duyệt\' to unlock).');
+    console.log('  👉 Compact    : Type \'squish\' or \'nén\' in chat to compress history and save tokens.');
+
+    console.log('\n🧠 Enable Semantic Code Graph Search (Requires Python 3.9+):');
+    console.log('  Run this command to build the FAISS index and auto-configure MCP servers for your IDEs:');
+    console.log('  👉 npx gkt mcp');
   } finally {
     // Clean up temp directory if we downloaded
     if (tmpDir) rmDir(tmpDir);

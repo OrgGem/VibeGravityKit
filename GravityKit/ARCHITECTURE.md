@@ -8,7 +8,7 @@ This document describes the architecture implemented by the current
 `GravityKit/` package and its NPX distribution. For command examples intended
 for end users, see the root `README.md`.
 
-Current Python package version: `3.13.1`
+Current Python package version: `3.13.4`
 
 ## System Overview
 
@@ -89,8 +89,8 @@ These counts are derived from the current `GravityKit/` folder.
 
 | Item | Count |
 | --- | ---: |
-| Python package version | `3.13.1` |
-| NPX package version | `3.10.5` |
+| Python package version | `3.13.4` |
+| NPX package version | `3.13.4` |
 | Skill groups excluding `_default` | 23 |
 | Default skills | 16 |
 | Installable skill folders in `.agent/skills/` | 340 |

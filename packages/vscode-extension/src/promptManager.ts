@@ -2,7 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { getSkillsRoot, getWorkspaceRoot, safeSkillDirectoryName } from './config';
-import { IDE_TARGETS, resolveWorkspacePath } from './ideTargets';
+import { IDE_TARGETS, resolveWorkspacePath, detectCurrentIdeTargetId } from './ideTargets';
+import { NormalizedSkill, SkillInstallTarget } from './types';
 
 export interface PromptFile {
     label: string;
@@ -301,3 +302,230 @@ function categoryRank(category: PromptFile['category']): number {
             return 3;
     }
 }
+
+export async function updateSkillInstructionsAfterInstall(
+    target: SkillInstallTarget | undefined,
+    skillsInstalled: NormalizedSkill[]
+): Promise<void> {
+    const workspaceRoot = getWorkspaceRoot();
+    
+    // 1. Detect active brain and router skills
+    // We check newly installed skills, canonical skills folder, and the target installation root
+    const searchPaths = new Set<string>();
+    try {
+        const canonicalSkillsRoot = getSkillsRoot();
+        if (canonicalSkillsRoot) {
+            searchPaths.add(path.resolve(canonicalSkillsRoot));
+        }
+    } catch {
+        // Ignore if getSkillsRoot() is not configured
+    }
+
+    if (target?.rootPath) {
+        searchPaths.add(path.resolve(target.rootPath));
+    }
+
+    const installedSkillKeys = new Set<string>();
+    
+    // Add skills being installed right now
+    for (const s of skillsInstalled) {
+        installedSkillKeys.add(s.id.toLowerCase());
+        installedSkillKeys.add(s.name.toLowerCase());
+    }
+
+    // Scan all search roots for directories or file rules
+    for (const sPath of searchPaths) {
+        if (fs.existsSync(sPath)) {
+            try {
+                const stat = fs.statSync(sPath);
+                if (stat.isDirectory()) {
+                    const entries = fs.readdirSync(sPath, { withFileTypes: true });
+                    for (const entry of entries) {
+                        if (entry.name.startsWith('.')) {
+                            continue;
+                        }
+                        if (entry.isDirectory()) {
+                            installedSkillKeys.add(entry.name.toLowerCase());
+                        } else if (entry.isFile()) {
+                            const ext = path.extname(entry.name);
+                            if (ext === '.md' || ext === '.mdc') {
+                                const baseName = path.basename(entry.name, ext);
+                                installedSkillKeys.add(baseName.toLowerCase());
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error(`Failed to scan skill path ${sPath}:`, e);
+            }
+        }
+    }
+
+    const hasBrain = [...installedSkillKeys].some(key => key.includes('brain'));
+    const hasRouter = [...installedSkillKeys].some(key => key.includes('router'));
+
+    // 2. Generate instruction contents
+    // We create a clear instruction block in Vietnamese and English to prioritize local skills.
+    let instructionBlock = '<!-- GKT_SKILLS_INSTRUCTIONS_START -->\n';
+    instructionBlock += '> [!IMPORTANT]\n';
+    instructionBlock += '> **Skill Prioritization / Quy tắc ưu tiên Skill:**\n';
+    instructionBlock += '> - **Priority / Ưu tiên:** Always prioritize using the installed skills in the workspace. Read the `SKILL.md` file in each skill folder to follow its specified workflow before doing general tasks.\n';
+    instructionBlock += '> - **Ưu tiên hàng đầu:** Luôn ưu tiên sử dụng các skill đã được cài đặt trong workspace. Hãy đọc file `SKILL.md` trong thư mục của từng skill để tuân thủ quy trình làm việc trước khi thực hiện tác vụ chung.\n';
+
+    if (hasBrain && hasRouter) {
+        instructionBlock += '> - **Core Skills / Skill cốt lõi:** The core skills `skill-router` and `brain-manager` are installed locally as instructions. Active usage is highly prioritized.\n';
+        instructionBlock += '> - **Router Priority:** Before starting any request, ALWAYS read and follow the `skill-router` workflow (in `.kiro/skills/skill-router` or `.agent/skills/skill-router`) to route/find appropriate skills.\n';
+        instructionBlock += '> - **Định tuyến Skill:** Trước khi thực hiện bất kỳ yêu cầu nào, BẮT BUỘC phải đọc và làm theo hướng dẫn của `skill-router` để tìm và định tuyến đến skill phù hợp nhất.\n';
+        instructionBlock += '> - **Brain Priority:** Use `brain-manager` (in `.kiro/skills/brain-manager` or `.agent/skills/brain-manager`) to query repository guidelines, search knowledge items, and update journals.\n';
+        instructionBlock += '> - **Quản lý kiến thức:** Sử dụng `brain-manager` để truy vấn hướng dẫn (Guidelines), tìm kiếm kiến thức (Knowledge Items) và ghi chép nhật ký trước khi thiết kế/lập trình.\n';
+        instructionBlock += '> - **No MCP Required / Không cần MCP:** These skills are fully self-contained as instructions; execute them by reading their `SKILL.md` directly. Không cần kích hoạt hay cấu hình MCP cho các skill này.\n';
+    } else {
+        instructionBlock += '> - **Usage / Hướng dẫn sử dụng:** Find and follow the `SKILL.md` of any matching skill in the workspace skills folder (e.g. `.kiro/skills/` or `.agent/skills/`).\n';
+    }
+    instructionBlock += '<!-- GKT_SKILLS_INSTRUCTIONS_END -->\n';
+
+    // Formulate a concise tag for JSON files
+    let jsonInstructionTag = ' [GKT_SKILLS_INSTRUCTIONS_START: Always prioritize using installed skills. ';
+    if (hasBrain && hasRouter) {
+        jsonInstructionTag += 'BẮT BUỘC: Hãy luôn sử dụng skill-router để tìm định tuyến skill và dùng brain-manager để quản lý kiến thức/nhật ký trước khi xử lý yêu cầu. Đọc trực tiếp SKILL.md không cần cấu hình MCP. ';
+    } else {
+        jsonInstructionTag += 'Đọc file SKILL.md trong thư mục từng skill để tuân thủ đúng quy trình làm việc. ';
+    }
+    jsonInstructionTag += 'GKT_SKILLS_INSTRUCTIONS_END]';
+
+    // 3. Determine if we are installing to Kiro
+    const targetId = target?.id;
+    const isKiro = targetId === 'kiro';
+
+    if (isKiro) {
+        // A. Kiro Agents: Update all .md files in .kiro/agents/
+        const agentsDir = path.join(workspaceRoot, '.kiro/agents');
+        if (fs.existsSync(agentsDir)) {
+            try {
+                const files = fs.readdirSync(agentsDir);
+                for (const file of files) {
+                    if (file.endsWith('.md')) {
+                        const filePath = path.join(agentsDir, file);
+                        const stat = fs.statSync(filePath);
+                        if (!stat.isFile()) {
+                            continue;
+                        }
+
+                        let content = fs.readFileSync(filePath, 'utf8');
+                        
+                        // Replace existing block or append to the end
+                        const startTag = '<!-- GKT_SKILLS_INSTRUCTIONS_START -->';
+                        const endTag = '<!-- GKT_SKILLS_INSTRUCTIONS_END -->';
+                        const regex = new RegExp(`[\\s\\n]*${startTag}[\\s\\S]*?${endTag}[\\s\\n]*`, 'g');
+                        content = content.replace(regex, '\n\n');
+                        
+                        content = content.trim() + '\n\n' + instructionBlock;
+                        content = content.replace(/\n{3,}/g, '\n\n').trim() + '\n';
+                        fs.writeFileSync(filePath, content, 'utf8');
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to update Kiro agents:', e);
+            }
+        }
+
+        // B. Kiro Hooks: Update all .json files in .kiro/hooks/
+        const hooksDir = path.join(workspaceRoot, '.kiro/hooks');
+        if (fs.existsSync(hooksDir)) {
+            try {
+                const files = fs.readdirSync(hooksDir);
+                for (const file of files) {
+                    if (file.endsWith('.json')) {
+                        const filePath = path.join(hooksDir, file);
+                        const stat = fs.statSync(filePath);
+                        if (!stat.isFile()) {
+                            continue;
+                        }
+
+                        const raw = fs.readFileSync(filePath, 'utf8');
+                        const parsed = JSON.parse(raw);
+                        
+                        if (parsed && typeof parsed.instructions === 'string') {
+                            let inst = parsed.instructions;
+                            
+                            // Remove existing block
+                            const startTag = '\\[GKT_SKILLS_INSTRUCTIONS_START:';
+                            const endTag = 'GKT_SKILLS_INSTRUCTIONS_END\\]';
+                            const regex = new RegExp(`\\s*${startTag}[\\s\\S]*?${endTag}\\s*`, 'g');
+                            inst = inst.replace(regex, ' ').trim();
+                            
+                            // Append new block
+                            parsed.instructions = (inst + ' ' + jsonInstructionTag).trim();
+                            fs.writeFileSync(filePath, JSON.stringify(parsed, null, 2) + '\n', 'utf8');
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to update Kiro hooks:', e);
+            }
+        }
+    }
+
+    // C. Non-Kiro / Standard prompt files (Strictly Gated)
+    const filesToUpdate: string[] = [];
+    if (!targetId) {
+        // Default target is unspecified: update AGENTS.md, plus the currently active IDE prompt rules if detected
+        filesToUpdate.push('AGENTS.md');
+        const activeIde = detectCurrentIdeTargetId();
+        if (activeIde === 'cursor') {
+            filesToUpdate.push('.cursorrules');
+        } else if (activeIde === 'windsurf') {
+            filesToUpdate.push('.windsurfrules');
+        } else if (activeIde === 'cline') {
+            filesToUpdate.push('.clinerules');
+        }
+    } else {
+        // Strictly gate prompt writes to the target IDE being installed to
+        if (targetId === 'cursor') {
+            filesToUpdate.push('.cursorrules');
+        } else if (targetId === 'windsurf') {
+            filesToUpdate.push('.windsurfrules');
+        } else if (targetId === 'cline') {
+            filesToUpdate.push('.clinerules');
+        } else if (targetId === 'agent' || targetId === 'codex') {
+            filesToUpdate.push('AGENTS.md');
+        }
+    }
+
+    for (const file of filesToUpdate) {
+        const filePath = path.join(workspaceRoot, file);
+        if (fs.existsSync(filePath)) {
+            try {
+                const stat = fs.statSync(filePath);
+                if (!stat.isFile()) {
+                    console.log(`Skipping instruction update for ${file} because it is not a file.`);
+                    continue;
+                }
+
+                let content = fs.readFileSync(filePath, 'utf8');
+                
+                const startTag = '<!-- GKT_SKILLS_INSTRUCTIONS_START -->';
+                const endTag = '<!-- GKT_SKILLS_INSTRUCTIONS_END -->';
+                const regex = new RegExp(`[\\s\\n]*${startTag}[\\s\\S]*?${endTag}[\\s\\n]*`, 'g');
+                content = content.replace(regex, '\n\n');
+                
+                if (content.startsWith('---')) {
+                    const endOfFrontmatter = content.indexOf('---', 3);
+                    if (endOfFrontmatter !== -1) {
+                        content = content.slice(0, endOfFrontmatter + 3) + '\n\n' + instructionBlock + content.slice(endOfFrontmatter + 3);
+                    } else {
+                        content = instructionBlock + '\n' + content;
+                    }
+                } else {
+                    content = instructionBlock + '\n' + content;
+                }
+                
+                content = content.replace(/\n{3,}/g, '\n\n').trim() + '\n';
+                fs.writeFileSync(filePath, content, 'utf8');
+            } catch (e) {
+                console.error(`Failed to update standard prompt file ${file}:`, e);
+            }
+        }
+    }
+}
+

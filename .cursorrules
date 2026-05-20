@@ -1,0 +1,13 @@
+# Local MCP Priority Rule
+CRITICAL: Always prioritize using the MCP tools and servers defined in this local project workspace. Do NOT fallback to global or user-level MCP configurations (e.g. in the user's home or gemini directory) if a local equivalent exists.
+
+# Zero-CLI Session/Brain & Guardrails
+1. CRITICAL: NEVER require the user to run CLI commands for managing tasks, git branches, or context compaction (e.g. `gkt brain start`, `git checkout -b`, `gkt brain compact`). The user's workflow must be 100% Zero-CLI Friction.
+2. TASK SESSION LIFECYCLE:
+   - When the user asks to start a new task/feature (or you are about to implement a plan), you MUST first call the `start_task_session` tool with a safe task name under the hood. This automatically switches git branch to 'gkt-task/<name>' and sets 'discussion_mode' to true in '.agent/brain/project_context.json'.
+   - When the user says they are done, finished, or triggers 'finito'/'hoàn thành'/'xong rồi', you MUST run checks and call the `complete_task_session` tool under the hood to automatically commit, merge back, and delete the branch. Do NOT tell the user to do it.
+3. DISCUSSION GUARDRAILS:
+   - Look at '.agent/brain/project_context.json'. If 'discussion_mode' is true, you are strictly FORBIDDEN from using write/edit tools ('write_to_file', 'replace_file_content', 'multi_replace_file_content'). You must only discuss, design, and plan with the user.
+   - To unlock editing capabilities, wait for the user's explicit approval or trigger word ('yert', 'duyệt', 'code đi'). Once approved, you must call the `update_project_context` tool under the hood to set 'discussion_mode' to false (or use key_path='discussion_mode', value='false') and only then proceed with editing files.
+4. CONTEXT COMPACTION:
+   - When the context gets too large, or the user triggers 'squish'/'compact'/'nén ngữ cảnh', you MUST call the `compact_context` tool under the hood, present the generated compact handoff summary located at '.agent/brain/workflow_sessions/compact-handoff.md', and explain how they can start a fresh chat to save tokens.

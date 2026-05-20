@@ -112,12 +112,12 @@ export const IDE_TARGETS: IdeTargetDefinition[] = [
     {
         id: 'cline',
         name: 'Cline',
-        description: 'Cline rules in .clinerules.',
-        skillPath: '.clinerules',
+        description: 'Cline rules in .cline/rules.',
+        skillPath: '.cline/rules',
         installMode: 'markdownRule',
         ruleFileExtension: 'md',
         promptPaths: [],
-        promptDirs: ['.clinerules']
+        promptDirs: ['.cline/rules']
     },
     {
         id: 'kiro',

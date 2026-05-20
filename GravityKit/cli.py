@@ -721,6 +721,44 @@ def load_kiro_foundation_docs(project_root: Path, force: bool = False) -> list[s
     return written
 
 
+def safe_copy_rules(source_dir: Path, target_dir: Path):
+    """Copy files and subdirectories from source to target without deleting target root or other files.
+    
+    Only overwrites files that exist in the source, preserving user's other files.
+    """
+    if not source_dir.exists():
+        return
+    target_dir.mkdir(parents=True, exist_ok=True)
+    for item in source_dir.iterdir():
+        target_item = target_dir / item.name
+        if item.is_file():
+            shutil.copy2(item, target_item)
+        elif item.is_dir():
+            safe_copy_rules(item, target_item)
+
+
+def safe_clean_agent_dir(target_dir: Path, preserve_brain=True, keep_folders=None):
+    """Clean only specific GravityKit folders instead of blowing away the entire directory.
+    
+    Avoids deleting user's other folders/files inside the root target directory.
+    """
+    if not target_dir.exists():
+        return
+    
+    gkt_folders = {"skills", "workflows", "agents", "specs", "steering", "hooks"}
+    if not preserve_brain:
+        gkt_folders.add("brain")
+        
+    for item in target_dir.iterdir():
+        if item.is_dir() and item.name in gkt_folders:
+            if keep_folders and item.name in keep_folders:
+                continue
+            try:
+                shutil.rmtree(item)
+            except OSError:
+                pass
+
+
 def copy_group_selective(source_agent_dir, target_agent_dir, group_config, default_skills=None, minimal=False):
     """Copy only the skills and workflows defined in a group config.
     
@@ -728,13 +766,14 @@ def copy_group_selective(source_agent_dir, target_agent_dir, group_config, defau
     Selectively copies: skills/<name>/, workflows/<name>.md
     """
     if target_agent_dir.exists():
-        shutil.rmtree(target_agent_dir)
-    target_agent_dir.mkdir(parents=True, exist_ok=True)
+        safe_clean_agent_dir(target_agent_dir, preserve_brain=True)
+    else:
+        target_agent_dir.mkdir(parents=True, exist_ok=True)
 
     # Always copy brain/
     brain_src = source_agent_dir / "brain"
     if brain_src.exists():
-        shutil.copytree(brain_src, target_agent_dir / "brain")
+        shutil.copytree(brain_src, target_agent_dir / "brain", dirs_exist_ok=True)
 
     all_skills = merge_group_skills(group_config, default_skills)
 
@@ -748,7 +787,7 @@ def copy_group_selective(source_agent_dir, target_agent_dir, group_config, defau
         for skill_name in all_skills:
             src = skills_src / skill_name
             if src.is_dir() and (src / "SKILL.md").exists():
-                shutil.copytree(src, skills_target / skill_name)
+                shutil.copytree(src, skills_target / skill_name, dirs_exist_ok=True)
                 copied_skills += 1
             else:
                 missing_skills.append(skill_name)
@@ -769,7 +808,7 @@ def copy_group_selective(source_agent_dir, target_agent_dir, group_config, defau
     # Copy all agents (agents are universal — not filtered by group)
     agents_src = source_agent_dir / "agents"
     if agents_src.exists():
-        shutil.copytree(agents_src, target_agent_dir / "agents")
+        shutil.copytree(agents_src, target_agent_dir / "agents", dirs_exist_ok=True)
 
     return copied_skills
 
@@ -787,10 +826,11 @@ def install_kiro(package_dir, group_config=None, skill_groups=None, minimal=Fals
     agent_dir = package_dir / ".agent"
     templates_dir = package_dir / "ide-adapters" / "kiro"
 
-    # Clean existing .kiro/ directory
+    # Clean existing .kiro/ directory safely
     if kiro_dir.exists():
-        shutil.rmtree(kiro_dir)
-    kiro_dir.mkdir(parents=True, exist_ok=True)
+        safe_clean_agent_dir(kiro_dir, preserve_brain=True)
+    else:
+        kiro_dir.mkdir(parents=True, exist_ok=True)
 
     # 1. Copy skills: .agent/skills/ → .kiro/skills/
     skills_src = agent_dir / "skills"
@@ -809,7 +849,7 @@ def install_kiro(package_dir, group_config=None, skill_groups=None, minimal=Fals
             for skill_name in all_skills:
                 src = skills_src / skill_name
                 if src.is_dir() and (src / "SKILL.md").exists():
-                    shutil.copytree(src, skills_target / skill_name)
+                    shutil.copytree(src, skills_target / skill_name, dirs_exist_ok=True)
                     copied_skills += 1
                 else:
                     missing_skills.append(skill_name)
@@ -818,20 +858,20 @@ def install_kiro(package_dir, group_config=None, skill_groups=None, minimal=Fals
             # Full: copy all skills
             for skill_folder in skills_src.iterdir():
                 if skill_folder.is_dir() and (skill_folder / "SKILL.md").exists():
-                    shutil.copytree(skill_folder, skills_target / skill_folder.name)
+                    shutil.copytree(skill_folder, skills_target / skill_folder.name, dirs_exist_ok=True)
                     copied_skills += 1
 
     # 2. Copy steering: ide-adapters/kiro/steering/ → .kiro/steering/
     steering_src = templates_dir / "steering"
     steering_target = kiro_dir / "steering"
     if steering_src.exists():
-        shutil.copytree(steering_src, steering_target)
+        shutil.copytree(steering_src, steering_target, dirs_exist_ok=True)
 
     # 3. Copy hooks: ide-adapters/kiro/hooks/ → .kiro/hooks/
     hooks_src = templates_dir / "hooks"
     hooks_target = kiro_dir / "hooks"
     if hooks_src.exists():
-        shutil.copytree(hooks_src, hooks_target)
+        shutil.copytree(hooks_src, hooks_target, dirs_exist_ok=True)
 
     # 4. Copy workflows → .kiro/specs/
     specs_dir = kiro_dir / "specs"
@@ -852,12 +892,12 @@ def install_kiro(package_dir, group_config=None, skill_groups=None, minimal=Fals
     # 5. Copy agents → .kiro/agents/
     agents_src = agent_dir / "agents"
     if agents_src.exists():
-        shutil.copytree(agents_src, kiro_dir / "agents")
+        shutil.copytree(agents_src, kiro_dir / "agents", dirs_exist_ok=True)
 
     # 6. Copy brain/ → .kiro/brain/ (session continuity + workflow checkpoints)
     brain_src = agent_dir / "brain"
     if brain_src.exists():
-        shutil.copytree(brain_src, kiro_dir / "brain")
+        shutil.copytree(brain_src, kiro_dir / "brain", dirs_exist_ok=True)
 
     load_kiro_foundation_docs(Path.cwd())
 
@@ -1181,11 +1221,19 @@ def init(target, group, minimal):
                 default_skills = get_default_skills(skill_groups)
                 copied = copy_group_selective(source_dir, target_dir, skill_groups[group_name], default_skills, minimal)
                 click.echo(f"  ✅ {config['label']} ({copied} skills){' (minimal)' if minimal else ''}")
+            elif target_ide in {"cursor", "windsurf", "cline", "kilocode", "copilot"}:
+                # Safe copy rules for IDE adapters to prevent deleting other user files
+                safe_copy_rules(source_dir, target_dir)
+                click.echo(f"  ✅ {config['label']}{' (minimal)' if minimal else ''}")
             else:
-                # Full copy (original behavior) for non-antigravity IDEs or no group
+                # Full copy (original behavior) for antigravity without group
                 if target_dir.exists():
-                    shutil.rmtree(target_dir)
-                target_dir.parent.mkdir(parents=True, exist_ok=True)
+                    if target_ide == "antigravity":
+                        safe_clean_agent_dir(target_dir, preserve_brain=True)
+                    else:
+                        shutil.rmtree(target_dir)
+                else:
+                    target_dir.parent.mkdir(parents=True, exist_ok=True)
                 
                 if minimal:
                     target_dir.mkdir(parents=True, exist_ok=True)
@@ -1193,11 +1241,11 @@ def init(target, group, minimal):
                         if item.name == 'skills':
                             continue
                         if item.is_dir():
-                            shutil.copytree(item, target_dir / item.name)
+                            shutil.copytree(item, target_dir / item.name, dirs_exist_ok=True)
                         else:
                             shutil.copy2(item, target_dir / item.name)
                 else:
-                    shutil.copytree(source_dir, target_dir)
+                    shutil.copytree(source_dir, target_dir, dirs_exist_ok=True)
                 click.echo(f"  ✅ {config['label']}{' (minimal)' if minimal else ''}")
             installed += 1
             registered_targets.append(target_ide)
@@ -1224,11 +1272,11 @@ def init(target, group, minimal):
                                 if item.name == 'skills':
                                     continue
                                 if item.is_dir():
-                                    shutil.copytree(item, agent_target / item.name)
+                                    shutil.copytree(item, agent_target / item.name, dirs_exist_ok=True)
                                 else:
                                     shutil.copy2(item, agent_target / item.name)
                         else:
-                            shutil.copytree(agent_src, agent_target)
+                            shutil.copytree(agent_src, agent_target, dirs_exist_ok=True)
                     click.echo(f"  ✅ .agent/ (skills referenced by {ide_target} adapter){' (minimal)' if minimal else ''}")
                     installed += 1
                     created_paths.append(agent_target)

@@ -4,20 +4,13 @@ import AdmZip = require('adm-zip');
 import * as fs from 'fs';
 import * as path from 'path';
 import { ensureInside, getSkillsRoot, getWorkspaceRootOrUndefined, safeSkillDirectoryName, getRpaSkillsConfigValue } from './config';
-import { NormalizedSkill, SkillStatus } from './types';
+import { NormalizedSkill, SkillStatus, SkillInstallTarget } from './types';
+import { updateSkillInstructionsAfterInstall } from './promptManager';
 
 export interface SkillRegistryLookup {
     findSkillById(skillId: string): NormalizedSkill | undefined;
     getSkillStatus(skill: NormalizedSkill): SkillStatus;
     refreshLocalState(): void;
-}
-
-export interface SkillInstallTarget {
-    id?: string;
-    label: string;
-    rootPath: string;
-    mode: 'skillDirectory' | 'markdownRule';
-    ruleFileExtension?: string;
 }
 
 export async function installSkill(skill: NormalizedSkill, registry?: SkillRegistryLookup): Promise<void> {
@@ -85,6 +78,13 @@ async function installPlan(
             }
 
             registry?.refreshLocalState();
+
+            try {
+                await updateSkillInstructionsAfterInstall(target, skills);
+            } catch (instError: any) {
+                console.error('Failed to update skill instructions after install:', instError);
+            }
+
             const installLocation = target ? ` for ${target.label} at ${path.relative(getWorkspaceRootOrUndefined() || process.cwd(), target.rootPath).replace(/\\/g, '/')}` : '';
             vscode.window.showInformationMessage(
                 skills.length === 1

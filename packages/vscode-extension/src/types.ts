@@ -64,3 +64,12 @@ export interface SkillStatus {
     installedVersion?: string;
     installPath?: string;
 }
+
+export interface SkillInstallTarget {
+    id?: string;
+    label: string;
+    rootPath: string;
+    mode: 'skillDirectory' | 'markdownRule';
+    ruleFileExtension?: string;
+}
+

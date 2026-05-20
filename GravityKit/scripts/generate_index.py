@@ -20,7 +20,7 @@ if sys.platform == "win32":
 
 
 def parse_frontmatter(content):
-    """Extract YAML frontmatter from SKILL.md content."""
+    """Extract YAML frontmatter safely from SKILL.md content with robust fallback."""
     content = content.lstrip("\ufeff")
     if not content.startswith("---"):
         return {}
@@ -28,21 +28,32 @@ def parse_frontmatter(content):
     if len(parts) < 3:
         return {}
     yaml_text = parts[1]
-    # Sanitize @ values
-    sanitized_lines = []
+    
+    # Layer 1: Standard safe load via PyYAML
+    try:
+        data = yaml.safe_load(yaml_text)
+        if isinstance(data, dict):
+            return data
+    except Exception:
+        # Syntax error (like raw reserved indicators @, :), proceed to robust fallback
+        pass
+        
+    # Layer 2: Self-healing Robust Line Parser for simple flat keys
+    metadata = {}
     for line in yaml_text.splitlines():
-        match = re.match(r'^(\s*[\w-]+):\s*(.*)$', line)
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        match = re.match(r'^([\w-]+):\s*(.*)$', line)
         if match:
             key, val = match.groups()
-            val_s = val.strip()
-            if '@' in val_s and not (val_s.startswith('"') or val_s.startswith("'")):
-                safe_val = val_s.replace('"', '\\"')
-                line = f'{key}: "{safe_val}"'
-        sanitized_lines.append(line)
-    try:
-        return yaml.safe_load("\n".join(sanitized_lines)) or {}
-    except yaml.YAMLError:
-        return {}
+            key = key.strip()
+            val = val.strip()
+            # Strip outer single/double quotes
+            if (val.startswith('"') and val.endswith('"')) or (val.startswith("'") and val.endswith("'")):
+                val = val[1:-1]
+            metadata[key] = val
+    return metadata
 
 
 def detect_category(skill_id, description):

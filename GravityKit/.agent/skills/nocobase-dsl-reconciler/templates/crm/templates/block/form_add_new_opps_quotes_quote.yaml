@@ -44,10 +44,10 @@ content:
     - total_amount_usd
   js_items:
     - key: line_item_auto_fill_tip
-      file: ./js/form_add_new_opportunities_quotations_quotations_createForm_line_item_auto_fill_tip.js
+      file: ./js/form_add_new_opps_quotes_quotes_.js
       desc: Line Item Auto-Fill Tip
     - key: price_calculation_formula_tip
-      file: ./js/form_add_new_opportunities_quotations_quotations_createForm_price_calculation_formula_tip.js
+      file: ./js/form_add_new_opps_quotes_quot_1.js
       desc: Price Calculation Formula Tip
   field_layout:
     - '--- Basic Info ---'
@@ -96,7 +96,7 @@ content:
       flow_key: yrohvt81g2k
       step_key: 5rp447eybr2
       desc: yrohvt81g2k
-      file: ./events/form_add_new_opportunities_quotations_quotations_createForm_event_yrohvt81g2k_5rp447eybr2.js
+      file: ./events/form_add_new_opps_quotes_quotes_.js
   fieldLinkageRules:
     - key: s5lzewfj6rm
       title: Linkage rule

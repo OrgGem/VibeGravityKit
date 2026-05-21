@@ -24,7 +24,7 @@ content:
   js_columns:
     - key: order_progress
       field: ''
-      file: ./js/table_orders_table_col_order_progress.js
+      file: ./js/table_orders_table_col_order_pro.js
       title: Order Progress
       desc: Order Progress Column
   column_order:
@@ -52,4 +52,4 @@ content:
       flow_key: hclqnhu563i
       step_key: csgv61i1xv9
       desc: hclqnhu563i
-      file: ./events/table_orders_table_event_hclqnhu563i_csgv61i1xv9.js
+      file: ./events/table_orders_table_event_hclqnhu.js

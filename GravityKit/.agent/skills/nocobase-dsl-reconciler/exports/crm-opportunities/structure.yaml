@@ -6,7 +6,7 @@ pages:
     - name
     js_items:
     - desc: Pipeline Stats Filter Block
-      file: ./js/opportunities_filterForm_0_pipeline_stats_filter_block.js
+      file: ./js/opps_filterForm_0_pipe_stats_fil.js
     field_layout:
     - - '[JS:Pipeline Stats Filter Block]'
     - - name

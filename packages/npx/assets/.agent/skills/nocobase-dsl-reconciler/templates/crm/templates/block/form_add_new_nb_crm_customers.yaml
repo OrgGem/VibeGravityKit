@@ -50,4 +50,4 @@ content:
     - submit
     - type: ai
       employee: dex
-      tasks_file: ./ai/form_add_new_nb_crm_customers_createForm_tasks.yaml
+      tasks_file: ./ai/form_add_new_nb_crm_custs_crea.yaml

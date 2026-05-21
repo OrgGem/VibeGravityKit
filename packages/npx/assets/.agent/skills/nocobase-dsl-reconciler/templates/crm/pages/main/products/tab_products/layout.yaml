@@ -1,7 +1,7 @@
 blocks:
   - type: jsBlock
     key: category_tree_filter_product_category_sidebar
-    file: ./js/products_products_category_tree_filter_product_category_sidebar.js
+    file: ./js/products_products_cat_tree_filter_product.js
     desc: Category Tree Filter - Product Category Sidebar
   - key: table
     type: table

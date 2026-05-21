@@ -12,5 +12,5 @@ tasks:
       - Mike is our champion but CFO Sarah has final sign-off
       - Next week we'll do a technical deep-dive, POC in February
       - Mike said if POC goes well, should be able to sign by end of March
-    system_file: ./ai/form_add_new_opportunities_createForm_task0.md
+    system_file: ./ai/form_add_new_opps_createForm_tas.md
     autoSend: true

@@ -1,6 +1,6 @@
 {
   "name": "gkt-node",
-  "version": "3.13.5",
+  "version": "3.13.6",
   "description": "GravityKit — The AI-Native Software House in a Box (npx installer)",
   "bin": {
     "gkt": "./bin/cli.js",

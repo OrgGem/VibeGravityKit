@@ -227,7 +227,7 @@ For each page beyond the starter basics:
 |---|---|
 | Main list table + filter | `templates/crm/pages/main/leads/layout.yaml` |
 | Multi-tab page | `templates/crm/pages/main/customers/` (`page.yaml` + `tab_*/layout.yaml`) |
-| Create-form with inline sub-table for o2m children | `templates/crm/templates/block/form_add_new_opportunities_quotations_quotations.yaml` — `items` is an o2m field listed in `fields:` and rendered as an inline editable sub-table. Also `templates/crm/pages/main/products/` for master/child UX. |
+| Create-form with inline sub-table for o2m children | `templates/crm/templates/block/form_add_new_opps_quotes_quote.yaml` — `items` is an o2m field listed in `fields:` and rendered as an inline editable sub-table. Also `templates/crm/pages/main/products/` for master/child UX. |
 | Detail-popup template | `templates/crm/templates/popup/activity_view.yaml` |
 | m2o auto-popup bindings | `templates/crm/defaults.yaml` |
 | Parent-detail + child-list popup | `templates/crm/pages/main/customers/tab_customers/popups/` |
@@ -363,7 +363,7 @@ Procedure:
 | Filtered summary jsBlock | `templates/crm/pages/main/analytics/js/analytics_jsBlock.js` |
 | Chart SQL (grouped counts) | `templates/crm/pages/main/analytics/charts/analytics_chart_2.sql` |
 | Chart render (echarts bar/pie) | `templates/crm/pages/main/analytics/charts/analytics_chart_2_render.js` |
-| Filter stat buttons on filterForm | `templates/crm/pages/main/customers/tab_customers/js/customers_customers_filterForm_customer_stats_filter_block.js` |
+| Filter stat buttons on filterForm | `templates/crm/pages/main/customers/tab_customers/js/custs_custs_filterForm_cust_stat.js` |
 | Full-page custom UI (wizard / multi-step / custom flow) | `templates/crm/pages/main/customers/tab_merge/js/customers_merge_jsBlock.js` — whole page is one `type: jsBlock`, ~580 lines React |
 
 After copying each leaf file:
@@ -438,7 +438,7 @@ Bare `- tasks` in a form is the third option: a **RecordSelect picker**
 
 Canonical CRM examples:
 - Table (standalone CRUD block): `templates/crm/pages/main/customers/tab_customers/popups/table.name.yaml`
-- Sub-table (inline editable grid): `templates/crm/templates/block/form_add_new_opportunities_quotations_quotations.yaml` (`items`)
+- Sub-table (inline editable grid): `templates/crm/templates/block/form_add_new_opps_quotes_quote.yaml` (`items`)
 
 ### `foreignKey` flips meaning
 

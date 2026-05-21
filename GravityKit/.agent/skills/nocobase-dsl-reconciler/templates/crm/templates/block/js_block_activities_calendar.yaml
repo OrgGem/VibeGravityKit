@@ -6,5 +6,5 @@ targetUid: 05aef6e5ea7
 content:
   type: jsBlock
   key: activity_calendar_block
-  file: ./js/js_block_activities_calendar_activity_calendar_block.js
+  file: ./js/js_block_acts_calendar_act_calen.js
   desc: Activity Calendar Block

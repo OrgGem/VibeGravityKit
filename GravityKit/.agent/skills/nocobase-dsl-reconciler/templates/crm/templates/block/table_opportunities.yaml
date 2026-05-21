@@ -28,7 +28,7 @@ content:
     - addNew
     - type: ai
       employee: viz
-      tasks_file: ./ai/table_opportunities_table_tasks.yaml
+      tasks_file: ./ai/table_opps_table_tasks.yaml
   event_flows:
     - event:
         eventName: beforeRender
@@ -39,4 +39,4 @@ content:
       flow_key: 858jqylowfr
       step_key: vf3lwi5tk73
       desc: 858jqylowfr
-      file: ./events/table_opportunities_table_event_858jqylowfr_vf3lwi5tk73.js
+      file: ./events/table_opps_table_event_858jqylow.js

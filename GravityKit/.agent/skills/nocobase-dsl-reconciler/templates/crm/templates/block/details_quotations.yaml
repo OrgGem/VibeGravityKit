@@ -34,7 +34,7 @@ content:
     - description
   js_items:
     - key: price_calculation_formula_tip
-      file: ./js/details_quotations_details_price_calculation_formula_tip.js
+      file: ./js/details_quotes_details_price_cal.js
       desc: Price Calculation Formula Tip
   field_layout:
     - '--- Basic Info ---'

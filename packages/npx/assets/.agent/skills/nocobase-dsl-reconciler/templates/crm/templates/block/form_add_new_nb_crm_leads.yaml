@@ -48,7 +48,7 @@ content:
     - submit
     - type: ai
       employee: dex
-      tasks_file: ./ai/form_add_new_nb_crm_leads_createForm_tasks.yaml
+      tasks_file: ./ai/form_add_new_nb_crm_leads_crea.yaml
   fieldLinkageRules:
     - key: 2iku5gs0k4o
       title: Linkage rule

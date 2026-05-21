@@ -21,7 +21,7 @@ blocks:
     js_columns:
       - key: ai_score
         field: ''
-        file: ./js/overview_high_score_leads_col_ai_score.js
+        file: ./js/overview_high_score_leads_col_ai.js
         title: AI Score
         desc: AI Score Column
     column_order:

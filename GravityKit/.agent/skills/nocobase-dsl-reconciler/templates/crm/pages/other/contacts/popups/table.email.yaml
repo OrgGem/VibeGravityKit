@@ -19,4 +19,4 @@ blocks:
       - addNew
       - type: ai
         employee: ellis
-        tasks_file: ./ai/contacts_email_mailMessages_tasks.yaml
+        tasks_file: ./ai/contacts_email_mail_msg_tasks.yaml

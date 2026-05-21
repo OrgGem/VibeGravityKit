@@ -16,9 +16,9 @@ popups:
       - createdAt
       js_items:
       - desc: Lead Key Stats Block
-        file: ./js/leads_popup_name_tab0_details_0_lead_key_stats_block.js
+        file: ./js/leads_popup_name_tab0_details_1.js
       - desc: Lead Badges Row Component
-        file: ./js/leads_popup_name_tab0_details_0_lead_badges_row_component.js
+        file: ./js/leads_popup_name_tab0_details_0_.js
       field_layout:
       - - '---'
       - - company
@@ -39,7 +39,7 @@ popups:
         filterByTk: '{{ctx.view.inputArgs.filterByTk}}'
       js_items:
       - desc: Lead AI Insights Block
-        file: ./js/leads_popup_name_tab0_lead_insights_lead_ai_insights_block.js
+        file: ./js/leads_popup_name_tab0_lead_insig.js
       field_layout:
       - - '[JS:Lead AI Insights Block]'
     - key: lead_owner
@@ -50,7 +50,7 @@ popups:
         filterByTk: '{{ctx.view.inputArgs.filterByTk}}'
       js_items:
       - desc: Lead Profile Header Block
-        file: ./js/leads_popup_name_tab0_lead_owner_lead_profile_header_block.js
+        file: ./js/leads_popup_name_tab0_lead_owner.js
       field_layout:
       - - '---'
       - - '[JS:Lead Profile Header Block]'
@@ -99,7 +99,7 @@ popups:
         filterByTk: '{{ctx.view.inputArgs.filterByTk}}'
       js_items:
       - desc: Lead Stage Flow Block
-        file: ./js/leads_popup_name_tab0_details_5_lead_stage_flow_block.js
+        file: ./js/leads_popup_name_tab0_details_5_.js
     - key: comments_6
       type: comments
       coll: nb_crm_comments
@@ -145,9 +145,9 @@ popups:
       - region
       js_items:
       - desc: Customer Statistics Block
-        file: ./js/customers_popup_name_tab0_details_0_customer_statistics_block.js
+        file: ./js/custs_popup_name_tab0_stats_bloc.js
       - desc: item_profile - Customer Profile Header
-        file: ./js/customers_popup_name_tab0_details_0_item_profile_customer_profile_header.js
+        file: ./js/custs_popup_name_tab0_header.js
       field_layout:
       - - '[JS:item_profile - Customer Profile Header]'
       - - level
@@ -164,7 +164,7 @@ popups:
         filterByTk: '{{ctx.view.inputArgs.filterByTk}}'
       js_items:
       - desc: AI Smart Profile Block
-        file: ./js/customers_popup_name_tab0_details_1_ai_smart_profile_block.js
+        file: ./js/custs_popup_name_tab0_ai_profile.js
     - key: contacts
       type: list
       title: Contacts
@@ -177,7 +177,7 @@ popups:
       - phone
       item_js:
       - desc: Contact Row Column - Customer 360
-        file: ./js/customers_popup_name_tab0_contacts_contact_row_column_customer_360.js
+        file: ./js/custs_popup_name_tab0_contacts_c.js
       item_layout:
       - - '[JS:Contact Row Column - Customer 360]'
       - - email
@@ -197,7 +197,7 @@ popups:
         sourceId: '{{ctx.view.inputArgs.filterByTk}}'
       item_js:
       - desc: Opportunity Row Column - Customer 360
-        file: ./js/customers_popup_name_tab0_opportunities_opportunity_row_column_customer_360.js
+        file: ./js/custs_popup_name_tab0_opps_opp_r.js
     - key: comments_4
       type: comments
       coll: nb_crm_comments

@@ -13,5 +13,5 @@ tasks:
       - Just announced a digital transformation initiative, board approved budget
       - Main competitors are Northwestern Medicine and Rush
       - Fiscal year ends in June
-    system_file: ./ai/form_add_new_nb_crm_customers_createForm_task0.md
+    system_file: ./ai/form_add_new_nb_crm_custs_create.md
     autoSend: true

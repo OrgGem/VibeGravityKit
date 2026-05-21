@@ -73,7 +73,7 @@
   type: block
   collection: nb_crm_opportunity_stages
   targetUid: 064a59ddf9a
-  file: block/form_add_new_nb_crm_opportunity_stages.yaml
+  file: block/form_add_new_nb_crm_opp_stages.yaml
   usageCount: 6
 - uid: b8yiiha802c
   name: 'Detail: Tasks'
@@ -115,7 +115,7 @@
   type: block
   collection: nb_crm_contacts
   targetUid: 26a1e02dba7
-  file: block/form_edit_customers_contacts_contacts.yaml
+  file: block/form_edit_custs_contacts_conta.yaml
   usageCount: 16
 - uid: f2b0l9m5axf
   name: 'Popup (Edit): Milestones'
@@ -157,7 +157,7 @@
   type: block
   collection: nb_crm_orders
   targetUid: c0141648ed2
-  file: block/form_add_new_new_orders_from_quotations.yaml
+  file: block/form_add_new_new_orders_from_q.yaml
   usageCount: 13
 - uid: gue1lmnb6dc
   name: 'Popup (Add new): Members'
@@ -213,7 +213,7 @@
   type: block
   collection: nb_crm_contacts
   targetUid: thd2lhmr5v3
-  file: block/details_customers_contacts_contacts.yaml
+  file: block/details_custs_contacts_contact.yaml
   usageCount: 8
 - uid: ls0z7rdsrs3
   name: 'Form (Add new): Exchange Rates'
@@ -276,7 +276,7 @@
   type: block
   collection: nb_crm_quotations
   targetUid: 005986ec9fd
-  file: block/form_add_new_opportunities_quotations_quotations.yaml
+  file: block/form_add_new_opps_quotes_quote.yaml
   usageCount: 22
 - uid: ofjq5s4okjz
   name: 'Form (Edit): Projects'

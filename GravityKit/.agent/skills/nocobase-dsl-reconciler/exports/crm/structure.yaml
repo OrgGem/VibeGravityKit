@@ -56,7 +56,7 @@ pages:
     js_columns:
     - uid: 720cbfa7842
       title: Lead Name/Company
-      file: ./js/table_b3f6e3_col_Lead_Name_Company.js
+      file: ./js/table_b3f6e3_col_Lead_Name_Compa.js
     - uid: d8d8a4a3a80
       title: Contact
       file: ./js/table_b3f6e3_col_Contact.js

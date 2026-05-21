@@ -13,7 +13,7 @@ tabs:
         fields:
           - type: markdown
             key: _md_0
-            content_file: ./md/customers_customers_name_edit_tab0_details__md_0.md
+            content_file: ./md/custs_custs_name_edit_tab0_detai.md
           - email
           - phone
           - salutation

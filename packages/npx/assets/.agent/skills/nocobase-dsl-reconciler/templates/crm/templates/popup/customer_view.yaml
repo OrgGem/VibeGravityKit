@@ -19,10 +19,10 @@ content:
             - region
           js_items:
             - key: customer_statistics_block
-              file: ./js/customer_view_tab0_details_customer_statistics_block.js
+              file: ./js/cust_view_tab0_stats_block.js
               desc: Customer Statistics Block
             - key: item_profile_customer_profile_header
-              file: ./js/customer_view_tab0_details_item_profile_customer_profile_header.js
+              file: ./js/cust_view_tab0_header.js
               desc: item_profile - Customer Profile Header
           field_layout:
             - - '[JS:item_profile - Customer Profile Header]'
@@ -34,7 +34,7 @@ content:
             - edit
             - type: ai
               employee: vera
-              tasks_file: ./ai/customer_view_tab0_details_tasks.yaml
+              tasks_file: ./ai/cust_view_tab0_details_tasks.yaml
         - key: details_2
           type: details
           coll: nb_crm_customers
@@ -42,7 +42,7 @@ content:
             filterByTk: '{{ctx.view.inputArgs.filterByTk}}'
           js_items:
             - key: ai_smart_profile_block
-              file: ./js/customer_view_tab0_details_2_ai_smart_profile_block.js
+              file: ./js/cust_view_tab0_details_2_ai_smar.js
               desc: AI Smart Profile Block
           field_layout:
             - - '[JS:AI Smart Profile Block]'
@@ -58,7 +58,7 @@ content:
             - phone
           js_items:
             - key: contact_row_column_customer_360
-              file: ./js/customer_view_tab0_contacts_contact_row_column_customer_360.js
+              file: ./js/cust_view_tab0_contacts_contact_.js
               desc: Contact Row Column - Customer 360
           field_layout:
             - - '[JS:Contact Row Column - Customer 360]'
@@ -77,7 +77,7 @@ content:
             sourceId: '{{ctx.view.inputArgs.filterByTk}}'
           js_items:
             - key: opportunity_row_column_customer_360
-              file: ./js/customer_view_tab0_opportunities_opportunity_row_column_customer_360.js
+              file: ./js/cust_view_tab0_opps_opp_row_colu.js
               desc: Opportunity Row Column - Customer 360
           field_layout:
             - - '[JS:Opportunity Row Column - Customer 360]'
@@ -125,6 +125,6 @@ content:
             - addNew
             - type: ai
               employee: ellis
-              tasks_file: ./ai/customer_view_tab2_mailMessages_tasks.yaml
+              tasks_file: ./ai/cust_view_tab2_mail_msg_tasks.yaml
       layout:
         - - mailMessages

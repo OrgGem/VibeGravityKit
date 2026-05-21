@@ -16,4 +16,4 @@ content:
     - addNew
     - type: ai
       employee: ellis
-      tasks_file: ./ai/email_table_mail_messages_mailMessages_tasks.yaml
+      tasks_file: ./ai/email_table_mail_messages_mail.yaml

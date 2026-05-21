@@ -16,14 +16,14 @@ content:
           fields:
             - type: markdown
               key: _md_0
-              content_file: ./md/opportunity_view_tab0_details__md_0.md
+              content_file: ./md/opp_view_tab0_details__md_0.md
             - customer
             - contact
             - owner
             - createdAt
           js_items:
             - key: opportunity_key_stats_block
-              file: ./js/opportunity_view_tab0_details_opportunity_key_stats_block.js
+              file: ./js/opp_view_tab0_details_opp_key_st.js
               desc: Opportunity Key Stats Block
           field_layout:
             - - '[MD:_md_0]'
@@ -42,7 +42,7 @@ content:
             filterByTk: '{{ctx.view.inputArgs.filterByTk}}'
           js_items:
             - key: ai_risk_analysis
-              file: ./js/opportunity_view_tab0_ai_smart_analysis_ai_risk_analysis.js
+              file: ./js/opp_view_tab0_ai_risk.js
               desc: AI Risk Analysis
           field_layout:
             - - '[JS:AI Risk Analysis]'
@@ -208,7 +208,7 @@ content:
             filterByTk: '{{ctx.view.inputArgs.filterByTk}}'
           js_items:
             - key: opportunity_stage_flow_block
-              file: ./js/opportunity_view_tab0_details_2_opportunity_stage_flow_block.js
+              file: ./js/opp_view_tab0_details_2_opp_stag.js
               desc: Opportunity Stage Flow Block
           field_layout:
             - - '[JS:Opportunity Stage Flow Block]'
@@ -219,7 +219,7 @@ content:
             filterByTk: '{{ctx.view.inputArgs.filterByTk}}'
           js_items:
             - key: quote_status_flow_block
-              file: ./js/opportunity_view_tab0_details_3_quote_status_flow_block.js
+              file: ./js/opp_view_tab0_details_quote_flow.js
               desc: Quote Status Flow Block
           field_layout:
             - - '[JS:Quote Status Flow Block]'
@@ -255,7 +255,7 @@ content:
             - addNew
             - type: ai
               employee: ellis
-              tasks_file: ./ai/opportunity_view_tab1_mailMessages_tasks.yaml
+              tasks_file: ./ai/opp_view_tab1_mail_msg_tasks.yaml
       layout:
         - - mailMessages
     - title: Tab2

@@ -18,10 +18,10 @@ tabs:
           - createdAt
         js_items:
           - key: lead_key_stats_block
-            file: ./js/leads_name_tab0_details_lead_key_stats_block.js
+            file: ./js/leads_name_tab0_details_lead_key.js
             desc: Lead Key Stats Block
           - key: lead_badges_row_component
-            file: ./js/leads_name_tab0_details_lead_badges_row_component.js
+            file: ./js/leads_name_tab0_details_lead_bad.js
             desc: Lead Badges Row Component
         field_layout:
           - - '[MD:_md_0]'
@@ -75,7 +75,7 @@ tabs:
           filterByTk: '{{ctx.view.inputArgs.filterByTk}}'
         js_items:
           - key: lead_ai_insights_block
-            file: ./js/leads_name_tab0_lead_insights_lead_ai_insights_block.js
+            file: ./js/leads_name_tab0_lead_insights_le.js
             desc: Lead AI Insights Block
         field_layout:
           - - '[JS:Lead AI Insights Block]'
@@ -87,7 +87,7 @@ tabs:
           filterByTk: '{{ctx.view.inputArgs.filterByTk}}'
         js_items:
           - key: lead_profile_header_block
-            file: ./js/leads_name_tab0_lead_owner_lead_profile_header_block.js
+            file: ./js/leads_name_tab0_lead_owner_lead_.js
             desc: Lead Profile Header Block
         field_layout:
           - - '---'
@@ -170,7 +170,7 @@ tabs:
           filterByTk: '{{ctx.view.inputArgs.filterByTk}}'
         js_items:
           - key: lead_stage_flow_block
-            file: ./js/leads_name_tab0_details_2_lead_stage_flow_block.js
+            file: ./js/leads_name_tab0_details_2_lead_s.js
             desc: Lead Stage Flow Block
         field_layout:
           - - '[JS:Lead Stage Flow Block]'
@@ -222,6 +222,6 @@ tabs:
           - addNew
           - type: ai
             employee: ellis
-            tasks_file: ./ai/leads_name_tab2_mailMessages_tasks.yaml
+            tasks_file: ./ai/leads_name_tab2_mail_msg_tasks.yaml
     layout:
       - - mailMessages

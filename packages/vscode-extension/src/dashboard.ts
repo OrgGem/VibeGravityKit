@@ -671,10 +671,19 @@ function renderDashboardScript(): string {
     return `
 (function () {
     const vscodeApi = typeof acquireVsCodeApi === 'function' ? acquireVsCodeApi() : undefined;
-    const state = {
+    const defaultState = {
         target: { tab: 'all', query: '' },
-        prompt: { tab: 'all', query: '' }
+        prompt: { tab: 'all', query: '' },
+        quickSetup: { targetId: '', groupIds: null },
+        collapsedSections: {}
     };
+    const state = (vscodeApi && vscodeApi.getState()) ? vscodeApi.getState() : defaultState;
+    
+    // Safeguard in case loaded state is incomplete
+    state.target = state.target || defaultState.target;
+    state.prompt = state.prompt || defaultState.prompt;
+    state.quickSetup = state.quickSetup || defaultState.quickSetup;
+    state.collapsedSections = state.collapsedSections || defaultState.collapsedSections;
 
     function closestSection(element) {
         return element.closest('[data-section]');
@@ -720,6 +729,16 @@ function renderDashboardScript(): string {
         }
     }
 
+    function saveCollapsedSectionsState() {
+        document.querySelectorAll('[data-section]').forEach((section) => {
+            const sectionId = section.dataset.section;
+            if (sectionId) {
+                state.collapsedSections[sectionId] = section.classList.contains('is-collapsed');
+            }
+        });
+        vscodeApi?.setState(state);
+    }
+
     document.querySelectorAll('[data-section-toggle]').forEach((button) => {
         const section = closestSection(button);
         if (!section) {
@@ -729,6 +748,7 @@ function renderDashboardScript(): string {
         button.addEventListener('click', () => {
             section.classList.toggle('is-collapsed');
             updateSectionButton(section);
+            saveCollapsedSectionsState();
         });
     });
 
@@ -737,6 +757,7 @@ function renderDashboardScript(): string {
             section.classList.add('is-collapsed');
             updateSectionButton(section);
         });
+        saveCollapsedSectionsState();
     });
 
     document.querySelector('[data-expand-all]')?.addEventListener('click', () => {
@@ -744,6 +765,7 @@ function renderDashboardScript(): string {
             section.classList.remove('is-collapsed');
             updateSectionButton(section);
         });
+        saveCollapsedSectionsState();
     });
 
     document.querySelectorAll('[data-tab-scope]').forEach((tabButton) => {
@@ -751,6 +773,7 @@ function renderDashboardScript(): string {
             const scope = tabButton.dataset.tabScope;
             const tab = tabButton.dataset.tab || 'all';
             state[scope].tab = tab;
+            vscodeApi?.setState(state);
             document.querySelectorAll('[data-tab-scope="' + scope + '"]').forEach((other) => {
                 other.classList.toggle('is-active', other === tabButton);
             });
@@ -762,6 +785,7 @@ function renderDashboardScript(): string {
         input.addEventListener('input', () => {
             const scope = input.dataset.search;
             state[scope].query = (input.value || '').trim().toLowerCase();
+            vscodeApi?.setState(state);
             applyFilter(scope);
         });
     });
@@ -782,16 +806,29 @@ function renderDashboardScript(): string {
         checkAll.indeterminate = checked.length > 0 && checked.length < checks.length;
     }
 
+    function saveQuickSetupState() {
+        const target = document.querySelector('[data-quick-target]');
+        state.quickSetup.targetId = target?.value || '';
+        state.quickSetup.groupIds = quickGroupChecks()
+            .filter((checkbox) => checkbox.checked)
+            .map((checkbox) => checkbox.value);
+        vscodeApi?.setState(state);
+    }
+
     document.querySelector('[data-quick-check-all]')?.addEventListener('change', (event) => {
         const checked = event.target.checked;
         quickGroupChecks().forEach((checkbox) => {
             checkbox.checked = checked;
         });
         updateQuickCheckAll();
+        saveQuickSetupState();
     });
 
     quickGroupChecks().forEach((checkbox) => {
-        checkbox.addEventListener('change', updateQuickCheckAll);
+        checkbox.addEventListener('change', () => {
+            updateQuickCheckAll();
+            saveQuickSetupState();
+        });
     });
 
     document.querySelector('[data-quick-target]')?.addEventListener('change', (event) => {
@@ -803,6 +840,7 @@ function renderDashboardScript(): string {
                 ? 'MCP will be activated in ' + mcpPath + '.'
                 : 'This target has no MCP config path, so quick setup will only install selected skills.';
         }
+        saveQuickSetupState();
     });
 
     document.querySelector('[data-quick-setup-run]')?.addEventListener('click', () => {
@@ -817,6 +855,52 @@ function renderDashboardScript(): string {
             targetId,
             groupIds
         });
+    });
+
+    // --- RESTORE STATE TO UI ELEMENTS ---
+    
+    // 1. Search inputs
+    document.querySelectorAll('[data-search]').forEach((input) => {
+        const scope = input.dataset.search;
+        if (state[scope] && state[scope].query) {
+            input.value = state[scope].query;
+        }
+    });
+
+    // 2. Tab buttons active state
+    document.querySelectorAll('[data-tab-scope]').forEach((tabButton) => {
+        const scope = tabButton.dataset.tabScope;
+        const tab = tabButton.dataset.tab || 'all';
+        if (state[scope] && state[scope].tab === tab) {
+            tabButton.classList.add('is-active');
+        } else {
+            tabButton.classList.remove('is-active');
+        }
+    });
+
+    // 3. Quick setup target dropdown selection
+    const quickTarget = document.querySelector('[data-quick-target]');
+    if (quickTarget && state.quickSetup.targetId) {
+        quickTarget.value = state.quickSetup.targetId;
+        // Trigger change to update the hint text
+        const event = new Event('change');
+        quickTarget.dispatchEvent(event);
+    }
+
+    // 4. Quick setup group checkboxes
+    if (Array.isArray(state.quickSetup.groupIds)) {
+        quickGroupChecks().forEach((checkbox) => {
+            checkbox.checked = state.quickSetup.groupIds.includes(checkbox.value);
+        });
+    }
+
+    // 5. Sections collapsed state
+    document.querySelectorAll('[data-section]').forEach((section) => {
+        const sectionId = section.dataset.section;
+        if (sectionId && state.collapsedSections[sectionId] !== undefined) {
+            section.classList.toggle('is-collapsed', !!state.collapsedSections[sectionId]);
+        }
+        updateSectionButton(section);
     });
 
     applyFilter('target');

@@ -16,7 +16,7 @@ content:
   fields:
     - type: markdown
       key: _md_0
-      content_file: ./md/details_customers_contacts_contacts_details__md_0.md
+      content_file: ./md/details_custs_contacts_contacts_.md
     - email
     - phone
     - salutation
@@ -37,46 +37,46 @@ content:
     - description
     - type: markdown
       key: _md_19
-      content_file: ./md/details_customers_contacts_contacts_details__md_19.md
+      content_file: ./md/details_custs_contacts_contac_1.md
     - type: markdown
       key: _md_20
-      content_file: ./md/details_customers_contacts_contacts_details__md_20.md
+      content_file: ./md/details_custs_contacts_contac_2.md
     - type: markdown
       key: _md_21
-      content_file: ./md/details_customers_contacts_contacts_details__md_21.md
+      content_file: ./md/details_custs_contacts_contac_3.md
     - type: markdown
       key: _md_22
-      content_file: ./md/details_customers_contacts_contacts_details__md_22.md
+      content_file: ./md/details_custs_contacts_contac_4.md
     - type: markdown
       key: _md_23
-      content_file: ./md/details_customers_contacts_contacts_details__md_23.md
+      content_file: ./md/details_custs_contacts_contac_5.md
     - type: markdown
       key: _md_24
-      content_file: ./md/details_customers_contacts_contacts_details__md_24.md
+      content_file: ./md/details_custs_contacts_contac_6.md
     - type: markdown
       key: _md_25
-      content_file: ./md/details_customers_contacts_contacts_details__md_25.md
+      content_file: ./md/details_custs_contacts_contac_7.md
     - type: markdown
       key: _md_26
-      content_file: ./md/details_customers_contacts_contacts_details__md_26.md
+      content_file: ./md/details_custs_contacts_contac_8.md
     - type: markdown
       key: _md_27
-      content_file: ./md/details_customers_contacts_contacts_details__md_27.md
+      content_file: ./md/details_custs_contacts_contac_9.md
     - type: markdown
       key: _md_28
-      content_file: ./md/details_customers_contacts_contacts_details__md_28.md
+      content_file: ./md/details_custs_contacts_contac_10.md
     - type: markdown
       key: _md_29
-      content_file: ./md/details_customers_contacts_contacts_details__md_29.md
+      content_file: ./md/details_custs_contacts_contac_11.md
     - type: markdown
       key: _md_30
-      content_file: ./md/details_customers_contacts_contacts_details__md_30.md
+      content_file: ./md/details_custs_contacts_contac_12.md
     - type: markdown
       key: _md_31
-      content_file: ./md/details_customers_contacts_contacts_details__md_31.md
+      content_file: ./md/details_custs_contacts_contac_13.md
     - type: markdown
       key: _md_32
-      content_file: ./md/details_customers_contacts_contacts_details__md_32.md
+      content_file: ./md/details_custs_contacts_contac_14.md
   field_layout:
     - - '[MD:_md_0]'
     - - title

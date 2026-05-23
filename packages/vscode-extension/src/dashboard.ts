@@ -1,9 +1,13 @@
 import * as vscode from 'vscode';
-import { getRpaSkillsConfigValue, getWorkspaceRoot } from './config';
+import { execFile } from 'child_process';
+import { promisify } from 'util';
+import { getRpaSkillsConfigValue, getWorkspaceRoot, getWorkspaceRootOrUndefined } from './config';
 import { getQuickSetupDefaultTargetId, getTargetStatuses, IdeTargetStatus, loadConfiguredMcpServers } from './ideTargets';
 import { collectPromptFiles, PromptFile } from './promptManager';
 import { WatchController } from './watchController';
 import { NormalizedGroup } from './types';
+
+const execFileAsync = promisify(execFile);
 
 export interface QuickSetupRequest {
     targetId: string;
@@ -85,7 +89,11 @@ export class AssistantDashboard implements vscode.Disposable {
     }
 
     private async renderHtml(): Promise<string> {
-        const workspaceRoot = getWorkspaceRoot();
+        const workspaceRoot = getWorkspaceRootOrUndefined();
+        if (!workspaceRoot) {
+            return renderNoWorkspaceHtml();
+        }
+        const markItDownStatus = await checkMarkItDownStatus();
         const targets = getTargetStatuses();
         const skillGroups = await this.listSkillGroups();
         const quickSetupDefaultTargetId = getQuickSetupDefaultTargetId(targets);
@@ -427,6 +435,7 @@ export class AssistantDashboard implements vscode.Disposable {
         ${button(watchAction, watchCommand, [], true, 'Watch prompt, skill, rule, and MCP files so the dashboard refreshes after local edits.')}
         ${button('New AGENTS.md', 'rpaSkills.createMainInstruction', [], true, 'Create or open the workspace-wide agent instruction file.')}
         ${button(mcpSkillRouterEnabled ? 'Disable Skill Router' : 'Enable Skill Router', 'rpaSkills.toggleMcpSkillRouter', [], true, 'Toggle MCP skill routing capability for IDEs')}
+        ${button('Install MarkItDown', 'rpaSkills.installMarkItDown', [], true, 'Install or upgrade Python MarkItDown with PDF support inside a VS Code terminal.')}
         <button class="icon-button" type="button" data-expand-all title="Expand all dashboard sections">Expand All</button>
         <button class="icon-button" type="button" data-collapse-all title="Collapse all dashboard sections">Collapse All</button>
     </div>
@@ -439,6 +448,7 @@ export class AssistantDashboard implements vscode.Disposable {
                 <div>
                     <span class="status ${this.watchController.isRunning ? 'good' : 'warn'}" title="Local file watch keeps the dashboard and tree state fresh after edits.">Watch ${escapeHtml(watchLabel)}</span>
                     <span class="status ${mcpSkillRouterEnabled ? 'good' : 'warn'}" title="When enabled, the skill router is registered in MCP files so agents can search installed skills dynamically.">Skill Router ${mcpSkillRouterEnabled ? 'Enabled' : 'Disabled'}</span>
+                    <span class="status ${markItDownStatus.installed ? 'good' : 'warn'}" title="MarkItDown is required to preview Word, Excel, and PDF files.">MarkItDown: ${escapeHtml(markItDownStatus.version)}</span>
                     <span class="status" title="The manifest URL used to load skill groups.">Registry ${escapeHtml(registryUrl || 'not set')}</span>
                     <span class="status" title="Canonical workspace install folder used by the normal Install action.">Skills ${escapeHtml(skillsPath)}</span>
                     <span class="status" title="MCP servers loaded from rpaSkills.mcp.servers or configured MCP files.">MCP ${mcpServerNames.length} servers</span>
@@ -878,6 +888,13 @@ function renderDashboardScript(): string {
         }
     });
 
+    // 4. Quick setup group checkboxes
+    if (Array.isArray(state.quickSetup.groupIds)) {
+        quickGroupChecks().forEach((checkbox) => {
+            checkbox.checked = state.quickSetup.groupIds.includes(checkbox.value);
+        });
+    }
+
     // 3. Quick setup target dropdown selection
     const quickTarget = document.querySelector('[data-quick-target]');
     if (quickTarget && state.quickSetup.targetId) {
@@ -885,13 +902,6 @@ function renderDashboardScript(): string {
         // Trigger change to update the hint text
         const event = new Event('change');
         quickTarget.dispatchEvent(event);
-    }
-
-    // 4. Quick setup group checkboxes
-    if (Array.isArray(state.quickSetup.groupIds)) {
-        quickGroupChecks().forEach((checkbox) => {
-            checkbox.checked = state.quickSetup.groupIds.includes(checkbox.value);
-        });
     }
 
     // 5. Sections collapsed state
@@ -949,4 +959,77 @@ function escapeHtml(value: string): string {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
+}
+
+async function checkMarkItDownStatus(): Promise<{ installed: boolean; version: string }> {
+    const pythonPath = getRpaSkillsConfigValue<string>('markitdown.pythonPath') || 'python';
+    try {
+        await execFileAsync(pythonPath, ['-c', 'import markitdown'], { timeout: 3000 });
+        return { installed: true, version: 'Ready' };
+    } catch {
+        return { installed: false, version: 'Not Installed' };
+    }
+}
+
+function renderNoWorkspaceHtml(): string {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPA Skills: Open Workspace</title>
+    <style>
+        body {
+            color: var(--vscode-editor-foreground);
+            background: var(--vscode-editor-background);
+            font-family: var(--vscode-font-family);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 80vh;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 480px;
+            border: 1px solid var(--vscode-panel-border);
+            border-radius: 8px;
+            padding: 30px;
+            background: var(--vscode-editorWidget-background);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        h1 {
+            font-size: 20px;
+            margin: 0 0 12px;
+        }
+        p {
+            color: var(--vscode-descriptionForeground);
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 0 0 20px;
+        }
+        .button {
+            display: inline-block;
+            background: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .button:hover {
+            background: var(--vscode-button-hoverBackground);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to RPA Skills!</h1>
+        <p>Vui lòng mở một thư mục hoặc dự án trong VS Code (File &gt; Open Folder...) để kích hoạt không gian làm việc (Workspace) và bắt đầu cài đặt, cấu hình các Skill tự động hóa.</p>
+        <a class="button" href="command:workbench.action.files.openFolder">Open Folder...</a>
+    </div>
+</body>
+</html>`;
 }

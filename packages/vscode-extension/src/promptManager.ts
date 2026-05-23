@@ -254,7 +254,143 @@ function readPreview(filePath: string): string {
 }
 
 function createPromptTemplate(relativePath: string): string {
-    if (/AGENTS\.md$/i.test(relativePath)) {
+    const normalized = relativePath.replace(/\\/g, '/');
+
+    if (/\.kiro\/agents\/.*\.md$/i.test(normalized)) {
+        const agentName = path.basename(normalized, '.md');
+        return [
+            `# Agent Role: ${agentName}`,
+            '',
+            `Bạn là một AI Agent chuyên biệt chịu trách nhiệm thực hiện các tác vụ liên quan đến ${agentName}. Hãy làm việc chặt chẽ với các file hướng dẫn trong thư mục \`.kiro/steering/\` để hoàn thành mục tiêu.`,
+            '',
+            '## Quy tắc hoạt động (Rules & Behaviors)',
+            '- **Định vị & Phạm vi:** Chỉ thực hiện các tác vụ thuộc phạm vi quản lý. Nếu có tác vụ nằm ngoài, hãy chuyển giao hoặc báo cáo lại.',
+            '- **Tuân thủ Guidelines:** Luôn đọc file \`.kiro/steering/tech.md\` để nắm rõ coding standards và \`.kiro/steering/product.md\` để hiểu rõ luồng nghiệp vụ trước khi viết mã.',
+            '- **Ghi chép Nhật ký:** Luôn ghi chép lại các quyết định thiết kế hoặc thay đổi cấu trúc quan trọng vào Journal.',
+            '',
+            '## Quy trình xử lý (Execution Workflow)',
+            '1. **Phân tích yêu cầu:** Nhận diện phạm vi, kiểm tra kỹ các ràng buộc nghiệp vụ.',
+            '2. **Lập kế hoạch (Planning):** Liệt kê các file cần chỉnh sửa hoặc tạo mới trước khi code.',
+            '3. **Thực thi (Implementation):** Viết mã sạch, dễ bảo trì, tuân thủ chặt chẽ kiến trúc dự án.',
+            '4. **Kiểm thử (Verification):** Tự kiểm tra các trường hợp biên và xử lý lỗi triệt để.',
+            '',
+            '## Hướng dẫn cụ thể cho tác vụ',
+            '- Ưu tiên sử dụng các skill cốt lõi đã cài đặt trong workspace.',
+            '- [Nhập yêu cầu chi tiết hoặc mô tả hành vi chuyên biệt ở đây...]',
+            ''
+        ].join('\n');
+    }
+
+    if (/\.kiro\/steering\/product\.md$/i.test(normalized)) {
+        return [
+            '# Product Steering & Vision',
+            '',
+            'Tài liệu này định hình tầm nhìn sản phẩm, luồng nghiệp vụ chính, chân dung người dùng (personas) và các tính năng cốt lõi cần xây dựng.',
+            '',
+            '## Tầm nhìn sản phẩm (Product Vision)',
+            '- [Mô tả sản phẩm giải quyết vấn đề gì của khách hàng?]',
+            '',
+            '## Chân dung người dùng (User Personas)',
+            '- **[Vai trò]:** [Mô tả ngắn gọn nhu cầu, hành vi, mục tiêu].',
+            '',
+            '## Tính năng cốt lõi (Core Features)',
+            '1. **[Tính năng 1]:** [Luồng hoạt động, trải nghiệm mong muốn].',
+            '2. **[Tính năng 2]:** [Luồng hoạt động, trải nghiệm mong muốn].',
+            '',
+            '## Tiêu chí nghiệm thu (Acceptance Criteria)',
+            '- Trải nghiệm người dùng trực quan, mượt mà.',
+            '- Xử lý lỗi thân thiện, bảo mật dữ liệu.',
+            ''
+        ].join('\n');
+    }
+
+    if (/\.kiro\/steering\/tech\.md$/i.test(normalized)) {
+        return [
+            '# Technical Steering & Architecture',
+            '',
+            'Tài liệu này hướng dẫn chi tiết về Tech Stack, tiêu chuẩn viết code (Coding Standards), kiến trúc hệ thống và quy tắc phát triển trong dự án.',
+            '',
+            '## Công nghệ cốt lõi (Tech Stack)',
+            '- **Ngôn ngữ:** [TypeScript, Python, Go, etc.]',
+            '- **Frameworks:** [React, Next.js, FastAPI, NestJS, etc.]',
+            '- **Cơ sở dữ liệu:** [PostgreSQL, Redis, MongoDB, etc.]',
+            '',
+            '## Quy tắc phát triển (Coding Guidelines)',
+            '- **Nguyên tắc Clean Code:** Đặt tên rõ ràng, hàm ngắn gọn tập trung vào một nhiệm vụ duy nhất.',
+            '- **Xử lý lỗi (Error Handling):** Bắt buộc xử lý lỗi triệt để, ghi log chi tiết, không nuốt lỗi.',
+            '- **TypeScript Strict Mode:** Sử dụng type-safe nghiêm ngặt, tránh tối đa kiểu `any`.',
+            '',
+            '## Kiến trúc dự án (Architecture Patterns)',
+            '- [Mô tả cấu trúc thư mục chính hoặc mô hình Clean/Hexagonal Architecture nếu có].',
+            ''
+        ].join('\n');
+    }
+
+    if (/\.kiro\/steering\/structure\.md$/i.test(normalized) || /\.kiro\/steering\/workflow\.md$/i.test(normalized)) {
+        return [
+            '# Structure & Workflow Steering',
+            '',
+            'Tài liệu này định hình cấu trúc thư mục dự án và quy trình phối hợp làm việc giữa các Agent.',
+            '',
+            '## Cấu trúc thư mục (Directory Structure)',
+            '- `packages/`: Chứa các sub-packages hoặc services.',
+            '- `src/`: Mã nguồn chính của ứng dụng.',
+            '- `.kiro/`: Chứa steering, agents và cấu hình điều phối của Kiro.',
+            '',
+            '## Quy trình phối hợp (Agent Coordination Flow)',
+            '1. **Planner Agent:** Tiếp nhận yêu cầu, phân tích và lên kế hoạch trong `.kiro/specs/`.',
+            '2. **Developer Agent:** Thực thi mã nguồn dựa trên Tech Steering.',
+            '3. **QA/Reviewer Agent:** Đảm bảo chất lượng code và chạy thử nghiệm.',
+            ''
+        ].join('\n');
+    }
+
+    if (/\.kiro\/steering\/.*\.md$/i.test(normalized)) {
+        const steeringName = path.basename(normalized, '.md');
+        return [
+            `# ${steeringName} Steering`,
+            '',
+            `Tài liệu định hướng nghiệp vụ hoặc kỹ thuật cho cấu phần ${steeringName}.`,
+            '',
+            '## Mục tiêu định hướng',
+            '- [Mục tiêu 1]',
+            '- [Mục tiêu 2]',
+            '',
+            '## Hướng dẫn chi tiết',
+            '[Viết các hướng dẫn điều phối hoặc nguyên tắc cụ thể ở đây...]',
+            ''
+        ].join('\n');
+    }
+
+    if (/\.kiro\/specs\/.*\.md$/i.test(normalized)) {
+        const specName = path.basename(normalized, '.md');
+        return [
+            `# Feature Specification: ${specName}`,
+            '',
+            `Tài liệu này mô tả chi tiết đặc tả kỹ thuật, thiết kế cơ sở dữ liệu, API Endpoints và danh sách công việc cần làm để xây dựng tính năng ${specName}.`,
+            '',
+            '## Đặc tả chức năng (Functional Specifications)',
+            '- **Mục tiêu:** [Mục tiêu của tính năng này].',
+            '- **Luồng hoạt động chính:** [Mô tả chi tiết luồng xử lý].',
+            '',
+            '## Thiết kế kỹ thuật (Technical Design)',
+            '- **Database Schema:**',
+            '  ```sql',
+            '  -- Thiết kế các bảng mới hoặc quan hệ cơ sở dữ liệu',
+            '  ```',
+            '- **API Endpoints:**',
+            '  - `POST /api/v1/...`: [Mô tả request/response body].',
+            '',
+            '## Danh sách công việc (Task Checklist)',
+            '- [ ] Thiết kế cơ sở dữ liệu và viết file migration.',
+            '- [ ] Xây dựng các API Endpoint cốt lõi.',
+            '- [ ] Tích hợp giao diện Front-end.',
+            '- [ ] Viết Unit Test và kiểm tra chất lượng.',
+            ''
+        ].join('\n');
+    }
+
+    if (/AGENTS\.md$/i.test(normalized)) {
         return [
             '# Agent Instructions',
             '',
@@ -268,8 +404,8 @@ function createPromptTemplate(relativePath: string): string {
         ].join('\n');
     }
 
-    if (/SKILL\.md$/i.test(relativePath)) {
-        const skillName = safeSkillDirectoryName(path.basename(path.dirname(relativePath)) || 'new-skill');
+    if (/SKILL\.md$/i.test(normalized)) {
+        const skillName = safeSkillDirectoryName(path.basename(path.dirname(normalized)) || 'new-skill');
         return [
             '---',
             `name: ${skillName}`,

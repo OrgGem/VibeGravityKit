@@ -2,7 +2,7 @@
   "name": "skills",
   "displayName": "RPA Skills",
   "description": "Skill Marketplace and Configuration Manager for RPA Skills",
-  "version": "0.0.6",
+  "version": "0.0.10",
   "publisher": "rpa",
   "license": "MIT",
   "icon": "resources/icon.png",
@@ -36,7 +36,8 @@
     "onCommand:rpaSkills.stopWatch",
     "onCommand:rpaSkills.toggleWatch",
     "onCommand:rpaSkills.openSettings",
-    "onCommand:rpaSkills.toggleMcpSkillRouter"
+    "onCommand:rpaSkills.toggleMcpSkillRouter",
+    "onCommand:rpaSkills.installMarkItDown"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -129,6 +130,11 @@
         "command": "rpaSkills.toggleMcpSkillRouter",
         "title": "RPA Skills: Toggle MCP Skill Router",
         "icon": "$(zap)"
+      },
+      {
+        "command": "rpaSkills.installMarkItDown",
+        "title": "RPA Skills: Install MarkItDown Dependencies",
+        "icon": "$(cloud-download)"
       }
     ],
     "menus": {
@@ -167,14 +173,14 @@
       "explorer/context": [
         {
           "command": "rpaSkills.previewDocumentAsMarkdown",
-          "when": "resourceExtname =~ /\\.(docx|docm|pptx|pptm|xlsx|xlsm|xls|xlsb)$/i",
+          "when": "resourceExtname =~ /\\.(docx|docm|pptx|pptm|xlsx|xlsm|xls|xlsb|pdf|html|htm)$/i",
           "group": "navigation@50"
         }
       ],
       "editor/title": [
         {
           "command": "rpaSkills.previewDocumentAsMarkdown",
-          "when": "resourceExtname =~ /\\.(docx|docm|pptx|pptm|xlsx|xlsm|xls|xlsb)$/i",
+          "when": "resourceExtname =~ /\\.(docx|docm|pptx|pptm|xlsx|xlsm|xls|xlsb|pdf|html|htm)$/i",
           "group": "navigation"
         }
       ],
@@ -234,6 +240,48 @@
         "contents": "Browse registry groups, open a skill for details, then use Install for the workspace skill folder or Install Skill to IDE for editor-specific rules.\n\n[Open Assistant Setup](command:rpaSkills.openAssistantDashboard)\n\n[Configure Registry](command:rpaSkills.openSettings)"
       }
     ],
+    "customEditors": [
+      {
+        "viewType": "rpaSkills.documentMarkdownPreview",
+        "displayName": "RPA Skills Markdown Preview",
+        "selector": [
+          {
+            "filenamePattern": "*.docx"
+          },
+          {
+            "filenamePattern": "*.docm"
+          },
+          {
+            "filenamePattern": "*.pptx"
+          },
+          {
+            "filenamePattern": "*.pptm"
+          },
+          {
+            "filenamePattern": "*.xlsx"
+          },
+          {
+            "filenamePattern": "*.xlsm"
+          },
+          {
+            "filenamePattern": "*.xls"
+          },
+          {
+            "filenamePattern": "*.xlsb"
+          },
+          {
+            "filenamePattern": "*.pdf"
+          },
+          {
+            "filenamePattern": "*.html"
+          },
+          {
+            "filenamePattern": "*.htm"
+          }
+        ],
+        "priority": "option"
+      }
+    ],
     "configuration": {
       "title": "RPA Skills",
       "properties": {
@@ -286,6 +334,21 @@
           "type": "number",
           "default": 120000,
           "description": "Maximum time in milliseconds to wait for MarkItDown document conversion."
+        },
+        "rpaSkills.preview.autoOpenHtml": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically open HTML and HTM files in RPA Skills Markdown Preview instead of the default text editor."
+        },
+        "rpaSkills.preview.autoOpenPdf": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically open PDF files in RPA Skills Markdown Preview instead of the default binary viewer."
+        },
+        "rpaSkills.preview.autoOpenOffice": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically open Word, Excel, and PowerPoint files in RPA Skills Markdown Preview instead of the default binary viewer."
         }
       }
     }

@@ -2,6 +2,12 @@
 inclusion: always
 ---
 
+<!-- MCP_SKILL_ROUTER_START -->
+> [!IMPORTANT]
+> **Skill Routing:** The MCP `skill-router` is enabled. You MUST use the `search_skills` MCP tool to search for necessary skills when the user gives you a task. If the user explicitly mentions a skill or workflow, use the tool to find it before proceeding.
+<!-- MCP_SKILL_ROUTER_END -->
+
+
 # Brain & Session Context
 
 ## At the start of every session

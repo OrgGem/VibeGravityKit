@@ -11,7 +11,7 @@ import {
 } from './ideTargets';
 import { createMainInstructionFile, openPromptFile, toggleInstructionInPromptFiles } from './promptManager';
 import { WatchController } from './watchController';
-import { previewDocumentAsMarkdown } from './documentMarkdownPreview';
+import { previewDocumentAsMarkdown, DocumentMarkdownPreviewProvider } from './documentMarkdownPreview';
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('RPA Skills extension is now active!');
@@ -163,10 +163,29 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.executeCommand('workbench.action.openSettings', 'rpaSkills.registryUrl');
     });
 
-    const configDisposable = vscode.workspace.onDidChangeConfiguration((event) => {
+    let installMarkItDownDisposable = vscode.commands.registerCommand('rpaSkills.installMarkItDown', async () => {
+        const pythonPath = vscode.workspace.getConfiguration('rpaSkills').get<string>('markitdown.pythonPath') || 'python';
+        const terminalName = 'Install MarkItDown';
+        let terminal = vscode.window.terminals.find(t => t.name === terminalName);
+        if (!terminal) {
+            terminal = vscode.window.createTerminal({ name: terminalName });
+        }
+        terminal.show(true);
+        terminal.sendText(`${pythonPath} -m pip install --upgrade "markitdown[all]"`);
+        vscode.window.showInformationMessage('Installing MarkItDown in VS Code terminal...');
+    });
+
+    const configDisposable = vscode.workspace.onDidChangeConfiguration(async (event) => {
         if (event.affectsConfiguration('rpaSkills') || event.affectsConfiguration('gravitykit')) {
             if (event.affectsConfiguration('rpaSkills.watch.enabled') || event.affectsConfiguration('gravitykit.watch.enabled')) {
                 watchController.syncFromConfiguration();
+            }
+            if (
+                event.affectsConfiguration('rpaSkills.preview.autoOpenHtml')
+                || event.affectsConfiguration('rpaSkills.preview.autoOpenPdf')
+                || event.affectsConfiguration('rpaSkills.preview.autoOpenOffice')
+            ) {
+                await syncEditorAssociations();
             }
             skillsProvider.refresh();
             dashboard?.refresh();
@@ -175,7 +194,12 @@ export function activate(context: vscode.ExtensionContext) {
 
     watchController.startFromConfiguration();
 
+    syncEditorAssociations().catch(err => console.error('Failed to sync editor associations:', err));
+
+    const customEditorDisposable = DocumentMarkdownPreviewProvider.register(context);
+
     context.subscriptions.push(
+        customEditorDisposable,
         skillsView,
         dashboard,
         watchController,
@@ -197,6 +221,7 @@ export function activate(context: vscode.ExtensionContext) {
         toggleWatchDisposable,
         toggleMcpSkillRouterDisposable,
         openSettingsDisposable,
+        installMarkItDownDisposable,
         configDisposable
     );
 }
@@ -426,4 +451,48 @@ function uniqueSkills<T extends { id: string }>(skills: T[]): T[] {
     }
 
     return result;
+}
+
+async function syncEditorAssociations(): Promise<void> {
+    const config = vscode.workspace.getConfiguration('rpaSkills');
+    const autoOpenHtml = config.get<boolean>('preview.autoOpenHtml') ?? false;
+    const autoOpenPdf = config.get<boolean>('preview.autoOpenPdf') ?? false;
+    const autoOpenOffice = config.get<boolean>('preview.autoOpenOffice') ?? false;
+
+    const workbenchConfig = vscode.workspace.getConfiguration('workbench');
+    const associations = { ...workbenchConfig.get<Record<string, string>>('editorAssociations') };
+
+    const viewType = 'rpaSkills.documentMarkdownPreview';
+
+    // Sync HTML
+    if (autoOpenHtml) {
+        associations['*.html'] = viewType;
+        associations['*.htm'] = viewType;
+    } else {
+        if (associations['*.html'] === viewType) { delete associations['*.html']; }
+        if (associations['*.htm'] === viewType) { delete associations['*.htm']; }
+    }
+
+    // Sync PDF
+    if (autoOpenPdf) {
+        associations['*.pdf'] = viewType;
+    } else {
+        if (associations['*.pdf'] === viewType) { delete associations['*.pdf']; }
+    }
+
+    // Sync Office (Word, Excel, PowerPoint)
+    const officePatterns = ['*.docx', '*.docm', '*.xlsx', '*.xlsm', '*.xls', '*.xlsb', '*.pptx', '*.pptm'];
+    if (autoOpenOffice) {
+        for (const pattern of officePatterns) {
+            associations[pattern] = viewType;
+        }
+    } else {
+        for (const pattern of officePatterns) {
+            if (associations[pattern] === viewType) {
+                delete associations[pattern];
+            }
+        }
+    }
+
+    await workbenchConfig.update('editorAssociations', associations, vscode.ConfigurationTarget.Global);
 }

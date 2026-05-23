@@ -25,7 +25,7 @@ MVP client for browsing and installing RPA skills from a registry server.
 10. Activate or disable MCP servers for supported IDE config files (`.mcp.json`, `.cursor/mcp.json`, `.codex/config.toml`).
 11. Watch local skill, prompt, rule, and MCP files so the extension refreshes when files change.
 12. Open or create prompt files including `AGENTS.md`, `SKILL.md`, IDE rules, and MCP configs.
-13. Preview Word, PowerPoint, and Excel documents as Markdown using MarkItDown.
+13. Preview HTML, Word, Excel, PowerPoint, and PDF documents as Markdown using MarkItDown.
 
 ## Settings
 
@@ -45,7 +45,7 @@ MVP client for browsing and installing RPA skills from a registry server.
 - `RPA Skills: Activate MCP for IDE`: write enabled MCP server config for the selected target.
 - `RPA Skills: Disable MCP for IDE`: keep MCP config installed but mark servers disabled.
 - `RPA Skills: Open Prompt or Instruction`: open a prompt, rule, `SKILL.md`, or MCP config for editing.
-- `RPA Skills: Preview Office File as Markdown`: convert `.docx`, `.pptx`, `.xlsx`, `.xlsm`, `.xls`, and `.xlsb` files with MarkItDown and show a basic Markdown preview.
+- `RPA Skills: Preview Office File as Markdown`: convert `.docx`, `.pptx`, `.xlsx`, `.xlsm`, `.xls`, `.xlsb`, `.pdf`, `.html`, and `.htm` files with MarkItDown and show a basic Markdown preview.
 - `RPA Skills: Start Watch` / `RPA Skills: Stop Watch`: control the workspace watcher.
 
 ## Development

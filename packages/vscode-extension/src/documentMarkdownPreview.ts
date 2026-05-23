@@ -14,8 +14,58 @@ const supportedExtensions = new Set([
     '.xlsx',
     '.xlsm',
     '.xls',
-    '.xlsb'
+    '.xlsb',
+    '.pdf',
+    '.html',
+    '.htm'
 ]);
+
+const openWebviewPanels = new Map<string, vscode.WebviewPanel>();
+
+function isDocumentCurrentlyPreviewed(uri: vscode.Uri): boolean {
+    const uriStr = uri.toString();
+    
+    // Check if open as Webview Panel
+    if (openWebviewPanels.has(uriStr)) {
+        return true;
+    }
+
+    // Check if open as Custom Editor in active/visible tabs
+    for (const group of vscode.window.tabGroups.all) {
+        for (const tab of group.tabs) {
+            if (tab.input instanceof vscode.TabInputCustom && tab.input.viewType === 'rpaSkills.documentMarkdownPreview') {
+                if (tab.input.uri.toString() === uriStr) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+async function switchToSourceEditor(uri: vscode.Uri): Promise<void> {
+    const uriStr = uri.toString();
+
+    // If it's open as Webview Panel, close the panel and show as text document
+    const panel = openWebviewPanels.get(uriStr);
+    if (panel) {
+        panel.dispose();
+        await vscode.window.showTextDocument(uri, {
+            viewColumn: vscode.ViewColumn.Active,
+            preview: false
+        });
+        return;
+    }
+
+    // If it's a Custom Editor, open it with default editor to swap back
+    await vscode.commands.executeCommand(
+        'vscode.openWith',
+        uri,
+        'default',
+        vscode.ViewColumn.Active
+    );
+}
 
 export async function previewDocumentAsMarkdown(input?: vscode.Uri): Promise<void> {
     const uri = await resolveDocumentUri(input);
@@ -25,7 +75,13 @@ export async function previewDocumentAsMarkdown(input?: vscode.Uri): Promise<voi
 
     const extension = path.extname(uri.fsPath).toLowerCase();
     if (!supportedExtensions.has(extension)) {
-        vscode.window.showErrorMessage('Please select a Word, PowerPoint, or Excel file.');
+        vscode.window.showErrorMessage('Please select a supported document (Word, Excel, PowerPoint, PDF, or HTML).');
+        return;
+    }
+
+    // Toggle: if already in preview, switch back to editor
+    if (isDocumentCurrentlyPreviewed(uri)) {
+        await switchToSourceEditor(uri);
         return;
     }
 
@@ -49,14 +105,27 @@ async function resolveDocumentUri(input?: vscode.Uri): Promise<vscode.Uri | unde
         return activeUri;
     }
 
+    // Try active Custom Editor tab
+    const activeTab = vscode.window.tabGroups.activeTabGroup.activeTab;
+    if (activeTab && activeTab.input instanceof vscode.TabInputCustom && activeTab.input.viewType === 'rpaSkills.documentMarkdownPreview') {
+        return activeTab.input.uri;
+    }
+
+    // Try active Webview Panel
+    for (const [uriStr, panel] of openWebviewPanels.entries()) {
+        if (panel.active) {
+            return vscode.Uri.parse(uriStr);
+        }
+    }
+
     const picked = await vscode.window.showOpenDialog({
         canSelectFiles: true,
         canSelectFolders: false,
         canSelectMany: false,
         filters: {
-            'Office documents': ['docx', 'docm', 'pptx', 'pptm', 'xlsx', 'xlsm', 'xls', 'xlsb']
+            'Supported Documents': ['docx', 'docm', 'pptx', 'pptm', 'xlsx', 'xlsm', 'xls', 'xlsb', 'pdf', 'html', 'htm']
         },
-        title: 'Select an Office document to preview as Markdown'
+        title: 'Select a document to preview as Markdown'
     });
 
     return picked?.[0];
@@ -74,7 +143,11 @@ async function convertDocumentWithMarkItDown(filePath: string): Promise<string> 
                 encoding: 'utf8',
                 maxBuffer: 20 * 1024 * 1024,
                 timeout: timeoutMs,
-                windowsHide: true
+                windowsHide: true,
+                env: {
+                    ...process.env,
+                    PYTHONIOENCODING: 'utf-8'
+                }
             }
         );
 
@@ -95,17 +168,41 @@ async function convertDocumentWithMarkItDown(filePath: string): Promise<string> 
 
 function showMarkdownPreview(uri: vscode.Uri, markdown: string): void {
     const basename = path.basename(uri.fsPath);
+    
+    // If a panel is already open for this uri, reveal it
+    const existingPanel = openWebviewPanels.get(uri.toString());
+    if (existingPanel) {
+        existingPanel.reveal(vscode.ViewColumn.Active);
+        return;
+    }
+
     const panel = vscode.window.createWebviewPanel(
         'rpaSkillsDocumentMarkdownPreview',
         `Markdown Preview: ${basename}`,
         vscode.ViewColumn.Active,
         {
-            enableScripts: false,
+            enableScripts: true,
             retainContextWhenHidden: true
         }
     );
 
+    openWebviewPanels.set(uri.toString(), panel);
+
     panel.webview.html = renderMarkdownPreviewHtml(basename, uri.fsPath, markdown);
+
+    panel.webview.onDidReceiveMessage(async (message) => {
+        if (message.type === 'switchToSource') {
+            panel.dispose();
+            await vscode.window.showTextDocument(uri, {
+                viewColumn: vscode.ViewColumn.Active,
+                preview: false
+            });
+        }
+    });
+
+    panel.onDidDispose(() => {
+        openWebviewPanels.delete(uri.toString());
+    });
 }
 
 function renderMarkdownPreviewHtml(title: string, filePath: string, markdown: string): string {
@@ -127,6 +224,45 @@ function renderMarkdownPreviewHtml(title: string, filePath: string, markdown: st
             line-height: 1.55;
             margin: 0;
             padding: 22px;
+        }
+        .preview-header-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--vscode-editor-background);
+            border-bottom: 1px solid var(--vscode-panel-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 16px;
+            margin: -22px -22px 20px -22px;
+        }
+        .toolbar-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--vscode-descriptionForeground);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding-right: 12px;
+        }
+        .toolbar-btn {
+            background: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px 11px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+            transition: background 0.15s ease;
+        }
+        .toolbar-btn:hover {
+            background: var(--vscode-button-hoverBackground);
         }
         h1 {
             font-size: 24px;
@@ -205,6 +341,15 @@ function renderMarkdownPreviewHtml(title: string, filePath: string, markdown: st
     </style>
 </head>
 <body>
+    <div class="preview-header-bar">
+        <span class="toolbar-title">${escapeHtml(title)}</span>
+        <button class="toolbar-btn" onclick="switchToSource()" title="Switch back to standard editor / Quay về mã nguồn">
+            <svg viewBox="0 0 16 16" fill="currentColor" style="width: 13px; height: 13px;">
+                <path fill-rule="evenodd" d="M4.72 3.22a.75.75 0 0 1 1.06 0L9.47 6.97a.75.75 0 0 1 0 1.06l-3.69 3.69a.75.75 0 1 1-1.06-1.06L7.88 7.5 4.72 4.34a.75.75 0 0 1 0-1.06zm4.5 0a.75.75 0 0 1 1.06 0l3.69 3.69a.75.75 0 0 1 0 1.06l-3.69 3.69a.75.75 0 1 1-1.06-1.06l3.16-3.16-3.16-3.16a.75.75 0 0 1 0-1.06z"/>
+            </svg>
+            Switch to Editor / Quay về mã nguồn
+        </button>
+    </div>
     <h1>${escapeHtml(title)}</h1>
     <div class="meta">${escapeHtml(filePath)}</div>
     <main class="preview">
@@ -214,6 +359,12 @@ function renderMarkdownPreviewHtml(title: string, filePath: string, markdown: st
         <summary>Raw Markdown</summary>
         <pre>${escapeHtml(markdown)}</pre>
     </details>
+    <script>
+        const vscode = acquireVsCodeApi();
+        function switchToSource() {
+            vscode.postMessage({ type: 'switchToSource' });
+        }
+    </script>
 </body>
 </html>`;
 }
@@ -376,4 +527,75 @@ function escapeHtml(value: string): string {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
+}
+
+export class DocumentMarkdownPreviewProvider implements vscode.CustomReadonlyEditorProvider {
+    public static register(context: vscode.ExtensionContext): vscode.Disposable {
+        return vscode.window.registerCustomEditorProvider(
+            'rpaSkills.documentMarkdownPreview',
+            new DocumentMarkdownPreviewProvider(context),
+            {
+                webviewOptions: {
+                    retainContextWhenHidden: true
+                },
+                supportsMultipleEditorsPerDocument: false
+            }
+        );
+    }
+
+    constructor(private readonly context: vscode.ExtensionContext) {}
+
+    openCustomDocument(
+        uri: vscode.Uri,
+        openContext: vscode.CustomDocumentOpenContext,
+        token: vscode.CancellationToken
+    ): vscode.CustomDocument {
+        return {
+            uri,
+            dispose: () => {}
+        };
+    }
+
+    async resolveCustomEditor(
+        document: vscode.CustomDocument,
+        webviewPanel: vscode.WebviewPanel,
+        token: vscode.CancellationToken
+    ): Promise<void> {
+        webviewPanel.webview.options = {
+            enableScripts: true
+        };
+
+        const uri = document.uri;
+        const basename = path.basename(uri.fsPath);
+        webviewPanel.title = `Markdown Preview: ${basename}`;
+
+        webviewPanel.webview.onDidReceiveMessage(async (message) => {
+            if (message.type === 'switchToSource') {
+                await vscode.commands.executeCommand(
+                    'vscode.openWith',
+                    uri,
+                    'default',
+                    vscode.ViewColumn.Active
+                );
+            }
+        });
+
+        const updateWebview = async () => {
+            if (token.isCancellationRequested) {
+                return;
+            }
+            try {
+                const markdown = await convertDocumentWithMarkItDown(uri.fsPath);
+                webviewPanel.webview.html = renderMarkdownPreviewHtml(basename, uri.fsPath, markdown);
+            } catch (error: any) {
+                webviewPanel.webview.html = renderMarkdownPreviewHtml(
+                    basename,
+                    uri.fsPath,
+                    `### Conversion Failed\n\n${error.message}`
+                );
+            }
+        };
+
+        await updateWebview();
+    }
 }
